@@ -70,7 +70,7 @@
                 </div>
 
                 <b-col>
-                    <label for="datepicker-data-ini">Data Cadastro inicial: </label>
+                    <label for="datepicker-data-ini">Data Cadastroo inicial: </label>
                     <mydatepicker-ini :datepicker_default="datepicker_ini" @childToParent="receiveDataCadastroIni"
                                       id="datepicker-data-ini"/>
                     <br><br>
