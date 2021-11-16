@@ -2,7 +2,6 @@
     <div class="levantamentos">
         <div>
             <b-form @submit.stop.prevent="pesquisarImagens">
-                <!--            <b-form @submit.stop.prevent="carregarImagens">-->
                 <b-button type="submit" variant="primary">Pesquisar Imagens</b-button>
             </b-form>
             <b-form @submit.stop.prevent="carregarImagens">
