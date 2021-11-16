@@ -1,0 +1,41 @@
+﻿when running containers, change the following files:
+ - database.py
+ - vue.config.js
+Enable/disable windows defender firewall
+Painel de Controle\Todos os Itens do Painel de Controle\Windows Defender Firewall
+
+testing ports on windows
+netstat -a -s -o -p tcp
+netstat -a -n -o
+netstat -a -s -o -p tcp
+
+
+-----------------dcoker installs
+https://stackoverflow.com/questions/36885985/cannot-start-docker-after-installation-on-windows
+-Create a virtual switch, refer to this article on how to do that
+-Create a docker machine using that network switch and hyper-V driver:
+docker-machine create -d hyperv --hyperv-virtual-switch "Comutador Virtual Externo" default
+
+
+
+docker build -t gabrieldeoliveiraest/projetofinal2_web:latest -f Dockerfile .
+docker login -u "gabrielgdsg" -p "M@resdosu1" docker.io
+docker tag kapiva_gestao_fastapi_vuejs_frontend gabrielgdsg/frontendcontainer:latest
+docker tag kapiva_gestao_fastapi_vuejs_backend gabrielgdsg/backendcontainer:latest
+docker tag kapiva_gestao_fastapi_vuejs_mongodb gabrielgdsg/mongodb:latest
+docker push gabrielgdsg/frontendcontainer:latest
+docker push gabrielgdsg/backendcontainer:latest
+docker push gabrielgdsg/mongodb:latest
+
+--running
+docker login -u "gabrielgdsg" -p "M@resdosu1" docker.io
+docker pull gabrielgdsg/frontendcontainer:latest
+docker pull gabrielgdsg/backendcontainer:latest
+docker pull gabrielgdsg/mongodb:latest
+docker run -dp 8080:8080 gabrielgdsg/frontendcontainer
+
+
+------Docker toolbox Port Forwardinghttps://stackoverflow.com/questions/42866013/docker-toolbox-localhost-not-working
+
+
+In VirtualBox:Click the appropriate machine (probably the one labeled "default")SettingsNetwork > Adapter 1 > Advanced > Port ForwardingClick "+" to add a new RuleSet Host Port 8080 & Guest Port 8080; be sure to leave Host IP and Guest IP empty

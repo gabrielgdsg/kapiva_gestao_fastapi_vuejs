@@ -1,0 +1,11 @@
+_mongosh beta
+
+//switch database
+use kapiva_gestao
+
+//remove a field
+db.comissao_dia.updateMany(
+   { },
+   { $unset: { comissao_total: "" } }
+)
+

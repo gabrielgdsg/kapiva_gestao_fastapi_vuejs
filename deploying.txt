@@ -1,0 +1,44 @@
+#developing
+let mongodb running on docker
+backend(fastapi) -> change .env file in config.py -> run debug mode
+frontend(vuejs) -> run 'npm run serve'
+
+
+-new pure python project
+ location:C:\Users\gabri\PycharmProjects\kapiva_gestao_fastapi_vuejs
+ new environment using Pipenv
+
+-cd /rootfolder
+ mkdir backend
+
+-cd backend/app (or only /backend)
+ pipenv install fastapi uvicorn odmantic psycopg2 requests untangle openpyxl python-dotenv
+(maybes)pipenv install aiofiles
+
+-cd /rootfolder
+ npm install -g @vue/cli (maybe?)	
+ vue create frontend
+
+-cd frontend
+ vue add router
+ vue add axios
+ vue add bootstrap-vue
+ #vue add moment?
+ npm install --save moment
+ npm install --save vue2-datepicker 
+ npm install --save numeral {maybe not needed because of vue-currency}
+ npm install --save vue-numeral-filter {maybe not needed because of vue-currency}
+ npm install --save vue-currency-input
+ npm i --save @fortawesome/fontawesome-svg-core 
+ npm i --save @fortawesome/free-solid-svg-icons
+ npm i --save @fortawesome/vue-fontawesome@latest
+ #fontawesome also need some imports and configs in the main.js
+npm install --save vue-autosuggest
+npm install --save googleapis
+npm install @googleapis/customsearch
+npm install --save image-downloader
+
+
+
+
+
