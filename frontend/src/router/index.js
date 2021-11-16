@@ -28,6 +28,12 @@ const routes = [
     props: true
   },
     {
+    path: '/levantamentos_test2/',
+    name: 'LevantamentosTest2',
+    component: () => import('../views/LevantamentosTest2.vue'),
+    props: true
+  },
+    {
     path: '/financeiro/caixa',
     name: 'FinanceiroCaixa',
     component: () => import('../views/FinanceiroCaixa.vue'),

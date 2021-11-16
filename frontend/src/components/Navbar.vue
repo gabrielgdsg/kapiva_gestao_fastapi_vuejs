@@ -11,6 +11,7 @@
                     </router-link>
                     <router-link class="nav-link" to="/levantamentos">Levantamentos</router-link>
                     <router-link class="nav-link" to="/levantamentos_test">LevantamentosTest</router-link>
+                    <router-link class="nav-link" to="/levantamentos_test2">LevantamentosTest2</router-link>
                     <router-link class="nav-link" to="/googleimagetestview">GoogleImageTestView</router-link>
                     <router-link class="nav-link" to="/cliente">Cliente</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>
