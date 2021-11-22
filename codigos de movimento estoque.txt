@@ -1,0 +1,9 @@
+cod_origem_mvto 	origem
+9			frente de caixa
+15			condicional
+7			ent.proc.notas
+2			emissao nota fiscal
+3			requisicao
+
+console6_maybe_new output right
+cant get some result from console_testing

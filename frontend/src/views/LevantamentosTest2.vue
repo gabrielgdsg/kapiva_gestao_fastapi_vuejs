@@ -1,90 +1,129 @@
 <template>
     <div class="levantamentos">
-        <div>
-            <b-form @submit.stop.prevent="pesquisarImagens">
-                <b-button type="submit" variant="primary">Pesquisar Imagens</b-button>
-            </b-form>
-            <b-form @submit.stop.prevent="carregarImagens">
-                <b-button type="submit" variant="primary">Carregar Imagens</b-button>
-            </b-form>
-            <b-form @submit.stop.prevent="saveProdutos">
-                <b-button type="submit" variant="primary">Salvar Produtos</b-button>
-            </b-form>
-
-        </div>
-
         <h1>Levantamentos</h1>
         <b-form @submit.stop.prevent="onSubmit">
             <b-row>
                 <b-col>
-                    <div class="autosuggest-container">
-                        <b>Marca: </b>
-                        <vue-autosuggest
-                                :get-suggestion-value="getSuggestionValue"
-                                :input-props="{id:'autosuggest__input', placeholder:'Digite a marca', class:'form-control'}"
-                                :suggestions="filteredOptions" @click="clickHandler" @focus="focusMe"
-                                @input="onInputChange"
-                                @selected="onSelected"
-                                v-model="query">
-                            <div class="autosuggest-container-results" slot-scope="{suggestion}"
-                                 style="display: flex; align-items: center;">
-                                <div> {{suggestion.item.nom_marca}} ({{suggestion.item.cod_marca}})</div>
-                            </div>
-                        </vue-autosuggest>
-                        <br>
-                    </div>
+
+                    <b-row>
+                        <div class="autosuggest-container">
+                            <b>Marca: </b>
+                            <vue-autosuggest
+                                    :get-suggestion-value="getSuggestionValue"
+                                    :input-props="{id:'autosuggest__input', placeholder:'Digite a marca', class:'form-control'}"
+                                    :suggestions="filteredOptions" @click="clickHandler" @focus="focusMe"
+                                    @input="onInputChange"
+                                    @selected="onSelected"
+                                    v-model="query">
+                                <div class="autosuggest-container-results" slot-scope="{suggestion}"
+                                     style="display: flex; align-items: center;">
+                                    <div> {{suggestion.item.nom_marca}} ({{suggestion.item.cod_marca}})</div>
+                                </div>
+                            </vue-autosuggest>
+                            <br>
+                        </div>
+                    </b-row>
+                    <br><br>
+                    <b-row>
+                        <div>
+                            <b-form @submit.stop.prevent="pesquisarImagens">
+                                <b-button type="submit" variant="primary">Pesquisar Imagens</b-button>
+                            </b-form>
+                            <b-form @submit.stop.prevent="carregarImagens">
+                                <b-button type="submit" variant="primary">Carregar Imagens</b-button>
+                            </b-form>
+                            <b-form @submit.stop.prevent="saveProdutos">
+                                <b-button type="submit" variant="primary">Salvar Produtos</b-button>
+                            </b-form>
+                        </div>
+                    </b-row>
+
                 </b-col>
 
-                <div checkbox fornecedors>
-                                    <b-col>
-                                    <div id="form_checkbox">
-                                        <b-form-group>
-                                            <template #label>
-                                                <b>Fornecedores da Marca:</b>
-                                                <b-form-checkbox
-                                                        :indeterminate="form_indeterminate"
-                                                        @change="form_toggleAll"
-                                                        aria-controls="flavours"
-                                                        aria-describedby="flavours"
-                                                        v-model="form_allSelected"
-                                                >{{ form_allSelected ? 'Desmarcar todos' : 'Marcar todos' }}
-                                                </b-form-checkbox>
-                                            </template>
-
-                                            <template v-slot="{ ariaDescribedby }">
-                                                <b-form-checkbox-group
-                                                        :aria-describedby="ariaDescribedby"
-                                                        :options="
-                                                        availableFornecedores"
-                                                        aria-label="Individual flavours"
-                                                        class="ml-4"
-                                                        id="flavors"
-                                                        name="flavors"
-                                                        stacked
-                                                        v-model="form_selected"
-                                                ></b-form-checkbox-group>
-                                            </template>
-                                        </b-form-group>
-                                    </div>
-                                    </b-col>
-                </div>
-
                 <b-col>
-                    <label for="datepicker-data-ini">Data Cadastr inicial: </label>
-                    <mydatepicker-ini :datepicker_default="datepicker_ini" @childToParent="receiveDataCadastroIni"
-                                      id="datepicker-data-ini"/>
-                    <br><br>
-                    <label for="datepicker-data-fim">Data Cadastro final: </label>
-                    <mydatepicker-fim :datepicker_default="datepicker_fim" @childToParent="receiveDataCadastroFim"
-                                      id="datepicker-data-fim"/>
-                    <br><br>
-                    <b-button type="submit" variant="primary">Enviar</b-button>
+                    <div checkbox fornecedors>
+                        <b-col>
+                            <div id="form_checkbox">
+                                <b-form-group>
+                                    <template #label>
+                                        <b>Fornecedores da Marca:</b>
+                                        <b-form-checkbox
+                                                :indeterminate="form_indeterminate"
+                                                @change="form_toggleAll"
+                                                aria-controls="flavours"
+                                                aria-describedby="flavours"
+                                                v-model="form_allSelected"
+                                        >{{ form_allSelected ? 'Desmarcar todos' : 'Marcar todos' }}
+                                        </b-form-checkbox>
+                                    </template>
+
+                                    <template v-slot="{ ariaDescribedby }">
+                                        <b-form-checkbox-group
+                                                :aria-describedby="ariaDescribedby"
+                                                :options="
+                                                        availableFornecedores"
+                                                aria-label="Individual flavours"
+                                                class="ml-4"
+                                                id="flavors"
+                                                name="flavors"
+                                                stacked
+                                                v-model="form_selected"
+                                        ></b-form-checkbox-group>
+                                    </template>
+                                </b-form-group>
+                            </div>
+                        </b-col>
+                    </div>
+                </b-col>
+                <b-col>
+                    <b-row>
+                        <label for="datepicker-data-ini">Data Cadastr inicial: </label>
+                        <mydatepicker-ini :datepicker_default="datepicker_ini" @childToParent="receiveDataCadastroIni"
+                                          id="datepicker-data-ini"/>
+                        <br><br>
+                    </b-row>
+                    <b-row>
+                        <label for="datepicker-data-fim">Data Cadastro final: </label>
+                        <mydatepicker-fim :datepicker_default="datepicker_fim" @childToParent="receiveDataCadastroFim"
+                                          id="datepicker-data-fim"/>
+                        <br><br>
+
+                    </b-row>
+
+                </b-col>
+                <b-col>
+                    <b-row>
+                       <b-button type="submit" variant="primary">Enviar</b-button>
+                    </b-row>
+                    <b-row>
+                    <br>
+                    </b-row>
+
+                    <b-row>
+                        <b-form-group>
+
+          <b-input-group size="sm">
+            <b-form-input
+              id="filter-input"
+              v-model="filter"
+              type="search"
+              placeholder="Filtrar por.."
+            ></b-form-input>
+
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+            </b-input-group-append>
+          </b-input-group>
+                            </b-form-group>
+                    </b-row>
+
                 </b-col>
             </b-row>
 
 
         </b-form>
-        <b-table :fields="computedFields" :items="mapped_items" :small=true class="text-right" hover striped>
+        <b-table :filter="filter" :fields="computedFields" :items="mapped_items" :small=true class="text-right"
+                 head-variant="light" hover sort-compare-locale="pt-BR" sticky-header="800px" striped>
             // eslint-disable-next-line vue/no-unused-vars
             <template #cell(img)="data">  <!-- eslint-disable-line-->
                 <!--            <template slot="[img]" slot-scope="data">-->
@@ -93,19 +132,12 @@
                 <img :src="data.value" v-bind="imageProps"/>
             </template>
 
-<!--            <template v-for="field in infantoFields" v-slot:[`cell(${field.key})`]="{ item }">&lt;!&ndash; eslint-disable-line&ndash;&gt;-->
-<!--                {{item[field.key+"_E"]}}-->
-<!--                {{item[field.key]}}-->
-<!--            </template>-->
 
             <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }"><!-- eslint-disable-line-->
                 {{item[field.key+"_E"]}}
                 <br><!-- eslint-disable-line-->
-                {{item[field.key]}}
+                <b> {{item[field.key]}} </b><!-- eslint-disable-line-->
             </template>
-
-
-
 
         </b-table>
 
@@ -135,7 +167,7 @@
                 graded_prods_entrada: '',
                 graded_prods_estoq: '',
                 array: [],
-                // test_new_items: [],
+                filter: null,
                 google_search_array: [],
                 produtos: [],
                 ref_cor_marca: [],
@@ -252,25 +284,32 @@
                 return [].concat(this.baseFields, this.gradeFields, this.valoresFields)
             },
             gradeFields(){
-                // return [].concat(this.infantoFields_duplos, this.adultoFields_duplos)
-                return [].concat(this.adultoFields)
-                // return [].concat(this.infantoFields, this.adultoFields)
+                // return [].concat(this.infantoFields_duplos, this.adultoFields_duplos, this.totaisFields)
+                // return [].concat(this.adultoFields)
+                // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
+                return [].concat(this.adultoFields, this.totaisFields)
             },
             baseFields() {
                 return [
-                    {key: 'nom_marca', label: 'Nom. Marca'},
-                    {key: 'dat_cadastro', label: 'Data Cad.'},
-                    {key: 'dat_alteracao', label: 'Data Alt.'},
-                    {key: 'cod_referencia', label: 'Ref.'},
-                    {key: 'des_cor', label: 'Cor'},
+                    {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
+                    {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
+                    {key: 'dat_alteracao', label: 'Data Alt.', sortable: true},
+                    {key: 'cod_referencia', label: 'Ref.', sortable: true},
+                    {key: 'des_cor', label: 'Cor', sortable: true},
                     {key: 'img', label: 'Img.'},
-                    {key: 'des_produto', label: 'Descrição.'}
+                    {key: 'des_produto', label: 'Descrição.', sortable: true}
                 ]
             },
             valoresFields() {
                 return [
-                    {key: 'vlr_custo_bruto', label: 'Custo'},
-                    {key: 'vlr_venda1', label: 'Vlr. Venda'}
+                    // {key: 'totais', label: 'Tot.', sortable: true},
+                    {key: 'vlr_custo_bruto', label: 'Custo', sortable: true},
+                    {key: 'vlr_venda1', label: 'Vlr. Venda', sortable: true}
+                ]
+            },
+            totaisFields() {
+                return [
+                    {key: 'totais', label: 'Tot.', sortable: true}
                 ]
             },
             infantoFields() {
@@ -467,65 +506,83 @@
                 }
 
             },
-            // gradearProdutosOld() {
-            //     this.mapped_items = [];
-            //     for (const ref_group in this.refs_array) {
-            //         let graded_prods_entrada = {};
-            //         let graded_prods_estoq = {};
-            //         for (const prod in this.refs_array[ref_group]) {
-            //             var estoq_entrada = 0;
-            //             if (this.refs_array[ref_group][prod].tipo_movto == 'E') {
-            //                 estoq_entrada = estoq_entrada + this.refs_array[ref_group][prod].qtd_movto;
-            //                 graded_prods_entrada[this.refs_array[ref_group][prod].des_tamanho] = estoq_entrada
-            //             }
-            //             graded_prods_estoq[this.refs_array[ref_group][prod].des_tamanho] = this.refs_array[ref_group][prod].saldo_estoque
-            //         }
-            //         graded_prods_estoq['nom_marca'] = this.refs_array[ref_group][0].nom_marca;
-            //         graded_prods_estoq['dat_cadastro'] = this.refs_array[ref_group][0].dat_cadastro;
-            //         graded_prods_estoq['dat_alteracao'] = this.refs_array[ref_group][0].dat_alteracao;
-            //         graded_prods_estoq['cod_referencia'] = this.refs_array[ref_group][0].cod_referencia;
-            //         // graded_prods_estoq['des_produto'] = this.refs_array[ref_group][0].des_produto
-            //         graded_prods_estoq['des_cor'] = this.refs_array[ref_group][0].des_cor
-            //         graded_prods_estoq['des_produto'] = this.refs_array[ref_group][0].des_produto.replace(this.refs_array[ref_group][0].des_cor, '').replace(this.refs_array[ref_group][0].des_tamanho, '').replace(this.refs_array[ref_group][0].nom_marca, '');
-            //         // graded_prods_estoq['des_produto'] = this.refs_array[ref_group][0].des_produto.slice(0, -3);
-            //         graded_prods_estoq['img'] = this.imagem_test;
-            //         // graded_prods_estoq['img'] = this.computedImage;
-            //         // graded_prods_estoq['img'] = this.fetchImage(this.refs_array[ref_group][0].nom_marca, this.refs_array[ref_group][0].cod_referencia, this.refs_array[ref_group][0].des_cor);
-            //         // graded_prods_estoq['img'] = 'No';
-            //         graded_prods_estoq['vlr_custo_bruto'] = this.refs_array[ref_group][0].vlr_custo_bruto;
-            //         graded_prods_estoq['vlr_venda1'] = this.refs_array[ref_group][0].vlr_venda1;
-            //         this.mapped_items.push(graded_prods_entrada);
-            //         this.mapped_items.push(graded_prods_estoq)
-            //     }
-            //
-            // },
             gradearProdutos() {
                 this.mapped_items = [];
                 this.produtos = [];
+
                 for (const ref_group in this.subgrouped_items_bycolor_obj) {
                     for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
+                        let saldo_estoq_entrada = 0;
+                        let saldo_estoq = 0;
                         let graded_prods_estoq = {};
+
                         for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
                             var estoq_entrada = 0;
-                            if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E') {
+                            // {
+                            if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E' &&
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
+                                    this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3) ) {
+
+
+                                    // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
+                            // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+                            //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+                            //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+                            //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+
+                                console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+
                                 estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
-                                graded_prods_estoq[estoq_entrada_name] = estoq_entrada
+
+                                if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
+                                    graded_prods_estoq[estoq_entrada_name] = estoq_entrada
+                                } else {
+                                    graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada
+                                }
+                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
+
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
+                                console.log("estoq_entrada_name")
+                                console.log(estoq_entrada_name)
+                                console.log("estoq_entrada")
+                                console.log(estoq_entrada)
+                                console.log("saldo_estoq_entrada")
+                                console.log(saldo_estoq_entrada)
+
+
                             }
+                            //calculating saldo_estoq summing saldo.estoque only once per item
+                            if (isNaN(graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho])) {
+                                    saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+                                }
+
                             graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+
+
+
+                            // else {
+                            //         graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada
+                            //     }
+
+                            // saldo_estoq = saldo_estoq + graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho]
+                            // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque")
+                            // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque)
+                            // console.log("saldo_estoq")
+                            // console.log(saldo_estoq)
+
                         }
+
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
-                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_alteracao;
+                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length-1].dat_alteracao;
                         graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
-                        // graded_prods_estoq['des_produto'] = this.refs_array[ref_group][0].des_produto
                         graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
-
-                        // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor')
-                        // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
-                        //     console.log('this.subgrouped_items_bycolor_obj[ref_group]')
-                        //     console.log(this.subgrouped_items_bycolor_obj[ref_group])
                         graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
                         // graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.slice(0, -3);
                         // graded_prods_estoq['img'] = this.imagem_test;
@@ -533,6 +590,8 @@
                         // graded_prods_estoq['img'] = this.fetchImage(this.refs_array[ref_group][0].nom_marca, this.refs_array[ref_group][0].cod_referencia, this.refs_array[ref_group][0].des_cor);
                         graded_prods_estoq['img'] = 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg';
                         // graded_prods_estoq['img'] = 'No';
+                        graded_prods_estoq['totais_E'] = saldo_estoq_entrada;
+                        graded_prods_estoq['totais'] = saldo_estoq;
                         graded_prods_estoq['vlr_custo_bruto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_custo_bruto;
                         graded_prods_estoq['vlr_venda1'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_venda1;
 

@@ -8,7 +8,7 @@ class LevantamentoPostgres:
     def load_estoque_from_db(cls, dat_cadastro_ini, dat_cadastro_fim, cod_marca):
         with CursorFromConnectionFromPool() as cursor:
             cursor.execute('''
-    select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
+            select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
         it.cod_produto, pro.des_produto, pro.cod_barra, pro.cod_referencia,
         sum(it.qtd_produto) as qtd, e.saldo_estoque,
         pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1, sum(it.vlr_total) as total,
@@ -19,25 +19,26 @@ class LevantamentoPostgres:
         f.raz_fornece, f.fan_fornece,
         m.cod_marca, m.nom_marca,
         pfe.tipo_movto, pfe.qtd_movto, pfe.data as data_movto, pfe.cod_movto, pfe.cod_origem_movto
-    from nfcompraitem it
-         inner join nfcompra cb on (cb.cod_empresa = it.cod_empresa and cb.cod_interno = it.cod_interno)
-         inner join produto pro on (pro.cod_empresa = it.cod_empresa and pro.cod_produto = it.cod_produto)
-         join produto_estoque e on (pro.cod_empresa = e.cod_empresa and pro.cod_produto = e.cod_produto)
-         inner join grupo_produto gu on (gu.cod_grupo = pro.cod_grupo)
-         inner join subgrupo_produto su on (su.cod_grupo = pro.cod_grupo and su.cod_subgrupo = pro.cod_subgrupo)
-         left outer join cores c on (c.cod_cor = pro.cod_cor)
+FROM PRODUTO pro
+         LEFT OUTER JOIN MARCA m ON (m.COD_MARCA = pro.COD_MARCA)
+         LEFT OUTER JOIN PRODUTO_ESTOQUE e ON (e.COD_EMPRESA = pro.COD_EMPRESA and
+                                             e.COD_PRODUTO = pro.COD_PRODUTO)
+        LEFT OUTER JOIN nfcompraitem it on (pro.cod_empresa = it.cod_empresa and pro.cod_produto = it.cod_produto)
+        LEFT OUTER JOIN produto_ficha_estoq pfe on (pfe.cod_produto = it.cod_produto )
+    LEFT OUTER JOIN grupo_produto gu on (gu.cod_grupo = pro.cod_grupo)
+        LEFT OUTER JOIN nfcompra cb on (cb.cod_empresa = it.cod_empresa and cb.cod_interno = it.cod_interno)
+        left outer join cores c on (c.cod_cor = pro.cod_cor)
          inner join grade_tamanho g on (g.cod_grade = pro.cod_grade)
          inner join tamanho t on (t.cod_grade = pro.cod_grade and t.cod_tamanho = pro.cod_tamanho)
-         join fornecedor f on (cb.cod_fornece = f.cod_fornece)
-         join marca m on (pro.cod_marca = m.cod_marca)
-         join produto_ficha_estoq pfe on (it.cod_produto = pfe.cod_produto)
-    where cb.cod_empresa = '1'
+         LEFT OUTER JOIN fornecedor f on (cb.cod_fornece = f.cod_fornece)
+        LEFT OUTER JOIN subgrupo_produto su on (su.cod_grupo = pro.cod_grupo and su.cod_subgrupo = pro.cod_subgrupo)
+where cb.cod_empresa = '1'
       and cb.dat_cadastro >= %s
       and cb.dat_cadastro < %s
       and (cb.flg_estorno is null or cb.flg_estorno = 'N')
       and m.cod_marca = %s
       and (pro.flg_mestre = 'N' or pro.flg_mestre is null)
-    group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
+group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
              it.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
              pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1,
              pro.cod_grade, g.des_grade, e.saldo_estoque,
@@ -50,7 +51,6 @@ class LevantamentoPostgres:
     order by 1, 2, 3, 4''', (dat_cadastro_ini, dat_cadastro_fim, cod_marca))
             dados_estoque = cursor.fetchall()
         return dados_estoque
-
 
     @classmethod
     def load_marcas_fornecedores_from_db(cls):
