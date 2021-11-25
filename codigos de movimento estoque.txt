@@ -1,6 +1,7 @@
 cod_origem_mvto 	origem
 9			frente de caixa
 15			condicional
+12	S		estorno proc. notas
 7			ent.proc.notas
 2			emissao nota fiscal
 3			requisicao

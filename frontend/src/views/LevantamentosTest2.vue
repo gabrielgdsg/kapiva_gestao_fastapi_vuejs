@@ -117,13 +117,24 @@
                             </b-form-group>
                     </b-row>
 
+                    <b-row>
+
+                        <b-form-checkbox-group
+                                :aria-describedby="ariaDescribedby"
+                                :options="grades_options"
+                                stacked
+                                switches
+                                v-model="grades_selected"
+                        > </b-form-checkbox-group>
+                    </b-row>
+
                 </b-col>
             </b-row>
 
 
         </b-form>
         <b-table :filter="filter" :fields="computedFields" :items="mapped_items" :small=true class="text-right"
-                 head-variant="light" hover sort-compare-locale="pt-BR" sticky-header="800px" striped>
+                 head-variant="light" hover :bordered="true" :sort-compare="dateSorter" sticky-header="700px" striped>
             // eslint-disable-next-line vue/no-unused-vars
             <template #cell(img)="data">  <!-- eslint-disable-line-->
                 <!--            <template slot="[img]" slot-scope="data">-->
@@ -164,6 +175,10 @@
         },
         data() {
             return {
+                grades_selected: [],
+                grades_options: [
+                    {text: 'Calçado Infantil', value: {key: '16', label: '16'}},
+                    {text: 'Calçado Adulto', value: 'this.adultFields'}],
                 graded_prods_entrada: '',
                 graded_prods_estoq: '',
                 array: [],
@@ -203,21 +218,47 @@
                 data_cadastro_fim: '',
                 cod_fornecedor: 70,
                 items: [],
-                // fields: [
-                //     {key: 'nom_marca', label: 'Nom. Marca'},
-                //     {key: 'dat_cadastro', label: 'Data Cad.'},
-                //     {key: 'dat_alteracao', label: 'Data Alt.'},
-                //     {key: 'cod_referencia', label: 'Ref.'},
-                //     {key: 'des_produto', label: 'Descrição.'},
-                //     // {key: 'qtd', label: 'Qtd.'},
-                //     {key: 'saldo_estoque', label: 'Saldo Est.'},
-                //     {key: 'vlr_venda1', label: 'Vlr. Venda'},
-                //     {key: 'vlr_custo_bruto', label: 'Custo'},
-                //     {key: 'cod_grade', label: 'cod grade'},
-                //     {key: 'des_grade', label: 'des_grade'},
-                //     {key: 'cod_tamanho', label: 'cod_tamanho'},
-                //     {key: 'des_tamanho', label: 'des_tamanho'}
-                // ]
+                infantilFields: [
+                    {key: '16', label: '16'},
+                    {key: '17', label: '17'},
+                    {key: '18', label: '18'},
+                    {key: '19', label: '19'},
+                    {key: '20', label: '20'},
+                    {key: '21', label: '21'},
+                    {key: '22', label: '22'},
+                    {key: '23', label: '23'},
+                    {key: '24', label: '24'},
+                    {key: '25', label: '25'},
+                    {key: '26', label: '26'},
+                    {key: '27', label: '27'},
+                    {key: '28', label: '28'},
+                    {key: '29', label: '29'},
+                    {key: '30', label: '30'},
+                    {key: '31', label: '31'},
+                    {key: '32', label: '32'},
+                    {key: '33', label: '33'},
+                    {key: '34', label: '34'},
+                    {key: '35', label: '35'},
+                    {key: '36', label: '36'}
+                ],
+                adultFields: [
+                    {key: '33', label: '33'},
+                    {key: '34', label: '34'},
+                    {key: '35', label: '35'},
+                    {key: '36', label: '36'},
+                    {key: '37', label: '37'},
+                    {key: '38', label: '38'},
+                    {key: '39', label: '39'},
+                    {key: '40', label: '40'},
+                    {key: '41', label: '41'},
+                    {key: '42', label: '42'},
+                    {key: '43', label: '43'},
+                    {key: '44', label: '44'},
+                    {key: '45', label: '45'},
+                    {key: '46', label: '46'},
+                    {key: '47', label: '47'},
+                    {key: '48', label: '48'},
+                ],
                 fields: [
                     {key: 'nom_marca', label: 'Nom. Marca'},
                     {key: 'dat_cadastro', label: 'Data Cad.'},
@@ -284,10 +325,12 @@
                 return [].concat(this.baseFields, this.gradeFields, this.valoresFields)
             },
             gradeFields(){
-                // return [].concat(this.infantoFields_duplos, this.adultoFields_duplos, this.totaisFields)
+                // return [].concat(this.infantoFields_duplos, this.adultoFields_duplos)
                 // return [].concat(this.adultoFields)
-                // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
-                return [].concat(this.adultoFields, this.totaisFields)
+                // return [].concat(this.infantoFields, this.adultoFields)
+                return [].concat(this.infantoFields, this.totaisFields)
+                // return [].concat(this.adultoFields, this.totaisFields)
+                // return [].concat(this.grades_selected)
             },
             baseFields() {
                 return [
@@ -417,6 +460,24 @@
             this.loadMarcas()
         },
         methods: {
+            dateSorter(a, b, key) {
+                console.log('a')
+                console.log(a)
+                console.log(a[key])
+                console.log('a[key]')
+                console.log(b.key)
+                console.log('b.key')
+                console.log(key)
+                // if (key !== 'dat_cadastro') {
+                // if (key !== 'dat_alteracao') {
+                if (key === 'dat_alteracao' || key === 'dat_cadastro') {
+                    if (moment(a[key], 'DD/MM/YYYY').toDate() > moment(b[key], 'DD/MM/YYYY').toDate()) return 1;
+                    if (moment(a[key], 'DD/MM/YYYY').toDate() < moment(b[key], 'DD/MM/YYYY').toDate()) return -1;
+                    return 0;
+                } else {
+                    return false       // If field is not `date` we let b-table handle the sorting
+                }
+},
             objectify(element) {
                 var result =
                     {
@@ -441,6 +502,7 @@
                         cod_cor: element[18],
                         des_cor: element[19],
                         // dat_cadastro: element[20],
+                        // dat_cadastro: moment(element[20]),
                         dat_cadastro: moment(element[20]).format('DD/MM/YYYY'),
                         dat_alteracao: moment(element[21]).format('DD/MM/YYYY'),
                         dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
@@ -530,8 +592,8 @@
                             //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
                             //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
 
-                                console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
-                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+                                // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
 
                                 estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
@@ -543,16 +605,16 @@
                                 }
                                 saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
 
-                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
-                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
-                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
-                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
-                                console.log("estoq_entrada_name")
-                                console.log(estoq_entrada_name)
-                                console.log("estoq_entrada")
-                                console.log(estoq_entrada)
-                                console.log("saldo_estoq_entrada")
-                                console.log(saldo_estoq_entrada)
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
+                                // console.log("estoq_entrada_name")
+                                // console.log(estoq_entrada_name)
+                                // console.log("estoq_entrada")
+                                // console.log(estoq_entrada)
+                                // console.log("saldo_estoq_entrada")
+                                // console.log(saldo_estoq_entrada)
 
 
                             }
