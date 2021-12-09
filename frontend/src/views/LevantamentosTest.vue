@@ -93,39 +93,49 @@
                 </b-col>
                 <b-col>
                     <b-row>
-                       <b-button type="submit" variant="primary">Enviar</b-button>
+                        <b-button type="submit" variant="primary">Enviar</b-button>
                     </b-row>
                     <b-row>
-                    <br>
+                        <br>
                     </b-row>
 
                     <b-row>
                         <b-form-group>
 
-          <b-input-group size="sm">
-            <b-form-input
-              id="filter-input"
-              v-model="filter"
-              type="search"
-              placeholder="Filtrar por.."
-            ></b-form-input>
+                            <b-input-group size="sm">
+                                <b-form-input
+                                        id="filter-input"
+                                        placeholder="Filtrar por.."
+                                        type="search"
+                                        v-model="filter"
+                                ></b-form-input>
 
-            <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
-            </b-input-group-append>
-          </b-input-group>
-                            </b-form-group>
+                                <b-input-group-append>
+                                    <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+                                </b-input-group-append>
+                            </b-input-group>
+                        </b-form-group>
                     </b-row>
 
                     <b-row>
 
-                        <b-form-checkbox-group
-                                :aria-describedby="ariaDescribedby"
-                                :options="grades_options"
-                                stacked
-                                switches
-                                v-model="grades_selected"
-                        > </b-form-checkbox-group>
+<!--                        <b-form-checkbox-group-->
+<!--                                :options="grades_options"-->
+<!--                                @change="clearGradesSelected"-->
+<!--                                stacked-->
+<!--                                switches-->
+<!--                                v-model="fields_selected"-->
+<!--                        ></b-form-checkbox-group>-->
+<div class='form-check form-switch'>
+                        <div :key="grade.name" v-for="grade in grades_options">
+
+                            <input class='form-check-input' :value="grade" type="checkbox" v-model="grades_selected"/>
+                            <label class='form-check-label'>{{grade.name}}</label>
+<!--                        <br>-->
+                        </div>
+                        </div>
+<!--                        <p>fields_selected</p>-->
+<!--                        {{grades_selected}}-->
                     </b-row>
 
                 </b-col>
@@ -133,8 +143,8 @@
 
 
         </b-form>
-        <b-table :filter="filter" :fields="computedFields" :items="mapped_items" :small=true class="text-right"
-                 head-variant="light" hover :bordered="true" :sort-compare="dateSorter" sticky-header="700px" striped>
+        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mapped_items" :small=true
+                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
             // eslint-disable-next-line vue/no-unused-vars
             <template #cell(img)="data">  <!-- eslint-disable-line-->
                 <!--            <template slot="[img]" slot-scope="data">-->
@@ -144,7 +154,9 @@
             </template>
 
 
-            <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }"><!-- eslint-disable-line-->
+            <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
+                <!-- eslint-disable-line-->
+                <!--            <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">&lt;!&ndash; eslint-disable-line&ndash;&gt;-->
                 {{item[field.key+"_E"]}}
                 <br><!-- eslint-disable-line-->
                 <b> {{item[field.key]}} </b><!-- eslint-disable-line-->
@@ -175,10 +187,126 @@
         },
         data() {
             return {
+                fields_selected: [],
                 grades_selected: [],
                 grades_options: [
-                    {text: 'Calçado Infantil', value: {key: '16', label: '16'}},
-                    {text: 'Calçado Adulto', value: 'this.adultFields'}],
+                    {
+                        "name": 'Calçado Bebê',
+                        "grade": [{key: '1', label: '1'},
+                            {key: '2', label: '2'},
+                            {key: '3', label: '3'},
+                            {key: '4', label: '4'}]
+                    },
+                    {
+                        "name": 'Calçado Infantil',
+                        "grade": [{key: '17', label: '17'},
+                            {key: '18', label: '18'},
+                            {key: '19', label: '19'},
+                            {key: '20', label: '20'},
+                            {key: '21', label: '21'},
+                            {key: '22', label: '22'},
+                            {key: '23', label: '23'},
+                            {key: '24', label: '24'},
+                            {key: '25', label: '25'},
+                            {key: '26', label: '26'},
+                            {key: '27', label: '27'},
+                            {key: '28', label: '28'},
+                            {key: '29', label: '29'},
+                            {key: '30', label: '30'},
+                            {key: '31', label: '31'},
+                            {key: '32', label: '32'},
+                            {key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'}]
+                    },
+                    {
+                        "name": 'Calçado Adulto',
+                        "grade": [{key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'},
+                            {key: '37', label: '37'},
+                            {key: '38', label: '38'},
+                            {key: '39', label: '39'},
+                            {key: '40', label: '40'},
+                            {key: '41', label: '41'},
+                            {key: '42', label: '42'},
+                            {key: '43', label: '43'},
+                            {key: '44', label: '44'},
+                            {key: '45', label: '45'},
+                            {key: '46', label: '46'},
+                            {key: '47', label: '47'},
+                            {key: '48', label: '48'}]
+                    },
+                    {
+                        "name": 'Calçado Adulto Duplo',
+                        "grade": [{key: '33/34', label: '33/34'},
+                            {key: '35/36', label: '35/36'},
+                            {key: '37/38', label: '37/38'},
+                            {key: '39/40', label: '39/40'},
+                            {key: '41/42', label: '41/42'},
+                            {key: '43/44', label: '43/44'},
+                            {key: '45/46', label: '45/46'},
+                            {key: '47/48', label: '47/48'}]
+                    },
+
+                ],
+                grades_options_old: [
+                    {text: 'calc_infant', value: 'calc_infant'},
+                    {text: 'calc_adult', value: 'calc_adult'},
+                    {
+                        text: 'Calçado Infantil', value: [{key: '16', label: '16'},
+                            {key: '17', label: '17'},
+                            {key: '18', label: '18'},
+                            {key: '19', label: '19'},
+                            {key: '20', label: '20'},
+                            {key: '21', label: '21'},
+                            {key: '22', label: '22'},
+                            {key: '23', label: '23'},
+                            {key: '24', label: '24'},
+                            {key: '25', label: '25'},
+                            {key: '26', label: '26'},
+                            {key: '27', label: '27'},
+                            {key: '28', label: '28'},
+                            {key: '29', label: '29'},
+                            {key: '30', label: '30'},
+                            {key: '31', label: '31'},
+                            {key: '32', label: '32'},
+                            {key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'}]
+                    },
+                    {
+                        text: 'Calçado Adulto', value: [{key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'},
+                            {key: '37', label: '37'},
+                            {key: '38', label: '38'},
+                            {key: '39', label: '39'},
+                            {key: '40', label: '40'},
+                            {key: '41', label: '41'},
+                            {key: '42', label: '42'},
+                            {key: '43', label: '43'},
+                            {key: '44', label: '44'},
+                            {key: '45', label: '45'},
+                            {key: '46', label: '46'},
+                            {key: '47', label: '47'},
+                            {key: '48', label: '48'}]
+                    },
+                    {
+                        text: 'Calçado Adulto duplo', value: [{key: '33/34', label: '33/34'},
+                            {key: '35/36', label: '35/36'},
+                            {key: '37/38', label: '37/38'},
+                            {key: '39/40', label: '39/40'},
+                            {key: '41/42', label: '41/42'},
+                            {key: '43/44', label: '43/44'},
+                            {key: '45/46', label: '45/46'},
+                            {key: '47/48', label: '47/48'}]
+                    },
+                    {text: 'Calçado Adult', value: [{key: '16', label: '16'}, {key: '17', label: '17'}]}],
                 graded_prods_entrada: '',
                 graded_prods_estoq: '',
                 array: [],
@@ -257,7 +385,7 @@
                     {key: '45', label: '45'},
                     {key: '46', label: '46'},
                     {key: '47', label: '47'},
-                    {key: '48', label: '48'},
+                    {key: '48', label: '48'}
                 ],
                 fields: [
                     {key: 'nom_marca', label: 'Nom. Marca'},
@@ -320,17 +448,20 @@
             }
         },
         computed: {
+            gradesSelecionadas() {
+                return []
+            },
             computedFields() {
                 // return [].concat(this.baseFields, this.adultoFields, this.valoresFields)
                 return [].concat(this.baseFields, this.gradeFields, this.valoresFields)
             },
-            gradeFields(){
-                // return [].concat(this.infantoFields_duplos, this.adultoFields_duplos)
-                // return [].concat(this.adultoFields)
-                // return [].concat(this.infantoFields, this.adultoFields)
-                // return [].concat(this.infantoFields)
-                return [].concat(this.adultoFields, this.totaisFields)
-                // return [].concat(this.grades_selected)
+            gradeFields() {
+                var grades = this.grades_selected.map(selected => {
+                    return selected.grade
+                })
+
+                return [].concat(grades.flat(1), this.totaisFields) //manter totaisFields aqui para que os totais fiquem corretos
+                // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
             },
             baseFields() {
                 return [
@@ -460,6 +591,11 @@
             this.loadMarcas()
         },
         methods: {
+            clearGradesSelected() {
+                console.log("this.grades_selected")
+                console.log(this.grades_selected)
+                // this.grades_selected = [];
+            },
             dateSorter(a, b, key) {
                 console.log('a')
                 console.log(a)
@@ -477,7 +613,7 @@
                 } else {
                     return false       // If field is not `date` we let b-table handle the sorting
                 }
-},
+            },
             objectify(element) {
                 var result =
                     {
@@ -582,15 +718,36 @@
                             var estoq_entrada = 0;
                             // {
                             if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E' &&
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
-                                    this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3) ) {
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 )) {
+
+                                // fazer um filtro por dat_movto???
+                                //
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group]")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group])
+
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto)
+
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto)
+
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+
+                                console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto")
+                                console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto)
 
 
-                                    // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
-                            // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
-                            //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
-                            //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
-                            //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+
+                            // {(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
+                            //         this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3)) {
+
+
+                                // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
+                                // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+                                //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+                                //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+                                //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
 
                                 // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
                                 // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
@@ -620,11 +777,10 @@
                             }
                             //calculating saldo_estoq summing saldo.estoque only once per item
                             if (isNaN(graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho])) {
-                                    saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
-                                }
+                                saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+                            }
 
                             graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
-
 
 
                             // else {
@@ -642,7 +798,7 @@
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
-                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length-1].dat_alteracao;
+                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
                         graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
                         graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
                         graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
@@ -750,7 +906,7 @@
                     })
 
             },
-            async fetchImage (nom_marca, cod_referencia, des_cor) {
+            async fetchImage(nom_marca, cod_referencia, des_cor) {
                 const base_path = `https://www.googleapis.com/customsearch/v1?key=AIzaSyAxkljtWwOvBkyVgaCgQQYR2bgFMUdzrQs&cx=f5c6bf2ce19682bb8&&searchType=image&&num=1&q=`
 
                 const query = nom_marca + '+' + cod_referencia + '+' + des_cor
@@ -778,7 +934,7 @@
                 console.log(image_url)
                 if (typeof image_url == 'undefined')
                     image_url = 'data:image/png;base64,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'
-                    //TESTING TO RETURN A DEFAULT IMAGE IF UNINDETIFIED
+                //TESTING TO RETURN A DEFAULT IMAGE IF UNINDETIFIED
                 return image_url
 
             },

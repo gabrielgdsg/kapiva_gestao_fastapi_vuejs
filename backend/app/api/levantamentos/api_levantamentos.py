@@ -76,9 +76,12 @@ async def read_levantamentos(data_cadastro_ini: str, data_cadastro_fim: str, cod
 
 @router.get("/api/reloadfrompostgresdb/marcafornecedor/")
 async def reloadfrompostgresdb_marcafornecedor():
-    marcas_fornecedores = await engine.find(MarcaFornecedor)
-    for marca_fornecedor in marcas_fornecedores:
-        await engine.delete(marca_fornecedor)
+    # marcas = await engine.find(Marcas)
+    # for marca in marcas:
+    #     await engine.delete(marca)
+
+    marcas_collection = engine.get_collection(Marcas)
+    marcas_collection.drop()
 
     dados_marcas_fornecedores = LevantamentoPostgres.load_marcas_fornecedores_from_db()
     marcas_fornecedores_list = []
@@ -175,7 +178,8 @@ async def save_produtos(produtos: List[Produto]):
         db_produto = await engine.find_one(Produto,
                                            Produto.cod_referencia == produto.cod_referencia,
                                            Produto.nom_marca == produto.nom_marca,
-                                           Produto.des_cor == produto.des_cor)
+                                           Produto.des_cor == produto.des_cor,
+                                           Produto.des_produto == produto.des_produto)
         print(f'db_produto{db_produto}')
         print(f'produto: {produto}')
         if db_produto is not None:
@@ -222,11 +226,12 @@ async def read_produtos(produtos: List[Produto]):
         db_produto = await engine.find_one(Produto,
                                            Produto.cod_referencia == produto.cod_referencia,
                                            Produto.nom_marca == produto.nom_marca,
-                                           Produto.des_cor == produto.des_cor)
+                                           Produto.des_cor == produto.des_cor,
+                                           Produto.des_produto == produto.des_produto)
         if db_produto is not None:
             db_produto_list.append(db_produto)
-        else:
-            return
+        # else:
+        #     return
     return jsonable_encoder(db_produto_list)
     # return jsonable_encoder(db_produto)
 

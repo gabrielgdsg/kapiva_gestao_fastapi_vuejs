@@ -76,7 +76,7 @@ class Produto(Model):
     # cod_subgrupo: int
     # des_subgrupo: str
     # cod_produto: int
-    # des_produto: str
+    des_produto: str
     # vlr_custo_bruto: Decimal
     # vlr_custo_aquis: Decimal
     # vlr_venda1: Decimal
