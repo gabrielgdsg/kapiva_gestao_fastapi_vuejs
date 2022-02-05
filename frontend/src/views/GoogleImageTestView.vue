@@ -43,11 +43,13 @@
         methods: {
             fetchProds() {
                 // const query  = ''
-                const path = `/api/fetch/produtos/`
+                // const path = `/api/fetch/produtos/`
+                const path = `http://localhost/api/comissao/2022-01-03/2022-01-03`
                 // const path = `/api/testecosia/${query}`
                 axios.get(path)
                     .then((res) => {
                         console.log(res)
+                        console.log('deu certo em partes')
                         // this.image = res.data
                         this.image = "data:image/jpg;base64," + res.data.img
                     })

@@ -71,28 +71,35 @@ class Marcas(Model):
 
 
 class Produto(Model):
-    # cod_grupo: int
-    # des_grupo: str
-    # cod_subgrupo: int
-    # des_subgrupo: str
-    # cod_produto: int
+    cod_grupo: int
+    des_grupo: str
+    cod_subgrupo: int
+    des_subgrupo: str
+    cod_produto: int
     des_produto: str
-    # vlr_custo_bruto: Decimal
-    # vlr_custo_aquis: Decimal
-    # vlr_venda1: Decimal
-    # cod_grade: int
-    # des_grade: str
-    # cod_cor: int
-    # dat_cadastro: datetime
-    # dat_alteracao: date
-    # dat_emissao: date
-    # dat_lancamento: date
-    # cod_fornecedor: int
-    # raz_fornecedor: str
-    # fan_fornecedor: str
-    # cod_marca: int
+    vlr_custo_bruto: Decimal
+    vlr_custo_aquis: Decimal
+    vlr_venda1: Decimal
+    cod_grade: int
+    des_grade: str
+    cod_cor: int
+    dat_cadastro: datetime
+    dat_alteracao: datetime
+    dat_lancamento: datetime
+    cod_fornecedor: int
+    raz_fornecedor: str
+    fan_fornecedor: str
+    cod_marca: int
     cod_referencia: str
     nom_marca: str
     des_cor: str
     # img: str
     img: binData
+    # selected: bool
+
+    class Config:
+        json_encoders = {
+            datetime: lambda v: datetime.strptime(str(v), "%Y-%m-%d %H:%M:%S").strftime("%d/%m/%Y")
+            # date: lambda v: datetime.strptime(str(v), "%Y-%m-%d").strftime("%d/%m/%Y"),
+            # Decimal: lambda v: v.to_decimal()
+        }

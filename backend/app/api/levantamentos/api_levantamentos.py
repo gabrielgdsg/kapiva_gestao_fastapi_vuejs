@@ -217,7 +217,7 @@ async def save_produtos(produtos: List[Produto]):
 @router.put("/api/produtos/images/")
 async def read_produtos(produtos: List[Produto]):
 # async def get_produtos(produtos: Optional[List[Produto]] = Query(None)):
-    db_produto_list = []
+    produto_list = []
     for produto in produtos:
         # db_produto = await engine.find_one(Produto,
         #                                    Produto.cod_referencia == produto.cod_referencia and
@@ -229,10 +229,11 @@ async def read_produtos(produtos: List[Produto]):
                                            Produto.des_cor == produto.des_cor,
                                            Produto.des_produto == produto.des_produto)
         if db_produto is not None:
-            db_produto_list.append(db_produto)
-        # else:
-        #     return
-    return jsonable_encoder(db_produto_list)
+            produto_list.append(db_produto)
+        else:
+            produto_list.append(produto)
+
+    return jsonable_encoder(produto_list)
     # return jsonable_encoder(db_produto)
 
 # @router.post("/images/")

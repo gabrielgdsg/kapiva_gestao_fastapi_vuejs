@@ -3,7 +3,7 @@
         <b-row>
             <b-col>
                 <div class="autosuggest-container">
-                    <b>Marca: </b>
+                    <b>Marca_: </b>
                     <vue-autosuggest
                             :get-suggestion-value="getSuggestionValue"
                             :input-props="{id:'autosuggest__input', placeholder:'Digite a marca', class:'form-control'}"
@@ -25,23 +25,16 @@
                             <b-form-checkbox
                                     :indeterminate="form_indeterminate"
                                     @change="form_toggleAll"
-                                    aria-controls="flavours"
-                                    aria-describedby="flavours"
                                     v-model="form_allSelected"
                             >{{ form_allSelected ? 'Desmarcar todos' : 'Marcar todos' }}
                             </b-form-checkbox>
                         </template>
 
-                        <template v-slot="{ ariaDescribedby }">
+                        <template >
                             <b-form-checkbox-group
-                                    :aria-describedby="ariaDescribedby"
-                                    :options="availableFornecedores"
-                                    aria-label="Individual flavours"
-                                    class="ml-4"
-                                    id="flavors"
-                                    name="flavors"
-                                    stacked
+                                    :options="form_options"
                                     v-model="form_selected"
+                                    class="ml-4" stacked
                             ></b-form-checkbox-group>
                         </template>
                     </b-form-group>
@@ -65,6 +58,8 @@
                 form_selected: [],
                 form_allSelected: true,
                 form_indeterminate: false,
+                form_options: ["a","b"],
+
                 query: "",
                 suggestion_selected: {
                     cod_marca: 0,
@@ -102,28 +97,6 @@
                     }
                 ];
             },
-            // fornecedores_from_marca() {
-            //     return [
-            //         {
-            //             data: this.suggestions[0].data
-            //                 .filter(item => {
-            //                     // console.log('fornecedores_from_marca_item')
-            //                     // console.log(item)
-            //                     return item.nom_marca === this.suggestion_selected.nom_marca;
-            //                 })
-            //                 .map(filtered_items => {
-            //                     // const mapped_items = filtered_items
-            //                     console.log('fornecedore_from_marca_filtered_items')
-            //                     console.log(filtered_items)
-            //                     const mapped_items = filtered_items.fornecedores
-            //                     // const mapped_items = filtered_items.fornecedores.cod_fornecedor + ': ' + filtered_items.fornecedores.fan_fornecedor
-            //                     console.log('mapped_items')
-            //                     console.log(mapped_items)
-            //                     return mapped_items;
-            //                 })
-            //         }
-            //     ]
-            // },
             availableFornecedores() {
                 console.log('this.suggestion_selected.fornecedores')
                 console.log(this.suggestion_selected.fornecedores)
@@ -143,63 +116,6 @@
                         console.log('res')
                         console.log(res)
                         this.suggestions[0].data = res.data
-
-                         //
-                            // // eslint-disable-next-line no-inner-declarations
-                            // function objectify(element, index, array) {
-                            // // console.log("a[" + index + "] = " + element);
-                            // // console.log('element')
-                            // // console.log(element)
-                            // // console.log('index')
-                            // console.log(index)
-                            // // console.log('array')
-                            // console.log(array)
-                            //
-                            // var result =
-                            // [
-                            //    {cod_grupo: element[0],
-                            //    des_grupo: element[1],
-                            //    cod_subgrupo: element[2],
-                            //    des_subgrupo: element[3],
-                            //    cod_produto: element[4],
-                            //    des_produto: element[5],
-                            //    cod_barra: element[6],
-                            //    cod_referencia: element[7],
-                            //    qtd: element[8],
-                            //    saldo_estoque: element[9],
-                            //    vlr_custo_bruto: element[10],
-                            //    vlr_custo_aquis: element[11],
-                            //    vlr_venda1: element[12],
-                            //    total: element[13],
-                            //    cod_grade: element[14],
-                            //    des_grade: element[15],
-                            //    cod_tamanho: element[16],
-                            //    des_tamanho: element[17],
-                            //    cod_cor: element[18],
-                            //    des_cor: element[19],
-                            //    dat_cadastro: element[20],
-                            //    dat_alteracao: element[21],
-                            //    dat_emissao: element[22],
-                            //    dat_lancamento: element[23],
-                            //    dat_saida: element[24],
-                            //    cod_fornecedor: element[25],
-                            //    raz_fornecedor: element[26],
-                            //    fan_fornecedor: element[27],
-                            //    cod_marca: element[28],
-                            //    nom_marca: element[29],
-                            //    tipo_movto: element[30],
-                            //    qtd_movto: element[31],
-                            //    data_movto: element[32],
-                            //    cod_movto: element[33],
-                            //    cod_origem_movto: element[34]}
-                            // ]
-                            // // console.log('result')
-                            // // console.log(result)
-                            // return result
-                            // }
-                            //
-                            // this.test_new_items = res.data.forEach(objectify)
-
                     })
                     .catch((error) => {
                         console.log(error)
@@ -212,7 +128,6 @@
             onSelected(item) {
                 this.suggestion_selected = item.item;
                 this.form_selected = this.availableFornecedores
-
             },
             onInputChange(text) {
                 console.log(text)
@@ -228,7 +143,8 @@
 
             },
             form_toggleAll(checked) {
-                this.form_selected = checked ? this.availableFornecedores.slice() : []
+                this.form_selected = checked ? this.form_options : []
+                // this.form_selected = checked ? this.form_options.slice() : []
             },
         },
         watch: {
