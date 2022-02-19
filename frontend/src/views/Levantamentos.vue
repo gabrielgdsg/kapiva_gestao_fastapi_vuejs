@@ -33,6 +33,11 @@
                                 <b-button type="submit" variant="primary">Salvar Produtos</b-button>
                             </b-form>
                         </div>
+
+                        <b-form-checkbox name="check-button" switch v-model="showHideImgLink">
+                            Link Imagens <b></b>
+                        </b-form-checkbox>
+
                     </b-row>
                 </b-col>
                 <b-col sm="2">
@@ -125,10 +130,17 @@
             </template>
 
             <template #cell(img)="data">  <!-- eslint-disable-line-->
-
-
                 <img @click="increaseImageIndex(data.item.cod_referencia, data.item.des_cor)" :src="data.value" v-bind="imageProps"/>
+            </template>
 
+            <template v-slot:head(img_link)="row">
+                <div v-show="showHideImgLink">{{ row.label }}</div>
+            </template>
+
+            <template #cell(img_link)="row">
+                <div v-show="showHideImgLink">
+                    <input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                </div>
             </template>
 
 
@@ -159,17 +171,13 @@
         },
         data() {
             return {
+                showHideImgLink: false,
                 form_selected_: [],
-                // selected_flavors: [],
-                // flavours: ['Orange', 'Grape', 'Apple', 'Lime', 'Very Berry'],
-                // allSelected: false,
-                // indeterminate: false,
                 image_index: 0,
                 produtos_selected: [],
                 fields_selected: [],
                 grades_selected: [],
                 grades_options: [
-
                     {
                         "name": 'Calçado Bebê',
                         "grade": [{key: '1', label: '1'},
@@ -325,10 +333,10 @@
                             {key: '115', label: '115'},
                             {key: '120', label: '120'}]
                     },
-                    // {
-                    //     "name": 'Img Link',
-                    //     "grade": {key: 'img_link', label: 'img_link'}
-                    // },
+                    {
+                        "name": 'Img Link',
+                        "grade": {key: 'img_link', label: 'Img Link'}
+                    },
                 ],
                 graded_prods_entrada: '',
                 graded_prods_estoq: '',
@@ -368,16 +376,7 @@
                 data_cadastro_ini: '',
                 data_cadastro_fim: '',
                 cod_fornecedor: 70,
-                items: [],
-                // fields: [
-                //     {key: 'nom_marca', label: 'Nom. Marca'},
-                //     {key: 'dat_cadastro', label: 'Data Cad.'},
-                //     {key: 'dat_alteracao', label: 'Data Alt.'},
-                //     {key: 'cod_referencia', label: 'Ref.'},
-                //     {key: 'des_cor', label: 'Cor'},
-                //     {key: 'img', label: 'Img.'},
-                //     {key: 'des_produto', label: 'Descrição.'},
-                // ]
+                items: []
             }
         },
         computed: {
@@ -464,9 +463,7 @@
                             if (isNaN(graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho])) {
                                 saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
                             }
-
                             graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
-
                         }
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
@@ -592,6 +589,7 @@
                     {key: 'cod_referencia', label: 'Ref.', sortable: true},
                     {key: 'des_cor', label: 'Cor', sortable: true},
                     {key: 'img', label: 'Img.'},
+                    {key: 'img_link', label: 'Img Link'},
                     {key: 'des_produto', label: 'Descrição.', sortable: true}
                 ]
             },

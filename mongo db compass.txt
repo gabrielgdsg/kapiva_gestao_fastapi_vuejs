@@ -9,3 +9,8 @@ db.comissao_dia.updateMany(
    { $unset: { comissao_total: "" } }
 )
 
+
+db.produto.updateMany(
+   { },
+   { $unset: { dat_lancamento: "" } }
+)

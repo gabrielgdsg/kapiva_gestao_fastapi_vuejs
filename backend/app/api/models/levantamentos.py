@@ -85,7 +85,6 @@ class Produto(Model):
     cod_cor: int
     dat_cadastro: datetime
     dat_alteracao: datetime
-    dat_lancamento: datetime
     cod_fornecedor: int
     raz_fornecedor: str
     fan_fornecedor: str
