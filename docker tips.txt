@@ -63,3 +63,9 @@ docker exec -i mongodb sh -c "mongorestore --archive -u root -p rootpassword" < 
 
 
 In VirtualBox:Click the appropriate machine (probably the one labeled "default")SettingsNetwork > Adapter 1 > Advanced > Port ForwardingClick "+" to add a new RuleSet Host Port 8080 & Guest Port 8080; be sure to leave Host IP and Guest IP empty
+
+
+
+-docker-compose up -d (usei isso para iniciar o mongodb container)
+--precisa ver como fazer para iniciar o mongodb container sozinho (sem docker-compose)
+--precisa ver como fazer para salvar e recuperar o mongodb database
