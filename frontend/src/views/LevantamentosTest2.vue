@@ -67,7 +67,6 @@
 
                     <b-row>
                         <b-form-group>
-
                             <b-input-group size="sm">
                                 <b-form-input
                                         id="filter-input"
@@ -111,8 +110,32 @@
         </b-form>
 
 
-        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true
+        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredmappedItemsComputed" :small=true
                  :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
+
+<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true-->
+<!--                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
+
+
+            <template scope="data" slot="top-row"><!-- eslint-disable-line-->
+                <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
+                    <template
+                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_alteracao'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
+                        <b-form-input :placeholder="field.label" class="col-sm"
+                                      v-model="filters[field.key]"></b-form-input>
+                    </template>
+                    <template v-else>
+
+                        {{gradeTotals[field.key+"_E"]}}
+                        <br><!-- eslint-disable-line-->
+                        <b>{{gradeTotals[field.key]}}</b>
+
+                    </template>
+                </td>
+            </template>
+
+
+
 
       <template #head(selected)="row"><!-- eslint-disable-line-->
         <b-form-checkbox
@@ -139,9 +162,13 @@
 
             <template #cell(img_link)="row">
                 <div v-show="showHideImgLink">
-                    <input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                    <b-form-input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                    <b-form-file placeholder="Nenhum arquivo" accept="image/*" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" ref="file-input"></b-form-file>
+<!--                    <input type="file" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" accept="image/*">-->
+<!--                    <img class="preview" :src="imageData">-->
                 </div>
             </template>
+
 
 
             <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
@@ -171,6 +198,8 @@
         },
         data() {
             return {
+                // imageData: null,
+                // file: null,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -376,10 +405,51 @@
                 data_cadastro_ini: '',
                 data_cadastro_fim: '',
                 cod_fornecedor: 70,
-                items: []
+                items: [],
+                filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''}
             }
         },
         computed: {
+            filteredmappedItemsComputed() {
+                const filtered = this.mappedItemsComputed.filter(item => {
+                    return Object.keys(this.filters).every(key =>
+                        String(item[key].toString().toLowerCase()).includes(this.filters[key].toString().toLowerCase()))
+                });
+
+                return filtered
+            },
+            gradeTotals() {
+                const grade_totals = {}
+                if (this.filteredmappedItemsComputed.length > 0) {
+                    for (const item in this.filteredmappedItemsComputed) {
+                        for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
+                            if (numero_da_grade === 'nom_marca') {
+                                break; //break loop when finds anything different from "numeros de grade"
+                            }
+                            if (isNaN(grade_totals[numero_da_grade])) {
+                                    grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
+                                }
+                            else {
+                                grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
+                            }
+                        }
+                    }
+                }
+                let grade_totals_split = {}
+                let grade_totals_split_E = {}
+                let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
+                let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
+
+                for (const key in grade_totals_keys) {
+                    grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
+                    grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
+                }
+
+                grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
+                grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+
+                return grade_totals
+            },
             mappedItemsComputed() {
                 let mapped_items = [];
 
@@ -714,8 +784,8 @@
                         cod_origem_movto: element[31],
                         selected: false,
                         image_index: 0,
-                        img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbrHWzlFK_PWuIk1Jglo7Avt97howljIWwAA&usqp=CAU']
-                        // img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://lojaferracini.vteximg.com.br/arquivos/ids/265063-800-800/Pro_0000022240415-0001.jpg?v=637406341029930000']
+                        // img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=']
+                        img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://lojaferracini.vteximg.com.br/arquivos/ids/265063-800-800/Pro_0000022240415-0001.jpg?v=637406341029930000']
                     };
                 return result
             },
@@ -801,9 +871,9 @@
 
                             this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img[this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index] = res.data[key].img
                             //these next 3 lines make the images auto refresh
-                            const aux = this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index
-                            this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = 1
-                            this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = aux
+                            // const aux = this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index
+                            // this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = 1
+                            // this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = aux
                         }
 
                     })
@@ -843,9 +913,7 @@
                     for (var i=0; i< 10; i++) {
                         this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[i] = image_url[i]
                     }
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[0] = image_url[0]
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[1] = image_url[1]
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[2] = image_url[2]
+
 
                     console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].img')
                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].img)
@@ -958,50 +1026,40 @@
                             this.subgrouped_items_bycolor_obj[ref_group][cor][0].selected = this.form_allSelected
                         }
                     }
-                // }
-                //
-                //
-                //
-                //
-                // // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => this.subgrouped_items_bycolor_obj[v][row.item.cod_referencia][row.item.des_cor][0].selected = false)
-                // var flat_subgrouped_items_bycolor_obj = []
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => flat_subgrouped_items_bycolor_obj.push(this.subgrouped_items_bycolor_obj[v]))
-                // console.log("flat_subgrouped_items_bycolor_obj")
-                // console.log(flat_subgrouped_items_bycolor_obj)
-                //
-                // var colors_by_ref_length = 0
-                // for (let obj in flat_subgrouped_items_bycolor_obj) {
-                //     // console.log("obj")
-                //     // console.log(obj)
-                //     console.log("flat_subgrouped_items_bycolor_obj[obj]")
-                //     console.log(flat_subgrouped_items_bycolor_obj[obj])
-                //     colors_by_ref_length += Object.keys(flat_subgrouped_items_bycolor_obj[obj]).length;
-                //     this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected = true
-                // }
-                // console.log("colors_by_ref_length")
-                // console.log(colors_by_ref_length)
-                //
-                //
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => console.log(this.subgrouped_items_bycolor_obj[v]))
-                //
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => console.log(v))
-                // this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected
-                //
-                // this.form_selected_ = checked ? this.form_selected_.slice() : []
-                // this.form_selected = checked ? this.form_options.slice() : []
-                // this.produtosSelecionados = checked ? this.form_options.slice() : []
             },
             formAnySelected(checked) {
                 // this.form_selected = checked ? this.form_options.slice() : []
                 // this.produtosSelecionados = checked ? this.form_options.slice() : []
                 var selected_rows = this.todosProdutos.filter(row => row.selected == true)
                 this.form_selected_ = selected_rows
-
                 console.log("checked")
                 console.log(checked)
                 console.log("this.produtosSelecionados")
                 console.log(this.produtosSelecionados)
             },
+            previewImage(event, cod_referencia, des_cor) {
+            // Reference to the DOM input element
+            var input = event.target;
+            // Ensure that you have a file before attempting to read it
+            if (input.files && input.files[0]) {
+                // create a new FileReader to read this image and convert to base64 format
+                var reader = new FileReader();
+                // Define a callback function to run, when FileReader finishes its job
+                reader.onload = (e) => {
+                    // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+                    // Read image as base64 and set to imageData
+                    // this.imageData = e.target.result;
+
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].img[0] = e.target.result;
+                    //these next three lines make the image auto reload
+                    let image_index_backup = this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index = image_index_backup + 1
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index = image_index_backup
+                }
+                // Start the reader job - read file as a data url (base64 format)
+                this.imageData = reader.readAsDataURL(input.files[0]);
+            }
+        }
         }
     }
 </script>

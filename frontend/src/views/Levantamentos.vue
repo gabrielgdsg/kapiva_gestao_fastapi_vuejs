@@ -67,7 +67,6 @@
 
                     <b-row>
                         <b-form-group>
-
                             <b-input-group size="sm">
                                 <b-form-input
                                         id="filter-input"
@@ -114,6 +113,31 @@
         <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true
                  :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
 
+            <template #thead-top="data"><!-- eslint-disable-line-->
+<!--    <td v-for="field in baseFields" :key="field.key">-->
+        <b-tr>
+            <b-th variant="secondary">Type 1</b-th>-->
+        <b-th >
+<!--        <b-th v-for="field in baseFields" :key="field.key">-->
+            a
+<!--            <input v-model="filters[field.key]" :placeholder="field.label">-->
+        </b-th>
+        </b-tr>
+
+<!--    </td>-->
+  </template>
+
+<!--            <template #thead-top="data">&lt;!&ndash; eslint-disable-line&ndash;&gt;-->
+<!--        <b-tr>-->
+<!--          <b-th colspan="2"><span class="sr-only">Name and ID</span></b-th>-->
+<!--          <b-th variant="secondary">Type 1</b-th>-->
+<!--          <b-th variant="primary" colspan="3">Type 2</b-th>-->
+<!--          <b-th variant="danger">Type 3</b-th>-->
+<!--        </b-tr>-->
+<!--      </template>-->
+
+
+
       <template #head(selected)="row"><!-- eslint-disable-line-->
         <b-form-checkbox
                                     :indeterminate="form_indeterminate"
@@ -139,7 +163,10 @@
 
             <template #cell(img_link)="row">
                 <div v-show="showHideImgLink">
-                    <input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                    <b-form-input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                    <b-form-file placeholder="Nenhum arquivo" accept="image/*" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" ref="file-input"></b-form-file>
+<!--                    <input type="file" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" accept="image/*">-->
+<!--                    <img class="preview" :src="imageData">-->
                 </div>
             </template>
 
@@ -171,6 +198,8 @@
         },
         data() {
             return {
+                // imageData: null,
+                // file: null,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -382,21 +411,28 @@
         computed: {
             mappedItemsComputed() {
                 let mapped_items = [];
-                // this.produtos = [];
 
                 for (const ref_group in this.subgrouped_items_bycolor_obj) {
                     for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
+                        // let saldo_estoq_entrada = 0;
                         let saldo_estoq_entrada = 0;
                         let saldo_estoq = 0;
                         let graded_prods_estoq = {};
 
+
                         for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
-                            var estoq_entrada = 0;
-                            // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].img = 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg';
+                            let estoq_entrada = 0;
+                            let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
+                            // graded_prods_estoq[estoq_entrada_name] = 0;
+                            if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
+                                    graded_prods_estoq[estoq_entrada_name] = 0
+                                    // graded_prods_estoq[estoq_entrada_name] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                }
 
                             // {
-                            if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E' &&
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7)) {
+                            if (
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) ) {
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 2)) {
 
                                 // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E' &&
                                 // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) &&
@@ -407,20 +443,6 @@
 
                                 // fazer um filtro por dat_movto???
                                 //
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group]")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group])
-                                //
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto)
-                                //
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto)
-                                //
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
-                                //
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto)
 
 
                                 // {(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
@@ -436,26 +458,30 @@
                                 // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
                                 // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
 
-                                estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
+                                // estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                // estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
 
-                                if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
-                                    graded_prods_estoq[estoq_entrada_name] = estoq_entrada
-                                } else {
-                                    graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada
-                                }
-                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
 
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
-                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
+
+
+                                    if  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
+                                        estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]+ estoq_entrada;
+                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                    } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
+                                        estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                        // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]- estoq_entrada;
+                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                    }
+
+                                graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]+ estoq_entrada;
+                                //     console.log("this.subgrouped_items_bycolor_obj[ref_group]")
+                                //     console.log(this.subgrouped_items_bycolor_obj[ref_group])
                                 // console.log("estoq_entrada_name")
                                 // console.log(estoq_entrada_name)
                                 // console.log("estoq_entrada")
                                 // console.log(estoq_entrada)
-                                // console.log("saldo_estoq_entrada")
-                                // console.log(saldo_estoq_entrada)
+                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
 
 
                             }
@@ -489,7 +515,7 @@
                         graded_prods_estoq['des_grade'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_grade;
                         graded_prods_estoq['cod_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_cor;
                         // graded_prods_estoq['dat_emissao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_emissao;
-                        graded_prods_estoq['dat_lancamento'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_lancamento;
+                        // graded_prods_estoq['dat_lancamento'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_lancamento;
                         graded_prods_estoq['cod_fornecedor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_fornecedor;
                         graded_prods_estoq['raz_fornecedor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].raz_fornecedor;
                         graded_prods_estoq['fan_fornecedor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].fan_fornecedor;
@@ -530,7 +556,7 @@
                     if (!produto.des_grade) {produto.des_grade = ''}
                     if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
                     if (!produto.dat_alteracao) {produto.dat_alteracao = ''}
-                    if (!produto.dat_lancamento) {produto.dat_lancamento = ''}
+                    // if (!produto.dat_lancamento) {produto.dat_lancamento = ''}
                     if (!produto.cod_fornecedor) {produto.cod_fornecedor = 0}
                     if (!produto.raz_fornecedor) {produto.raz_fornecedor = ''}
                     if (!produto.fan_fornecedor) {produto.fan_fornecedor = ''}
@@ -549,7 +575,7 @@
                         cod_cor: produto.cod_cor,
                         dat_cadastro: moment(produto.dat_cadastro, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         dat_alteracao: moment(produto.dat_alteracao, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
-                        dat_lancamento: moment(produto.dat_lancamento, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
+                        // dat_lancamento: moment(produto.dat_lancamento, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         cod_fornecedor: produto.cod_fornecedor,
                         raz_fornecedor: produto.raz_fornecedor,
                         fan_fornecedor: produto.fan_fornecedor,
@@ -633,21 +659,21 @@
         beforeMount() {
             this.loadMarcas()
         },
-        watch: {
-            selected(newValue) {
-                // Handle changes in individual flavour checkboxes
-                if (newValue.length === 0) {
-                    this.indeterminate = false
-                    this.allSelected = false
-                } else if (newValue.length === this.flavours.length) {
-                    this.indeterminate = false
-                    this.allSelected = true
-                } else {
-                    this.indeterminate = true
-                    this.allSelected = false
-                }
-            }
-        },
+        // watch: {
+        //     selected(newValue) {
+        //         // Handle changes in individual flavour checkboxes
+        //         if (newValue.length === 0) {
+        //             this.indeterminate = false
+        //             this.allSelected = false
+        //         } else if (newValue.length === this.flavours.length) {
+        //             this.indeterminate = false
+        //             this.allSelected = true
+        //         } else {
+        //             this.indeterminate = true
+        //             this.allSelected = false
+        //         }
+        //     }
+        // },
         methods: {
             toggleAll(checked) {
         this.selected = checked ? this.flavours.slice() : []
@@ -702,23 +728,23 @@
                         // dat_cadastro: moment(element[20]),
                         dat_cadastro: moment(element[20]).format('DD/MM/YYYY'),
                         dat_alteracao: moment(element[21]).format('DD/MM/YYYY'),
-                        dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
-                        dat_lancamento: moment(element[23]).format('DD/MM/YYYY'),
-                        dat_saida: moment(element[24]).format('DD/MM/YYYY'),
-                        cod_fornecedor: element[25],
-                        raz_fornecedor: element[26],
-                        fan_fornecedor: element[27],
-                        cod_marca: element[28],
-                        nom_marca: element[29],
-                        tipo_movto: element[30],
-                        qtd_movto: element[31],
-                        data_movto: moment(element[32]).format('DD/MM/YYYY'),
-                        cod_movto: element[33],
-                        cod_origem_movto: element[34],
+                        // dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
+                        // dat_lancamento: moment(element[23]).format('DD/MM/YYYY'),
+                        // dat_saida: moment(element[22]).format('DD/MM/YYYY'),
+                        cod_fornecedor: element[22],
+                        raz_fornecedor: element[23],
+                        fan_fornecedor: element[24],
+                        cod_marca: element[25],
+                        nom_marca: element[26],
+                        tipo_movto: element[27],
+                        qtd_movto: element[28],
+                        data_movto: moment(element[29]).format('DD/MM/YYYY'),
+                        cod_movto: element[30],
+                        cod_origem_movto: element[31],
                         selected: false,
                         image_index: 0,
-                        img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbrHWzlFK_PWuIk1Jglo7Avt97howljIWwAA&usqp=CAU']
-                        // img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://lojaferracini.vteximg.com.br/arquivos/ids/265063-800-800/Pro_0000022240415-0001.jpg?v=637406341029930000']
+                        // img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=']
+                        img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://lojaferracini.vteximg.com.br/arquivos/ids/265063-800-800/Pro_0000022240415-0001.jpg?v=637406341029930000']
                     };
                 return result
             },
@@ -748,6 +774,7 @@
                     })
                     .catch((error) => {
                         console.log(error)
+                        console.log(error.response.data); // => the response payload
                     })
             },
             groupItemsByRef() {
@@ -803,14 +830,15 @@
 
                             this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img[this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index] = res.data[key].img
                             //these next 3 lines make the images auto refresh
-                            const aux = this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index
-                            this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = 1
-                            this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = aux
+                            // const aux = this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index
+                            // this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = 1
+                            // this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index = aux
                         }
 
                     })
                     .catch((error) => {
                         console.log(error)
+                        console.log(error.response.data); // => the response payload
                     })
             },
             async pesquisarImagens() {
@@ -844,9 +872,7 @@
                     for (var i=0; i< 10; i++) {
                         this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[i] = image_url[i]
                     }
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[0] = image_url[0]
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[1] = image_url[1]
-                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[2] = image_url[2]
+
 
                     console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].img')
                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].img)
@@ -869,6 +895,7 @@
                     })
                     .catch((error) => {
                         console.log(error)
+                        console.log(error.response.data); // => the response payload
                     })
 
             },
@@ -895,6 +922,7 @@
                     })
                     .catch((error) => {
                         console.log(error)
+                        console.log(error.response.data); // => the response payload
                     })
                 console.log('image_url_from fetchimage')
                 console.log(image_url)
@@ -923,6 +951,7 @@
                     })
                     .catch((error) => {
                         console.log(error)
+                        console.log(error.response.data); // => the response payload
                     })
             },
             clickHandler(item) {
@@ -956,50 +985,40 @@
                             this.subgrouped_items_bycolor_obj[ref_group][cor][0].selected = this.form_allSelected
                         }
                     }
-                // }
-                //
-                //
-                //
-                //
-                // // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => this.subgrouped_items_bycolor_obj[v][row.item.cod_referencia][row.item.des_cor][0].selected = false)
-                // var flat_subgrouped_items_bycolor_obj = []
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => flat_subgrouped_items_bycolor_obj.push(this.subgrouped_items_bycolor_obj[v]))
-                // console.log("flat_subgrouped_items_bycolor_obj")
-                // console.log(flat_subgrouped_items_bycolor_obj)
-                //
-                // var colors_by_ref_length = 0
-                // for (let obj in flat_subgrouped_items_bycolor_obj) {
-                //     // console.log("obj")
-                //     // console.log(obj)
-                //     console.log("flat_subgrouped_items_bycolor_obj[obj]")
-                //     console.log(flat_subgrouped_items_bycolor_obj[obj])
-                //     colors_by_ref_length += Object.keys(flat_subgrouped_items_bycolor_obj[obj]).length;
-                //     this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected = true
-                // }
-                // console.log("colors_by_ref_length")
-                // console.log(colors_by_ref_length)
-                //
-                //
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => console.log(this.subgrouped_items_bycolor_obj[v]))
-                //
-                // Object.keys(this.subgrouped_items_bycolor_obj).forEach(v => console.log(v))
-                // this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected
-                //
-                // this.form_selected_ = checked ? this.form_selected_.slice() : []
-                // this.form_selected = checked ? this.form_options.slice() : []
-                // this.produtosSelecionados = checked ? this.form_options.slice() : []
             },
             formAnySelected(checked) {
                 // this.form_selected = checked ? this.form_options.slice() : []
                 // this.produtosSelecionados = checked ? this.form_options.slice() : []
                 var selected_rows = this.todosProdutos.filter(row => row.selected == true)
                 this.form_selected_ = selected_rows
-
                 console.log("checked")
                 console.log(checked)
                 console.log("this.produtosSelecionados")
                 console.log(this.produtosSelecionados)
             },
+            previewImage(event, cod_referencia, des_cor) {
+            // Reference to the DOM input element
+            var input = event.target;
+            // Ensure that you have a file before attempting to read it
+            if (input.files && input.files[0]) {
+                // create a new FileReader to read this image and convert to base64 format
+                var reader = new FileReader();
+                // Define a callback function to run, when FileReader finishes its job
+                reader.onload = (e) => {
+                    // Note: arrow function used here, so that "this.imageData" refers to the imageData of Vue component
+                    // Read image as base64 and set to imageData
+                    // this.imageData = e.target.result;
+
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].img[0] = e.target.result;
+                    //these next three lines make the image auto reload
+                    let image_index_backup = this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index = image_index_backup + 1
+                    this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index = image_index_backup
+                }
+                // Start the reader job - read file as a data url (base64 format)
+                this.imageData = reader.readAsDataURL(input.files[0]);
+            }
+        }
         }
     }
 </script>
