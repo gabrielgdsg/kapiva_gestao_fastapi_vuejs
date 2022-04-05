@@ -121,8 +121,8 @@
       </template>
       <template v-slot:row-details="{ item }">
 <!--          {{item.movtos}}-->
-          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos">
-          </b-table>
+<!--          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
+          <b-table :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>
 
       </template>
 
@@ -134,7 +134,6 @@
                                       v-model="filters[field.key]"></b-form-input>
                     </template>
                     <template v-else>
-
                         {{gradeTotals[field.key+"_E"]}}
                         <br><!-- eslint-disable-line-->
                         <b>{{gradeTotals[field.key]}}</b>
@@ -480,7 +479,8 @@
 
                             if (
                                 // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)) {
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9)) {
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 4)) {
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9)) {
 
                                     if  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
                                         estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
@@ -489,6 +489,13 @@
                                         entrada['data_movto']= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
                                         entrada[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                         movtos.push(entrada)
+                                        if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === 'Z5652') {
+                                        // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === '01AA090') {
+                                        console.log("entrada: "+ this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque.toString())
+                                        console.log(entrada)
+                                        console.log("movtos")
+                                        console.log(movtos)
+                                    }
 
                                     } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
                                         // estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
@@ -497,7 +504,16 @@
                                         saida['data_movto']= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
                                         saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]=0-this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                         movtos.push(saida)
+                                        if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === 'Z5652') {
+                                        // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === '01AA090') {
+                                        console.log("saida: "+ this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_movto.toString())
+                                        console.log(saida)
+                                            console.log("movtos")
+                                        console.log(movtos)
                                     }
+                                    }
+
+
 
                                 graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada;
                                 saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada;
@@ -515,10 +531,19 @@
                                 r[data_movto] = {...r[data_movto], ...rest};
                                 return r;
                             }, {}));
+
+                        // TODO is really necessary to sort the array by dare the array or it is already sorted???
+                        let reduced_movtos_ordered_by_date = reduced_movtos.sort(function (a, b) {
+                            // Turn your strings into dates, and then subtract them
+                            // to get a value that is either negative, positive, or zero.
+                            // return new Date(b.data_movto) - new Date(a.data_movto);
+                            return moment(a.data_movto, 'DD/MM/YYYY').toDate() - moment(b.data_movto, 'DD/MM/YYYY').toDate();
+                        });
+
                         console.log("reduced_movtos");
                         console.log(reduced_movtos);
-                        console.log("movtos")
-                        console.log(movtos)
+                        console.log("reduced_movtos_ordered_by_date")
+                        console.log(reduced_movtos_ordered_by_date)
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
