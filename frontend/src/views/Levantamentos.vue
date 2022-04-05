@@ -110,31 +110,30 @@
         </b-form>
 
 
-        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true
+        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredmappedItemsComputed" :small=true
                  :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
 
-            <template #thead-top="data"><!-- eslint-disable-line-->
-<!--    <td v-for="field in baseFields" :key="field.key">-->
-        <b-tr>
-            <b-th variant="secondary">Type 1</b-th>-->
-        <b-th >
-<!--        <b-th v-for="field in baseFields" :key="field.key">-->
-            a
-<!--            <input v-model="filters[field.key]" :placeholder="field.label">-->
-        </b-th>
-        </b-tr>
+<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true-->
+<!--                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
 
-<!--    </td>-->
-  </template>
 
-<!--            <template #thead-top="data">&lt;!&ndash; eslint-disable-line&ndash;&gt;-->
-<!--        <b-tr>-->
-<!--          <b-th colspan="2"><span class="sr-only">Name and ID</span></b-th>-->
-<!--          <b-th variant="secondary">Type 1</b-th>-->
-<!--          <b-th variant="primary" colspan="3">Type 2</b-th>-->
-<!--          <b-th variant="danger">Type 3</b-th>-->
-<!--        </b-tr>-->
-<!--      </template>-->
+            <template scope="data" slot="top-row"><!-- eslint-disable-line-->
+                <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
+                    <template
+                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_alteracao'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
+                        <b-form-input :placeholder="field.label" class="col-sm"
+                                      v-model="filters[field.key]"></b-form-input>
+                    </template>
+                    <template v-else>
+
+                        {{gradeTotals[field.key+"_E"]}}
+                        <br><!-- eslint-disable-line-->
+                        <b>{{gradeTotals[field.key]}}</b>
+
+                    </template>
+                </td>
+            </template>
+
 
 
 
@@ -169,6 +168,7 @@
 <!--                    <img class="preview" :src="imageData">-->
                 </div>
             </template>
+
 
 
             <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
@@ -405,10 +405,51 @@
                 data_cadastro_ini: '',
                 data_cadastro_fim: '',
                 cod_fornecedor: 70,
-                items: []
+                items: [],
+                filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''}
             }
         },
         computed: {
+            filteredmappedItemsComputed() {
+                const filtered = this.mappedItemsComputed.filter(item => {
+                    return Object.keys(this.filters).every(key =>
+                        String(item[key].toString().toLowerCase()).includes(this.filters[key].toString().toLowerCase()))
+                });
+
+                return filtered
+            },
+            gradeTotals() {
+                const grade_totals = {}
+                if (this.filteredmappedItemsComputed.length > 0) {
+                    for (const item in this.filteredmappedItemsComputed) {
+                        for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
+                            if (numero_da_grade === 'nom_marca') {
+                                break; //break loop when finds anything different from "numeros de grade"
+                            }
+                            if (isNaN(grade_totals[numero_da_grade])) {
+                                    grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
+                                }
+                            else {
+                                grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
+                            }
+                        }
+                    }
+                }
+                let grade_totals_split = {}
+                let grade_totals_split_E = {}
+                let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
+                let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
+
+                for (const key in grade_totals_keys) {
+                    grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
+                    grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
+                }
+
+                grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
+                grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+
+                return grade_totals
+            },
             mappedItemsComputed() {
                 let mapped_items = [];
 
@@ -431,8 +472,8 @@
 
                             // {
                             if (
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) ) {
-                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 2)) {
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) ) {
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)) {
 
                                 // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E' &&
                                 // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) &&

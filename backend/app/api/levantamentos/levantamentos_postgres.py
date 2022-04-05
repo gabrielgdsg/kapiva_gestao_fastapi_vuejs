@@ -9,7 +9,7 @@ class LevantamentoPostgres:
         with CursorFromConnectionFromPool() as cursor:
             cursor.execute('''
                 select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
-            it.cod_produto, pro.des_produto, pro.cod_barra, pro.cod_referencia,
+            pro.cod_produto, pro.des_produto, pro.cod_barra, pro.cod_referencia,
             sum(it.qtd_produto) as qtd, e.saldo_estoque,
             pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1, sum(it.vlr_total) as total,
             pro.cod_grade, g.des_grade,
@@ -24,7 +24,7 @@ class LevantamentoPostgres:
              LEFT OUTER JOIN PRODUTO_ESTOQUE e ON (e.COD_EMPRESA = pro.COD_EMPRESA and
                                                  e.COD_PRODUTO = pro.COD_PRODUTO)
             LEFT OUTER JOIN nfcompraitem it on (pro.cod_empresa = it.cod_empresa and pro.cod_produto = it.cod_produto)
-            LEFT OUTER JOIN produto_ficha_estoq pfe on (pfe.cod_produto = it.cod_produto )
+            LEFT OUTER JOIN produto_ficha_estoq pfe on (pfe.cod_produto = pro.cod_produto )
         LEFT OUTER JOIN grupo_produto gu on (gu.cod_grupo = pro.cod_grupo)
             LEFT OUTER JOIN nfcompra cb on (cb.cod_empresa = it.cod_empresa and cb.cod_interno = it.cod_interno)
             left outer join cores c on (c.cod_cor = pro.cod_cor)
@@ -32,14 +32,14 @@ class LevantamentoPostgres:
              inner join tamanho t on (t.cod_grade = pro.cod_grade and t.cod_tamanho = pro.cod_tamanho)
              LEFT OUTER JOIN fornecedor f on (cb.cod_fornece = f.cod_fornece)
             LEFT OUTER JOIN subgrupo_produto su on (su.cod_grupo = pro.cod_grupo and su.cod_subgrupo = pro.cod_subgrupo)
-    where cb.cod_empresa = '1'
+    where pro.cod_empresa = '1'
           and %s is not null
           and %s is not null
           and (cb.flg_estorno is null or cb.flg_estorno = 'N')
           and m.cod_marca = %s
           and (pro.flg_mestre = 'N' or pro.flg_mestre is null)
     group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
-                 it.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
+                 pro.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
                  pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1,
                  pro.cod_grade, g.des_grade, e.saldo_estoque,
                  pro.cod_tamanho, t.des_tamanho,
