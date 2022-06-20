@@ -34,6 +34,8 @@ export default {
       const path = `/api/financeiro/caixa/${this.data_caixa}`
       axios.get(path)
         .then((res) => {
+          console.log("res")
+          console.log(res)
           this.$router.push({name: 'FinanceiroCaixa', params: {currentComponent: 'tabela', data_caixa: this.data_caixa, dados_caixa: res.data}})
         })
         .catch((error) => {
