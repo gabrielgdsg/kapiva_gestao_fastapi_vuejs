@@ -1,0 +1,4 @@
+levantamentos_test
+-filter by fornecedor (e.g. Grendene, Cartago, Ipanema)
+-create column by entrada
+

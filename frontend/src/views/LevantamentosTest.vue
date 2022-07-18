@@ -372,8 +372,13 @@
                             {key: '120', label: '120'}]
                     },
                     {
-                        "name": 'Img Link',
-                        "grade": {key: 'img_link', label: 'Img Link'}
+                        "name": 'Meias',
+                        "grade":[ {key: '33/38', label: '33/38'},
+                         {key: '39/44', label: '39/44'}]
+                    },
+                    {
+                        "name": 'Outros',
+                        "grade": {key: 'un', label: 'un'}
                     },
                 ],
                 graded_prods_entrada: '',
@@ -761,7 +766,8 @@
                         cod_grade: element[14],
                         des_grade: element[15],
                         cod_tamanho: element[16],
-                        des_tamanho: element[17],
+                        //todo
+                        des_tamanho: element[17] || 'un',
                         cod_cor: element[18],
                         des_cor: element[19],
                         // dat_cadastro: element[20],
