@@ -462,7 +462,6 @@
                         let saldo_estoq = 0;
                         let graded_prods_estoq = {};
                         let movtos = [];
-                        // let entrada_saida = {};
 
                         for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
                             let estoq_entrada = 0;
