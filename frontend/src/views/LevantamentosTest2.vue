@@ -120,9 +120,8 @@
 
       </template>
       <template v-slot:row-details="{ item }">
-<!--          {{item.movtos}}-->
-<!--          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
-          <b-table :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>
+          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>
+<!--          <b-table :sort-by="sortBy" :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
 
       </template>
 
@@ -206,8 +205,6 @@
         },
         data() {
             return {
-                // imageData: null,
-                // file: null,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -474,12 +471,7 @@
                             let estoq_entrada = 0;
                             let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E";
                             let movimento = 0;
-                            // let entrada_saida = {};
-                            // movtos = [];
 
-                            // movtos[prod]['data_movto'] = {};
-                            // entrada_saida['saldos'] = {};
-                            // entrada_saida['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = {};
 
                             if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
                                     graded_prods_estoq[estoq_entrada_name] = 0
@@ -492,8 +484,6 @@
 
                                 if (isNaN(movtos[prod])) {movtos[prod] = {};}
                                 if (isNaN(movtos[prod]['data_movto'])) {movtos[prod]['data_movto'] = {};}
-                                // if (isNaN(movtos[ref_group][cor])) {movtos[ref_group][cor] = {};}
-                                // if (isNaN(movtos[ref_group][cor][prod])) {movtos[ref_group][cor][prod] = {};}
 
 
                                 if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
@@ -503,143 +493,40 @@
                                     // estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                     movimento = 0 - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 }
-                                // let entrada_saida = {};
-                                // entrada_saida['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                // if (isNaN(entrada_saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
-                                //     entrada_saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                // } else {
-                                //     entrada_saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = entrada_saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
-                                // }
 
 
-                                console.log('prod')
-                                console.log(prod)
-
-                                if (isNaN(movtos[prod - 1]['data_movto'])) {
-                                    movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                }
-                                movtos[prod] = movtos[prod - 1]
-                                if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto === movtos[prod - 1]['data_movto']) {
-                                    if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
-                                        movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                    } else movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
-                                }
-                                else {
-                                    movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                }
-
-
-
-                                // movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                // movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-
-
-                                // movtos[ref_group][cor][prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                // movtos[ref_group][cor][prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-
-
-                                // if (prod === '0') {
-                                //     movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                //     movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                //
-                                //     console.log("movtos[prod]")
-                                //     console.log(movtos[prod])
-                                //     console.log("movtos")
-                                //     console.log(movtos)
-                                // } else {
-                                //     // movtos[prod] = movtos[prod - 1]
+                                // if (isNaN(movtos[prod-1]['data_movto'])) {
+                                //     console.log("isNan")
                                 //     movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
                                 //
-                                //     if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
-                                //         console.log("isNan")
-                                //         movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                // } else {
+                                //     console.log("notNan")
+                                //     movtos[prod] = movtos[prod - 1]
+                                //     if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto === movtos[prod - 1]['data_movto']) {
+                                //         if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
+                                //             movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                //         } else movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
                                 //     } else {
-                                //         console.log("anterior: " + movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + "movimento: " + movimento+ 'saldo: ' + movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]  + movimento)
-                                //         movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
+                                //         movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
                                 //     }
-                                //
-                                //     console.log("typeof movimento")
-                                // console.log(typeof movimento)
-                                // console.log( movimento)
-                                // console.log("typeof movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]")
-                                // console.log(typeof movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])
-                                // console.log(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])
-                                //     console.log("soma")
-                                //     console.log(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento)
-
-
-
-                                // }
-                                // console.log("movtos[ref_group][cor][prod]")
-                                // console.log(movtos[ref_group][cor][prod])
-                                console.log("movtos[prod]")
-                                    console.log(movtos[prod])
-                                    console.log("movtos")
-                                    console.log(movtos)
-
-
-                                // movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]
-                                // movtos.push(entrada_saida)
-
-                                // if(prod > 0 && movtos[prod-1]['data_movto'] === this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto) {
-                                //     movtos[prod] = movtos[prod -1]
-                                //     movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                // }
-                                // else if(prod > 0) {
-                                //     movtos[prod] = movtos[prod -1]
-                                //     movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                //     movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod-1][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]+movimento
                                 // }
 
 
-                                // entrada_saida['saldos'] = {};
-                                // entrada_saida['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = {};
-                                // if (isNaN(movtos[0]['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
-                                //     movtos[0]['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                // } else {
-                                //     movtos[0]['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[0]['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
-                                // }
-                                // entrada_saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[0]['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()];
-                                //
+                                movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
+                                movtos[prod]['tipo_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto;
+                                movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
 
-                                // movtos['saldos'] = {};
-                                // entrada_saida['saldos'][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = {};
-
-
-
-                                //     let entrada = {};
-                                    //     entrada[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] ={};
-                                    //     entrada['data_movto']= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                    //     entrada[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    //     movtos.push(entrada)
-                                    //     if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === 'Z5652') {
-                                    //     // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === '01AA090') {
-                                    //     console.log("entrada: "+ this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque.toString())
-                                    //     console.log(entrada)
-                                    //     console.log("movtos")
-                                    //     console.log(movtos)
-                                    //
-                                    //     }
-                                    //
-                                    // } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
-                                    //     // estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    //     movimento = 0 - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    //     let saida = {};
-                                    //     saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] ={};
-                                    //     saida['data_movto']= this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                    //     saida[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()]=0-this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    //     movtos.push(saida)
-                                    //     if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === 'Z5652') {
-                                    //     // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_referencia === '01AA090') {
-                                    //     console.log("saida: "+ this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_movto.toString())
-                                    //     console.log(saida)
-                                    //         console.log("movtos")
-                                    //     console.log(movtos)
-                                    // }
-                                    //
-                                    //
-                                    // }
-
+                                if (movtos[prod-1]) {
+                                    if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto === movtos[prod - 1]['data_movto']) {
+                                        // movtos[prod] = movtos[prod - 1]
+                                            if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
+                                                movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                            } else movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
+                                        } else {
+                                            movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
+                                            movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                        }
+                                }
 
                                 graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada;
                                 saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada;
@@ -654,34 +541,8 @@
                         console.log("movtos")
                         console.log(movtos)
 
-                           let reduced_movtos = Object.values(movtos.reduce((r, {data_movto, ...rest}, index, array) => {
-                               console.log("index");
-                            console.log(index);
-                            console.log("array_reduced");
-                            console.log(array);
-                               //
-                               // console.log("r")
-                               // console.log(r)
-                               // console.log("{rest}")
-                               // console.log({rest})
-                               // console.log("rest")
-                               // console.log(rest)
-                               // console.log( "{data_movto, ...rest}")
-                               // console.log( {data_movto, ...rest})
-                               // console.log("r[data_movto]")
-                               // console.log(r[data_movto])
-                               //
-                               //
+                           let reduced_movtos = Object.values(movtos.reduce((r, {data_movto, ...rest}) => {
                                 r[data_movto] = r[data_movto] || {data_movto};
-                               // console.log("r[data_movto] || {data_movto}")
-                               // console.log(r[data_movto])
-                               //
-                               // console.log("Object.keys(rest)[0]")
-                               // console.log(Object.keys(rest)[0])
-                               //
-                               // console.log("Object.keys(r[data_movto])")
-                               // console.log(Object.keys(r[data_movto]))
-
                                let result = Object.keys(rest)[0] in r[data_movto]
                                console.log("result")
                                console.log(result)
@@ -706,68 +567,19 @@
 
                         var data = [];
                         reduced_movtos.forEach(({data_movto, ...rest}, index, array) => {
-                            // console.log("index");
-                            // console.log(index);
-                            // console.log("array_forEach");
-                            // console.log(array);
-                            // console.log("data_movto")
-                            // console.log(data_movto)
-                            // console.log("rest")
-                            // console.log(rest)
-                            // console.log("data")
-                            // console.log(data)
                             if (index >0 && Object.keys(rest) in data[index-1]) {
                                 let aux = {}
                                 aux[Object.keys(rest).toString()]= data[index-1][Object.keys(rest)] + array[index][Object.keys(rest)]
                                 aux['data_movto'] = data_movto
-                                console.log("aux")
-                                console.log(aux)
-                                // data = [...data, {data_movto, ...aux}];
                                 data = [...data, aux];
-                                // console.log("data")
-                                // console.log(data)
-                                // data = [...data, data[index-1]|| array[index]];
                             }
                             else {
                                 console.log("else")
                                 data = [...data, data[index-1]|| array[index]];
                             }
-
-
                             data = [...data, data[index-1]|| array[index]];}
                         )
-                        console.log("data")
-                        console.log(data)
 
-
-
-
-
-                        // let reduced_movtos = Object.values(movtos.reduce((r, {data_movto, ...rest}) => {
-                        //         r[data_movto] = r[data_movto] || {data_movto};
-                        //         r[data_movto] = {...r[data_movto], ...rest};
-                        //         return r;
-                        //     }, {}));
-
-
-
-
-
-                        console.log('movtos_red')
-                        console.log(reduced_movtos)
-
-                        // TODO is really necessary to sort the array by dare the array or it is already sorted???
-                        // let reduced_movtos_ordered_by_date = reduced_movtos.sort(function (a, b) {
-                        //     // Turn your strings into dates, and then subtract them
-                        //     // to get a value that is either negative, positive, or zero.
-                        //     // return new Date(b.data_movto) - new Date(a.data_movto);
-                        //     return moment(a.data_movto, 'DD/MM/YYYY').toDate() - moment(b.data_movto, 'DD/MM/YYYY').toDate();
-                        // });
-
-                        // console.log("reduced_movtos");
-                        // console.log(reduced_movtos);
-                        // console.log("reduced_movtos_ordered_by_date")
-                        // console.log(reduced_movtos_ordered_by_date)
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
@@ -781,7 +593,6 @@
                         graded_prods_estoq['totais'] = saldo_estoq;
                         graded_prods_estoq['vlr_custo_bruto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_custo_bruto;
                         graded_prods_estoq['vlr_venda1'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_venda1;
-
                         graded_prods_estoq['des_grupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_grupo;
                         graded_prods_estoq['cod_grupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_grupo;
                         graded_prods_estoq['cod_subgrupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_subgrupo;
@@ -801,8 +612,8 @@
                         graded_prods_estoq['image_index'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].image_index;
                         graded_prods_estoq['image_index'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].image_index;
                         // graded_prods_estoq['ult_entrada'] = ult_entrada;
-                        // graded_prods_estoq['movtos'] =reduced_movtos;
-                        graded_prods_estoq['movtos'] =movtos;
+                        graded_prods_estoq['movtos'] =reduced_movtos;
+                        // graded_prods_estoq['movtos'] =movtos;
 
                         mapped_items.push(graded_prods_estoq);
                     }
@@ -874,7 +685,6 @@
                 var grades = this.grades_selected.map(selected => {
                     return selected.grade
                 })
-
                 return [].concat(grades.flat(1), this.totaisFields) //manter totaisFields aqui para que os totais fiquem corretos
                 // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
             },
@@ -949,7 +759,6 @@
         // },
         methods: {
             expandAdditionalInfo(row) {
-                console.log("expand row")
       row._showDetails = !row._showDetails;
     },
             toggleDetails(row) {
