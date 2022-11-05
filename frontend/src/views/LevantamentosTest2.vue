@@ -141,9 +141,6 @@
                 </td>
             </template>
 
-
-
-
       <template #head(selected)="row"><!-- eslint-disable-line-->
         <b-form-checkbox
                                     :indeterminate="form_indeterminate"
@@ -493,23 +490,6 @@
                                     // estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                     movimento = 0 - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 }
-
-
-                                // if (isNaN(movtos[prod-1]['data_movto'])) {
-                                //     console.log("isNan")
-                                //     movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                //
-                                // } else {
-                                //     console.log("notNan")
-                                //     movtos[prod] = movtos[prod - 1]
-                                //     if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto === movtos[prod - 1]['data_movto']) {
-                                //         if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
-                                //             movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
-                                //         } else movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
-                                //     } else {
-                                //         movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
-                                //     }
-                                // }
 
 
                                 movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
