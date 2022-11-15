@@ -4,6 +4,7 @@ from starlette.middleware.cors import CORSMiddleware
 from api.comissao import api_comissao
 from api.financeiro import api_caixa
 from api.levantamentos import api_levantamentos
+from api.estoque import api_estoque
 from db_postgres.connection import PostgresDatabase
 from config import settings
 # from api.models import User
@@ -12,6 +13,7 @@ from db_mongo.database import engine, ObjectId
 app = FastAPI()
 
 app.include_router(api_levantamentos.router)
+app.include_router(api_estoque.router)
 app.include_router(api_comissao.router)
 app.include_router(api_caixa.router)
 

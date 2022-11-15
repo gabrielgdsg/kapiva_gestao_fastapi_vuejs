@@ -15,7 +15,7 @@ class LevantamentoPostgres:
             pro.cod_grade, g.des_grade,
             pro.cod_tamanho, t.des_tamanho,
             pro.cod_cor, c.des_cor,
-            pro.dat_cadastro,pro.dat_alteracao, cb.cod_fornece, 
+            pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece, 
             f.raz_fornece, f.fan_fornece,
             m.cod_marca, m.nom_marca,
             pfe.tipo_movto, pfe.qtd_movto, pfe.data as data_movto, pfe.cod_movto, pfe.cod_origem_movto
@@ -44,7 +44,7 @@ class LevantamentoPostgres:
                  pro.cod_grade, g.des_grade, e.saldo_estoque,
                  pro.cod_tamanho, t.des_tamanho,
                  pro.cod_cor,  c.des_cor,
-                 pro.dat_cadastro,pro.dat_alteracao, cb.cod_fornece,
+                 pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece,
                  f.raz_fornece, f.fan_fornece,
                  m.cod_marca, m.nom_marca,
                  pfe.tipo_movto, pfe.qtd_movto, data_movto, pfe.cod_movto, pfe.cod_origem_movto

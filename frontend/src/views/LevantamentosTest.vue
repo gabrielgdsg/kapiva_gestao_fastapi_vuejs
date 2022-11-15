@@ -129,7 +129,7 @@
             <template scope="data" slot="top-row"><!-- eslint-disable-line-->
                 <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
                     <template
-                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_alteracao'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
+                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_ultcompra'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
                         <b-form-input :placeholder="field.label" class="col-sm"
                                       v-model="filters[field.key]"></b-form-input>
                     </template>
@@ -527,7 +527,8 @@
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
-                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
+                        graded_prods_estoq['dat_ultcompra'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_ultcompra;
+                        // graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
                         graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
                         graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
                         graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
@@ -581,9 +582,12 @@
                     if (!produto.vlr_venda1) {produto.vlr_venda1 = 0.0}
                     if (!produto.cod_grade) {produto.cod_grade = 0}
                     if (!produto.des_grade) {produto.des_grade = ''}
-                    if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
-                    if (!produto.dat_alteracao) {produto.dat_alteracao = ''}
-                    // if (!produto.dat_lancamento) {produto.dat_lancamento = ''}
+                    // if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
+                    // if (isNaN(produto.dat_ultcompra)) {produto.dat_ultcompra = '01/01/1900'}
+                    if (!moment(produto.dat_cadastro, "DD/MM/YYYY", false).isValid())
+                        {produto.dat_cadastro = '01/01/1900'}
+                    if (!moment(produto.dat_ultcompra, "DD/MM/YYYY", false).isValid())
+                        {produto.dat_ultcompra = '01/01/1900'}
                     if (!produto.cod_fornecedor) {produto.cod_fornecedor = 0}
                     if (!produto.raz_fornecedor) {produto.raz_fornecedor = ''}
                     if (!produto.fan_fornecedor) {produto.fan_fornecedor = ''}
@@ -601,7 +605,7 @@
                         des_grade: produto.des_grade,
                         cod_cor: produto.cod_cor,
                         dat_cadastro: moment(produto.dat_cadastro, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
-                        dat_alteracao: moment(produto.dat_alteracao, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
+                        dat_ultcompra: moment(produto.dat_ultcompra, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         // dat_lancamento: moment(produto.dat_lancamento, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         cod_fornecedor: produto.cod_fornecedor,
                         raz_fornecedor: produto.raz_fornecedor,
@@ -638,7 +642,7 @@
                     {key: 'selected', label: 'Sel.'},
                     {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
                     {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
-                    {key: 'dat_alteracao', label: 'Data Alt.', sortable: true},
+                    {key: 'dat_ultcompra', label: 'Data Alt.', sortable: true},
                     {key: 'cod_referencia', label: 'Ref.', sortable: true},
                     {key: 'des_cor', label: 'Cor', sortable: true},
                     {key: 'img', label: 'Img.'},
@@ -738,7 +742,7 @@
             },
             dateSorter(a, b, key) {
 
-                if (key === 'dat_alteracao' || key === 'dat_cadastro'|| key === 'data_movto') {
+                if (key === 'dat_ultcompra' || key === 'dat_cadastro'|| key === 'data_movto') {
                     if (moment(a[key], 'DD/MM/YYYY').toDate() > moment(b[key], 'DD/MM/YYYY').toDate()) return 1;
                     if (moment(a[key], 'DD/MM/YYYY').toDate() < moment(b[key], 'DD/MM/YYYY').toDate()) return -1;
                     return 0;
@@ -773,7 +777,7 @@
                         // dat_cadastro: element[20],
                         // dat_cadastro: moment(element[20]),
                         dat_cadastro: moment(element[20]).format('DD/MM/YYYY'),
-                        dat_alteracao: moment(element[21]).format('DD/MM/YYYY'),
+                        dat_ultcompra: moment(element[21]).format('DD/MM/YYYY'),
                         // dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
                         // dat_lancamento: moment(element[23]).format('DD/MM/YYYY'),
                         // dat_saida: moment(element[22]).format('DD/MM/YYYY'),

@@ -111,21 +111,28 @@
 
 
         <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredmappedItemsComputed" :small=true
-                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
+                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped
+                 @row-clicked="expandAdditionalInfo" >
 
-<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true-->
-<!--                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
+<template v-slot:cell(actions)="{ detailsShowing, item }" >
+        <!-- Use the built in method from the scoped data to toggle the row details -->
+        <b-btn @click="toggleDetails(item)">{{ detailsShowing ? '-' : '+'}}</b-btn>
 
+      </template>
+      <template v-slot:row-details="{ item }">
+          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>
+<!--          <b-table :sort-by="sortBy" :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
+
+      </template>
 
             <template scope="data" slot="top-row"><!-- eslint-disable-line-->
                 <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
                     <template
-                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_alteracao'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
+                            v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_ultcompra'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
                         <b-form-input :placeholder="field.label" class="col-sm"
                                       v-model="filters[field.key]"></b-form-input>
                     </template>
                     <template v-else>
-
                         {{gradeTotals[field.key+"_E"]}}
                         <br><!-- eslint-disable-line-->
                         <b>{{gradeTotals[field.key]}}</b>
@@ -133,9 +140,6 @@
                     </template>
                 </td>
             </template>
-
-
-
 
       <template #head(selected)="row"><!-- eslint-disable-line-->
         <b-form-checkbox
@@ -198,8 +202,6 @@
         },
         data() {
             return {
-                // imageData: null,
-                // file: null,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -406,7 +408,8 @@
                 data_cadastro_fim: '',
                 cod_fornecedor: 70,
                 items: [],
-                filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''}
+                filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''},
+                currentItems: []
             }
         },
         computed: {
@@ -455,75 +458,54 @@
 
                 for (const ref_group in this.subgrouped_items_bycolor_obj) {
                     for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
-                        // let saldo_estoq_entrada = 0;
                         let saldo_estoq_entrada = 0;
                         let saldo_estoq = 0;
                         let graded_prods_estoq = {};
-
+                        let movtos = [];
 
                         for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
                             let estoq_entrada = 0;
-                            let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
-                            // graded_prods_estoq[estoq_entrada_name] = 0;
+                            let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E";
+                            let movimento = 0;
+
                             if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
                                     graded_prods_estoq[estoq_entrada_name] = 0
-                                    // graded_prods_estoq[estoq_entrada_name] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                }
+                            if (
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)) {
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 4)) {
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9)) {
+
+                                if (isNaN(movtos[prod])) {movtos[prod] = {};}
+                                if (isNaN(movtos[prod]['data_movto'])) {movtos[prod]['data_movto'] = {};}
+
+
+                                if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
+                                    movimento = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                    estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
+                                    // estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                    movimento = 0 - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 }
 
-                            // {
-                            if (
-                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) ) {
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)) {
+                                movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
+                                movtos[prod]['tipo_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto;
+                                movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
 
-                                // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E' &&
-                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) &&
-                                // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
-                                //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
-                                //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
-                                //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+                                if (movtos[prod-1]) {
+                                    if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto === movtos[prod - 1]['data_movto']) {
+                                        // movtos[prod] = movtos[prod - 1]
+                                            if (isNaN(movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()])) {
+                                                movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                            } else movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] + movimento
+                                        } else {
+                                            movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
+                                            movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
+                                        }
+                                }
 
-                                // fazer um filtro por dat_movto???
-                                //
-
-
-                                // {(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
-                                //         this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3)) {
-
-
-                                // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
-                                // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
-                                //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
-                                //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
-                                //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
-
-                                // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
-                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
-
-                                // estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                // estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-
-
-
-
-                                    if  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
-                                        estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]+ estoq_entrada;
-                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
-                                        estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                        // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]- estoq_entrada;
-                                         // graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
-                                    }
-
-                                graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name]+ estoq_entrada;
-                                //     console.log("this.subgrouped_items_bycolor_obj[ref_group]")
-                                //     console.log(this.subgrouped_items_bycolor_obj[ref_group])
-                                // console.log("estoq_entrada_name")
-                                // console.log(estoq_entrada_name)
-                                // console.log("estoq_entrada")
-                                // console.log(estoq_entrada)
-                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
-
+                                graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada;
+                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada;
 
                             }
                             //calculating saldo_estoq summing saldo.estoque only once per item
@@ -532,10 +514,52 @@
                             }
                             graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
                         }
+                        console.log("movtos")
+                        console.log(movtos)
+
+                           let reduced_movtos = Object.values(movtos.reduce((r, {data_movto, ...rest}) => {
+                                r[data_movto] = r[data_movto] || {data_movto};
+                               let result = Object.keys(rest)[0] in r[data_movto]
+                               console.log("result")
+                               console.log(result)
+
+                               if(Object.keys(rest)[0] in r[data_movto]){
+                                   // let grade_name = Object.keys(rest)[0].toString()
+                                   let existent_grade ={
+                                       [Object.keys(rest)[0].toString()] : r[data_movto][Object.keys(rest)[0]]+rest[Object.keys(rest)[0]]
+                                   }
+                                   console.log("existent_grade")
+                                   console.log(existent_grade)
+                                   r[data_movto] = {...r[data_movto], ...existent_grade };
+                               } else {r[data_movto] = {...r[data_movto], ...rest};}
+
+
+                               console.log("rest")
+                               console.log(rest)
+                               console.log("{...r[data_movto], ...rest}")
+                               console.log(r[data_movto])
+                                return r;
+                            }, {}));
+
+                        var data = [];
+                        reduced_movtos.forEach(({data_movto, ...rest}, index, array) => {
+                            if (index >0 && Object.keys(rest) in data[index-1]) {
+                                let aux = {}
+                                aux[Object.keys(rest).toString()]= data[index-1][Object.keys(rest)] + array[index][Object.keys(rest)]
+                                aux['data_movto'] = data_movto
+                                data = [...data, aux];
+                            }
+                            else {
+                                console.log("else")
+                                data = [...data, data[index-1]|| array[index]];
+                            }
+                            data = [...data, data[index-1]|| array[index]];}
+                        )
+
 
                         graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
                         graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
-                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
+                        graded_prods_estoq['dat_ultcompra'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_ultcompra;
                         graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
                         graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
                         graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
@@ -545,7 +569,6 @@
                         graded_prods_estoq['totais'] = saldo_estoq;
                         graded_prods_estoq['vlr_custo_bruto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_custo_bruto;
                         graded_prods_estoq['vlr_venda1'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_venda1;
-
                         graded_prods_estoq['des_grupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_grupo;
                         graded_prods_estoq['cod_grupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_grupo;
                         graded_prods_estoq['cod_subgrupo'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_subgrupo;
@@ -562,18 +585,13 @@
                         graded_prods_estoq['fan_fornecedor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].fan_fornecedor;
                         graded_prods_estoq['cod_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_marca;
                         graded_prods_estoq['image_index'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].image_index;
-
+                        graded_prods_estoq['image_index'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].image_index;
+                        graded_prods_estoq['image_index'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].image_index;
+                        // graded_prods_estoq['ult_entrada'] = ult_entrada;
+                        graded_prods_estoq['movtos'] =reduced_movtos;
+                        // graded_prods_estoq['movtos'] =movtos;
 
                         mapped_items.push(graded_prods_estoq);
-                        // this.produtos.push({
-                        //     // selectable: false,
-                        //
-                        //     nom_marca: this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca,
-                        //     cod_referencia: this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia,
-                        //     des_cor: this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor,
-                        //     // img: this.subgrouped_items_bycolor_obj[ref_group][cor][0].img,
-                        //     img: 'data:image/jpeg;base64,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'
-                        // })
                     }
                 }
                 return mapped_items
@@ -595,9 +613,12 @@
                     if (!produto.vlr_venda1) {produto.vlr_venda1 = 0.0}
                     if (!produto.cod_grade) {produto.cod_grade = 0}
                     if (!produto.des_grade) {produto.des_grade = ''}
-                    if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
-                    if (!produto.dat_alteracao) {produto.dat_alteracao = ''}
-                    // if (!produto.dat_lancamento) {produto.dat_lancamento = ''}
+                    // if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
+                    // if (isNaN(produto.dat_ultcompra)) {produto.dat_ultcompra = '01/01/1900'}
+                    if (!moment(produto.dat_cadastro, "DD/MM/YYYY", false).isValid())
+                        {produto.dat_cadastro = '01/01/1900'}
+                    if (!moment(produto.dat_ultcompra, "DD/MM/YYYY", false).isValid())
+                        {produto.dat_ultcompra = '01/01/1900'}
                     if (!produto.cod_fornecedor) {produto.cod_fornecedor = 0}
                     if (!produto.raz_fornecedor) {produto.raz_fornecedor = ''}
                     if (!produto.fan_fornecedor) {produto.fan_fornecedor = ''}
@@ -615,7 +636,7 @@
                         des_grade: produto.des_grade,
                         cod_cor: produto.cod_cor,
                         dat_cadastro: moment(produto.dat_cadastro, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
-                        dat_alteracao: moment(produto.dat_alteracao, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
+                        dat_ultcompra: moment(produto.dat_ultcompra, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         // dat_lancamento: moment(produto.dat_lancamento, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         cod_fornecedor: produto.cod_fornecedor,
                         raz_fornecedor: produto.raz_fornecedor,
@@ -643,7 +664,6 @@
                 var grades = this.grades_selected.map(selected => {
                     return selected.grade
                 })
-
                 return [].concat(grades.flat(1), this.totaisFields) //manter totaisFields aqui para que os totais fiquem corretos
                 // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
             },
@@ -652,12 +672,13 @@
                     {key: 'selected', label: 'Sel.'},
                     {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
                     {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
-                    {key: 'dat_alteracao', label: 'Data Alt.', sortable: true},
+                    {key: 'dat_ultcompra', label: 'Data UltCompra', sortable: true},
                     {key: 'cod_referencia', label: 'Ref.', sortable: true},
                     {key: 'des_cor', label: 'Cor', sortable: true},
                     {key: 'img', label: 'Img.'},
                     {key: 'img_link', label: 'Img Link'},
-                    {key: 'des_produto', label: 'Descrição.', sortable: true}
+                    {key: 'des_produto', label: 'Descrição.', sortable: true},
+                    {key: 'actions', label: '+'}
                 ]
             },
             valoresFields() {
@@ -716,6 +737,22 @@
         //     }
         // },
         methods: {
+            expandAdditionalInfo(row) {
+      row._showDetails = !row._showDetails;
+    },
+            toggleDetails(row) {
+        if(row._showDetails){
+          this.$set(row, '_showDetails', false)
+        }else{
+          this.currentItems.forEach(item => {
+            this.$set(item, '_showDetails', false)
+          })
+
+          this.$nextTick(() => {
+            this.$set(row, '_showDetails', true)
+          })
+        }
+      },
             toggleAll(checked) {
         this.selected = checked ? this.flavours.slice() : []
       },
@@ -734,7 +771,7 @@
             },
             dateSorter(a, b, key) {
 
-                if (key === 'dat_alteracao' || key === 'dat_cadastro') {
+                if (key === 'dat_ultcompra' || key === 'dat_cadastro'|| key === 'data_movto') {
                     if (moment(a[key], 'DD/MM/YYYY').toDate() > moment(b[key], 'DD/MM/YYYY').toDate()) return 1;
                     if (moment(a[key], 'DD/MM/YYYY').toDate() < moment(b[key], 'DD/MM/YYYY').toDate()) return -1;
                     return 0;
@@ -768,7 +805,7 @@
                         // dat_cadastro: element[20],
                         // dat_cadastro: moment(element[20]),
                         dat_cadastro: moment(element[20]).format('DD/MM/YYYY'),
-                        dat_alteracao: moment(element[21]).format('DD/MM/YYYY'),
+                        dat_ultcompra: moment(element[21]).format('DD/MM/YYYY'),
                         // dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
                         // dat_lancamento: moment(element[23]).format('DD/MM/YYYY'),
                         // dat_saida: moment(element[22]).format('DD/MM/YYYY'),
@@ -794,6 +831,7 @@
                 const path = `/api/levantamentos/${this.data_cadastro_ini}/${this.data_cadastro_fim}/${this.suggestion_selected.cod_marca}/`;
                 axios.get(path)
                     .then((res) => {
+                        console.log("res");
                         console.log(res);
                         this.items = [];
                         res.data.forEach(item => this.items.push(this.objectify(item)));
@@ -898,17 +936,6 @@
                     if (typeof image_url == 'undefined')
                         image_url = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAh1BMVEX////Y2NgAAADW1tba2tr4+Pjd3d37+/v19fXx8fHh4eHp6en39/eHh4fu7u7JycmwsLCYmJhzc3NMTEzIyMgyMjIiIiJ6enpwcHCXl5eGhoa3t7dRUVHPz88YGBgrKysPDw+ioqIbGxs/Pz9iYmJISEiqqqpaWlq+vr5AQECPj483NzcmJiaEuJppAAAKXUlEQVR4nO1diXaqMBCFEEDBulu3YrWL+mz///veJAGFEBZZgm3nntMqAiGXTGYjCYaBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEAgEAvFD4QJs9q/rijQOuzf0Pc+h1LRME/4odTzPH/bsrivWCOyh71DzhsR3xx/+bJZu3+OtlgPLMr3+T5XaYnoRSyDZdWXvR8+nxdRiJKnf67rKdwGa7378oIYcOkmFUg5whjPsuuqlMKTlep8KFn18jj2nOj/O0Xns/uh6FcRThvfAxmNIq3TAJMDxeVhRdb16AnqD9ZjN2K8vnzfQB7QcPpOvxghS0++akIQSEmqBCwpVp+xG8O8Fhz+WpNr5zWdZlAVLAxEZwv8BC6fMApr0gcKOXn5N/b66rm6/wHl9GNPYz6mk4w9yzx34Ts7ZD6JvsgmWCxggDMkU14egmEUQfMyyusLN5vgAFDMIQsB3VzGZ/nrnFLOUzP3mzM8oqWN1Y6sb0Kui6AcZNrVTo+EqtX1lzxk8d0WBTpemX52sqC5XrjK69Bqs8Z3w1WJF803g3UVanfmomYawjr81VBXYkUJ1s4OJOhR76VIp7aYr5mUs6lBMu/G0m644zI0M6lBUaGirg8SG2lC0RrEDOS3MatehOEhT1C6nveKkWi11ky5Ot/fmlEgb1jIaUi+n1Gmu8lUqkIEaFH1LuoWalU3JtFqdVkzF/rS56hcj1YRUYadrUkyFLVobUb6/cPGMdFsNiqnbqLEn9uVrM1XePEXZIFn63NOULeQsGqeYklNtNlG2hVF00zhFKZSi2myinFG5KrnGKcrl6QoU49d1ALc763ps27mFVWzwE2xWpShHoJoMRjxGdTaAyeRwFizHa7Z9GZtOyG+7nL0stw6P+v3JATCO2mG8Hokv5/XZMNaHCJOJ6NXH6ct0bElaW4/BiOsZj0Q4sF3/wo3dkdWMWh9i88NirRiEO09CYXySJ1HelKwMl8TAaMzF1/0xSVGLrnHNJMPldrsdrwiZwL4ZWZ0Pk6cvQrbsgfcL2a/P5wuQYoIakD0cuoadJivnhVxEgUtgaIxZKYQc4WPr8ruxsjx2h7bJvqgjiEoYQ2B45r9O+K2fAU8X+uE7OTmmA7+dPUq9LbSwQ92A7PgdmhKSZsjQE83H8EWm/HNKvhK5Ei0mMWEMgeFc/ExIwBiumUYFbq8Bpf/Ikh/sTcknEJ4Lhoa74CKdZtgnJOykI0Ls6KdxohF1iCmVGI4ihueQoWF7B/IdUJC0Mz+YnkEwKR2HDI0DeS9g+BQ2oWGsyDLREzVoU9tSMuzx3jXjvdEwPsgnY0QCwXDEuN4YQod08xmewnIY11NCaKz2c/xDmWHAfz2R7wFjeLH7Pe/COp5zIM8hw2AHsgYM9yJV7HAmeQy/hGo2WP/+TPqI7duL5PWA4eL962tBRFvOIoW/9kwVQ2H6vUKGi2yG7bs1jsxQGMAVv/KM7F5fv5n2sSk9krdISveC4U44cBbXmXkM/10ZrmWGrYdQkusJDLe+70eiM+M1+yAfhjFwztd+COZ7HjJkFOfkjR+bzXAV7WM7k/e09REaUhLspktDhkyXmrxzutBUwiNxjoRQUzBkj22m7A7AfXiK6Exlhgcyu5Z4kBy3tuOLYQmGUGdWQfeDzDzm2ngvrCHCNjS9QJxzISdx0nckkjeGXuj3cIGWAoy2VY0UOQ2VDH2QXYPrzCWEFt6GCSlnSCHwAE+HNaFBwZizz8mV140hNPOeMRk+k6Ucb7etaqTL9ZQMjQ1ZMAcSLOJiuQRFO2HjomHr/d87qKUXYTSeCJmtL/DD0UgxtMGHn67Bv/u05ZvatleTZGi5V6+N4zNk2A+rPWKEyLuINMZc6769HKJ48fjK956js2MMDXezZ6HFxk53jJYZJru9NfD9uLc/jIYIDX3hItvz4/EsokVqzRkCcMwjhWh78yAudH58Y0jnYgxmL5nLaNtcSBmawufZrkOj4IDScGSiad4V9Q+kbE2d6hdDfu5VHK7Vz9240pnthojS1coEpLUpVrhmDVS5n7Up3i03dSAzLHVSXYpaGdqVen1NitLZ7TqmldpQ+dT6DoqdSmnZq9Vpxfv1dx1U12vC6jsey4GzbyI7XsZB0axLi+6nv9k8hdisXSMItzabOVD0tqv3xexiQaCxXU0FNk8bCC3O0VnLtMui1x4W+jRWLHe9HxjjWE6cOmEKHMJG5xA77p256hHOqUvq9WlkvzQVjvbmo1FwIG/nEXyy6OJ9xDH3OY3Leb49sWBqdDwex0vyPQa/1eIptUAcl075avZLpehJHY4G5DlUIWPycvv5mVw8cEydTwiImYfqTcjCg5DRZQxXmZfUHFuUCkeBYdi4cYZR/tp5IntejMMYmlyj5jHUHB+WupyaofFGlj6LLaJoI2IIXSuPoeYYXxIZdbePM5wNegxMAYJ2OW0t76qsrgxNb0NW7vU4CZrzNFKuzVKq7jjD+OPFC3x5XY2jgPHG0Jlmq1JXGvjRdq5Nck7UT7viDPevDG8iF0M5k8+5k2a4X7DjdvNUYdLQlvZntEnZS2WvyOiHDO58RaJMcYLhh9idLkzq+e0PG5L6vbIj5jBkJTyTDyfF8JQ1C0Xqhu0/t5DHYqkyNWqG26lIxIHG+fZSDD8ctfwNkpfT8OxJ8qGU9zSDIdmLL0fyrGDoqbuYJKQanh/KUqPqF5kWf8r6mb8gUz7OP8nQh7BDUZbU73WMqJEHtSm0d8JaPHPsL2K4yWn5Av8HPEZJWou3t7fd7pk/DohBHg6t4zm+PDBRIaYBeb0y3O05yAa2/NWOZb2nPWF1gOHXzVqEx0kMZSHVMRZDDkgV8Zp7faBo+0OBMBneoxYV34AiDeZBKPPBXECOLVLzErRMSpDEtOq8K0bxOlaG3pBQzvIgQT3jL2XXtGrnL5Oekg/RNBC6qUH0WempWyum5iQ0Q6AQmeNL70VhBq6r8aVZY4TvRwHFzsYIp0xi9UmjuRRTO/XNfVKO1a+GPIodjtVXzbeoimyKXc63UEx7qjE3JoNiahaO3olPqVrVuL8Fi9vcODdX/RJIGao6M8rlEFAN3RNlHXkidx01UKIVtc8/bHiSZzFFjbYwQnoecLMz1GXon6/e8HzrIopdrDmgmCjbHsUu5uMr56vXWfMjl2I3y5uo1hyg7aibjtbFSLunDDXEKZOiToc0iaYXk8mI+rtbn0a9dIRVY9Uj9bpaHa4xpO6KtdaJUqDTdaIy1/qqolMfcq2vP7BeW86ae/eJ6uOuuZe3bqJftgM99rqJ2RRpycXy85bgfwiCf2D90spr0No/Zg3aP7CO8B9YC9rgqx41uWR5l75oFn79mux/YF19o6F3I9RY4VUDfv37LYzf/44ShnrvmXlIDZNC1XcFWT/kXUEMv/19Twx3vrOr5BL8j4USr5ULYZnezxHPJIAkLfJAf/K78wTsoRe9/5Be/0Wi+ePffxjhd7/DMo7f+x5SBAKBQCAQCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAQCgUAgEH8G/wHbpIrORxpjogAAAABJRU5ErkJggg=='
 
-                    console.log('this.produtos_from_carregarImagens')
-
-                    console.log('marca')
-                    console.log(marca)
-                    console.log('cor')
-                    console.log(cor)
-                    console.log('ref_group')
-                    console.log(ref_group)
-
-                    console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].img')
-                    console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].img)
                     // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img = image_url[0]
                     for (var i=0; i< 10; i++) {
                         this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[i] = image_url[i]

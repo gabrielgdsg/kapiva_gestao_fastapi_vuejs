@@ -26,7 +26,7 @@ class LevantamentoEstoque(Model):
     cod_cor: int
     des_cor: str
     dat_cadastro: datetime
-    dat_alteracao: date
+    dat_ultcompra: date
     dat_emissao: date
     dat_lancamento: date
     dat_saida: date
@@ -84,7 +84,7 @@ class Produto(Model):
     des_grade: str
     cod_cor: int
     dat_cadastro: datetime
-    dat_alteracao: datetime
+    dat_ultcompra: datetime
     cod_fornecedor: int
     raz_fornecedor: str
     fan_fornecedor: str
