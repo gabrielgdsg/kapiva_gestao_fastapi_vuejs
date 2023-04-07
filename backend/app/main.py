@@ -1,4 +1,5 @@
 from typing import List
+from fastapi_offline import FastAPIOffline
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from api.comissao import api_comissao
@@ -10,7 +11,8 @@ from config import settings
 # from api.models import User
 from db_mongo.database import engine, ObjectId
 
-app = FastAPI()
+app = FastAPIOffline()
+# app = FastAPI()
 
 app.include_router(api_levantamentos.router)
 app.include_router(api_estoque.router)
@@ -53,7 +55,7 @@ if __name__ == "__main__":
     import asyncio
     import uvicorn
     loop = asyncio.get_event_loop()
-    config = uvicorn.Config(app=app, port=80, loop=loop, host=settings.UVICORN_HOST, log_level="info", reload=True, debug=True)
+    config = uvicorn.Config(app=app, port=80, loop=loop, host=settings.UVICORN_HOST, log_level="info", reload=True)
     server = uvicorn.Server(config)
     loop.run_until_complete(server.serve())
 #

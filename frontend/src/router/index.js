@@ -46,6 +46,12 @@ const routes = [
     props: true
   },
     {
+    path: '/estoque',
+    name: 'Estoque',
+    component: () => import('../views/Estoque'),
+    props: true
+  },
+    {
     path: '/googleimagetestview',
     name: 'GoogleImageTestView',
     component: () => import('../views/GoogleImageTestView'),

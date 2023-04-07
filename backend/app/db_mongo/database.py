@@ -11,5 +11,5 @@ client = AsyncIOMotorClient(settings.MONGODB_URL)
 # client = AsyncIOMotorClient("mongodb://root:rootpassword@localhost:27017")
 
 
-engine = AIOEngine(motor_client=client, database="kapiva_gestao")
+engine = AIOEngine(client=client, database="kapiva_gestao")
 

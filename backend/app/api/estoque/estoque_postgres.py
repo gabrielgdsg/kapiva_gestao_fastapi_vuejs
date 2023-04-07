@@ -1,9 +1,8 @@
 from db_postgres.connection import CursorFromConnectionFromPool
 
 class EstoquePostgres:
-
     @classmethod
-    def load_estoque_produtos_from_db(cls, data_movto_ini):
+    def load_estoque_produtos_from_db(cls, cod_marca, dat_movto_ini):
         with CursorFromConnectionFromPool() as cursor:
             cursor.execute('''
                 select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
@@ -16,7 +15,7 @@ class EstoquePostgres:
             pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece, 
             f.raz_fornece, f.fan_fornece,
             m.cod_marca, m.nom_marca,
-            pfe.tipo_movto, pfe.qtd_movto, pfe.data as data_movto, pfe.cod_movto, pfe.cod_origem_movto
+            pfe.tipo_movto, pfe.qtd_movto, pfe.data as data_movto, pfe.cod_movto, pfe.cod_origem_movto, pfe.id
     FROM PRODUTO pro
              LEFT OUTER JOIN MARCA m ON (m.COD_MARCA = pro.COD_MARCA)
              LEFT OUTER JOIN PRODUTO_ESTOQUE e ON (e.COD_EMPRESA = pro.COD_EMPRESA and
@@ -32,7 +31,8 @@ class EstoquePostgres:
             LEFT OUTER JOIN subgrupo_produto su on (su.cod_grupo = pro.cod_grupo and su.cod_subgrupo = pro.cod_subgrupo)
     where pro.cod_empresa = '1'
           and (cb.flg_estorno is null or cb.flg_estorno = 'N')
-          and pfe.data >= %s
+          and m.cod_marca = '{0}'
+          and pfe.data >= '{1}'
           and (pro.flg_mestre = 'N' or pro.flg_mestre is null)
     group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
                  pro.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
@@ -43,7 +43,6 @@ class EstoquePostgres:
                  pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece,
                  f.raz_fornece, f.fan_fornece,
                  m.cod_marca, m.nom_marca,
-                 pfe.tipo_movto, pfe.qtd_movto, data_movto, pfe.cod_movto, pfe.cod_origem_movto
-        order by 1, 2, 3, 4''', data_movto_ini)
+                 pfe.tipo_movto, pfe.qtd_movto, data_movto, pfe.cod_movto, pfe.cod_origem_movto, pfe.id'''.format(cod_marca, dat_movto_ini))
             dados_estoque = cursor.fetchall()
         return dados_estoque

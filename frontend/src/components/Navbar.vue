@@ -14,6 +14,7 @@
                     <router-link class="nav-link" to="/levantamentos_test2">LevantamentosTest2</router-link>
                     <router-link class="nav-link" to="/googleimagetestview">GoogleImageTestView</router-link>
                     <router-link class="nav-link" to="/cliente">Cliente</router-link>
+                    <router-link class="nav-link" to="/estoque">Estoque</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>
                         <b-dropdown-item class="nav-link" :to="{name: 'FinanceiroCaixa', params: {currentComponent: 'selecionar'}}">
                             Caixa
