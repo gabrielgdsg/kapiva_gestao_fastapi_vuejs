@@ -704,6 +704,8 @@
                 ]
             },
             filteredOptions() {
+                console.log('this.suggestions')
+                console.log(this.suggestions)
                 return [
                     {
                         data: this.suggestions[0].data

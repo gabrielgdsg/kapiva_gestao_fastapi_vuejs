@@ -10,6 +10,7 @@ from db_postgres.connection import PostgresDatabase
 from config import settings
 # from api.models import User
 from db_mongo.database import engine, ObjectId
+from db_mongo.database import init_db
 
 app = FastAPIOffline()
 # app = FastAPI()
@@ -19,8 +20,10 @@ app.include_router(api_estoque.router)
 app.include_router(api_comissao.router)
 app.include_router(api_caixa.router)
 
+PostgresDatabase.initialise(user=settings.POSTGRES_USER, password=settings.POSTGRES_PASSWORD,
+                            database=settings.POSTGRES_DATABASE, host=settings.POSTGRES_HOST,
+                            port=settings.POSTGRES_PORT)
 
-PostgresDatabase.initialise(user=settings.POSTGRES_USER, password=settings.POSTGRES_PASSWORD, database=settings.POSTGRES_DATABASE, host=settings.POSTGRES_HOST, port=settings.POSTGRES_PORT)
 # PostgresDatabase.initialise(user='postgres', password=36217900, database='LOGTEC', host='CAIXA',  port='5432')  # ip:192.168.1.151
 # PostgresDatabase.initialise(user='postgres', password=36217900, database='LOGTEC', host='192.168.1.151',  port='5432')  # ip:192.168.1.151
 ## PostgresDatabase.initialise(user='postgres', password=36217900, database='LOGTEC', host='postgresqlhost',  port='5432')# ip:192.168.1.151
@@ -45,6 +48,11 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
+
+@app.on_event("startup")
+async def start_db():
+    await init_db()
+
 # if __name__ == "__main__":
 #     import uvicorn
 #     uvicorn.run('main:app', port=80, host=settings.UVICORN_HOST, log_level="info", reload=True, debug=True)
@@ -54,10 +62,14 @@ app.add_middleware(
 if __name__ == "__main__":
     import asyncio
     import uvicorn
+
     loop = asyncio.get_event_loop()
     config = uvicorn.Config(app=app, port=80, loop=loop, host=settings.UVICORN_HOST, log_level="info", reload=True)
     server = uvicorn.Server(config)
     loop.run_until_complete(server.serve())
+
+
+
 #
 #     from uvicorn.reloaders.statreload import StatReload
 #     from uvicorn.main import run, get_logger
@@ -99,5 +111,3 @@ if __name__ == "__main__":
 #         raise HTTPException(404)
 #     await engine.delete(user)
 #     return user
-
-

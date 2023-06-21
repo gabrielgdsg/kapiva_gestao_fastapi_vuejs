@@ -43,6 +43,7 @@ class EstoquePostgres:
                  pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece,
                  f.raz_fornece, f.fan_fornece,
                  m.cod_marca, m.nom_marca,
-                 pfe.tipo_movto, pfe.qtd_movto, data_movto, pfe.cod_movto, pfe.cod_origem_movto, pfe.id'''.format(cod_marca, dat_movto_ini))
+                 pfe.tipo_movto, pfe.qtd_movto, data_movto, pfe.cod_movto, pfe.cod_origem_movto, pfe.id
+    order by pfe.id'''.format(cod_marca, dat_movto_ini))
             dados_estoque = cursor.fetchall()
         return dados_estoque

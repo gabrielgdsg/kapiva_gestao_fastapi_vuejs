@@ -3,8 +3,8 @@
         <b-row>
             <b-col sm="2">
 
-                <b-form @submit.stop.prevent="updateEstoqueProdutos">
-                    <b-button type="submit" variant="primary">Update Estoque Produtos</b-button>
+                <b-form @submit.stop.prevent="readProdutosFromMongoWithFilter">
+                    <b-button type="submit" variant="primary">Mongo Estoque Produtos with Filter</b-button>
                 </b-form>
                 <b/>
                 <b-form @submit.stop.prevent="readProdutosFromMongo">
@@ -30,12 +30,12 @@
             <b-col sm="2">
                     <b-row>
                         <label>Data Movto inicial: </label>
-                        <datepicker-ini v-model="data_movto_ini" @change="receiveDataMovtoIni"  placeholder="Selecione a data"/>
+                        <mydatepicker-ini :datepicker_default="datepicker_ini" @childToParent="receiveDataMovtoIni"  placeholder="Selecione a data"/>
                         <br><br>
                     </b-row>
                     <b-row>
                         <label>Data Movto final: </label>
-                        <datepicker-fim v-model="data_movto_fim" @change="receiveDataMovtoFim"  placeholder="Selecione a data"/>
+                        <mydatepicker-fim :datepicker_default="datepicker_fim" @childToParent="receiveDataMovtoFim"  placeholder="Selecione a data"/>
                         <br><br>
 
                     </b-row>
@@ -62,11 +62,10 @@
         <b-row>
             <b-input v-model="filter" placeholder="Filtros OU separados por vírgulas"></b-input>
             <!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="items" :filter-function="filterFn"-->
-<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredItemsComputed" :filter-function="filterFn"-->
             <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredItemsComputed" :filter-function="filterFn"
                  :small=true
-                 :sort-compare="dateSorter" @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px"
-                 striped>
+                  @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px" striped>
+<!--                 :sort-compare="dateSorter" @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
 
             <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
                 <div v-if="item.estoque_history[item.estoque_history.length-1]"><!-- eslint-disable-line-->
@@ -129,27 +128,30 @@
     import {VueAutosuggest} from 'vue-autosuggest'
     import axios from "axios";
     import moment from "moment";
-    import DatePicker from 'vue2-datepicker'
+    // import DatePicker from 'vue2-datepicker'
     import 'vue2-datepicker/index.css'
     import 'vue2-datepicker/locale/pt-br'
-    // import Mydatepicker from '../components/Mydatepicker'
+    import Mydatepicker from '../components/Mydatepicker'
     // import moment from "moment";
 
     export default {
-        name: "Estoque",
+        name: "Estoque_test",
         components: {
-            'datepicker-ini': DatePicker,
-            'datepicker-fim': DatePicker,
+            'mydatepicker-ini': Mydatepicker,
+            'mydatepicker-fim': Mydatepicker,
             'vue-autosuggest': VueAutosuggest
         },
         data() {
             return {
                 cod_marca: 0, //olympikus = 567
                 // cod_marca: '567', //olympikus = 567
-                data_movto_ini: new Date('2019-01-01 03:00:00.000'),
                 // data_movto_ini: new Date('2019-01-01 03:00:00.000'),
-                data_movto_fim: new Date,
+                // data_movto_fim: new Date,
                 default_date: new Date('1900-01-01 01:00:00.000'),
+                datepicker_ini: new Date(1900, 0, 1),
+                datepicker_fim: new Date(2019, 11, 16),
+                data_movto_ini: '',
+                data_movto_fim: '',
                 // default_date: new Date('1900-01-01 01:00:00.000'),
                 filter: null,
                 filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''},
@@ -360,8 +362,12 @@
                 return mapped_items
             },
             filteredItemsComputed() {
-                return this.filteredItemsByDescription(this.items)
+                // return  Object.freeze(this.filteredItemsByDescription(this.filteredItemsByCor(this.items)))
+                return  this.filteredItemsByCor(this.filteredItemsByDescription(this.items))
+                // return  this.filteredItemsByDescription(this.filteredItemsByCor(this.items))
+                // return this.items.filter(item => item.des_produto.toLowerCase().includes(this.filters.des_produto.toLowerCase()))
             },
+
 
             filteredmappedItemsComputed() {
                 const filtered = this.items.filter(item => {
@@ -394,6 +400,7 @@
                 return [
                     {key: 'selected', label: 'Sel.'},
                     {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
+                    {key: 'raz_fornècedor', label: 'Forn.', sortable: true},
                     {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
                     {key: 'dat_ultcompra', label: 'Data UltCompra', sortable: true},
                     {key: 'cod_referencia', label: 'Ref.', sortable: true},
@@ -454,15 +461,30 @@
         },
         methods: {
             filteredItemsByDescription:function(items){
-                // console.log(items)
-                return items.filter(item => !item.des_produto.toLowerCase().indexOf(this.filters.des_produto))
-
+                console.log(items)
+                // return items.filter(item => !item.des_produto.toLowerCase().indexOf(this.filters.des_produto))
+                return this.items.filter(item => (item.des_produto||'').toLowerCase().includes(this.filters.des_produto.toLowerCase()))},
+                // return items.filter(item => !item.des_produto.toLowerCase().includes(this.filters.des_produto))
             //    TODO
             //    des_cor in FERRACINI = null sometimes, find a way to bypass
             //    chaining filters like below might work
             //    https://5balloons.info/combining-multiple-filters-on-list-using-computed-properties-in-vuejs/
+            filteredItemsByCor:function(items){
+                console.log(items)
+                return this.items.filter(item => (item.des_cor||'').toLowerCase().includes(this.filters.des_cor.toLowerCase()))},
 
-            },
+            // const filtered = this.items.filter(item => {
+            //     // const filtered = this.mappedItemsComputed.filter(item => {
+            //     //     console.log(filtered)
+            //         return Object.keys(this.filters).every(key =>{
+            //             String(item[key].toString().toLowerCase()).includes(this.filters[key].toString().toLowerCase())
+            //         }
+            //         )
+            //     })
+
+
+
+
             receiveDataMovtoIni(value) {
                 this.data_movto_ini = value
             },
@@ -476,8 +498,9 @@
                     .then((res) => {
                         // console.log('res_marcas');
                         // console.log(res);
-                        this.marcas = res.data
+                        // this.marcas = res.data
                         this.suggestions[0].data = res.data
+                        Object.freeze(this.suggestions)
                     })
                     .catch((error) => {
                         console.log(error)
@@ -573,14 +596,35 @@
                 row._showDetails = !row._showDetails;
             },
             readProdutosFromMongo() {
-                const path = `/api/estoque/read_produtos_from_mongo_db/${this.suggestion_selected.cod_marca}`
+                const path = `/api/estoque/read_produtos_from_mongo_db_test/${this.suggestion_selected.cod_marca}`
                 // const path = `/api/estoque/read_produtos_from_mongo_db/${this.cod_marca}`
                 console.log(path)
                 axios.get(path)
                     .then((produtos) => {
-                        // console.log("produtos")
-                        // console.log(produtos)
+                        console.log("produtos")
+                        console.log(produtos)
                         this.items = produtos.data
+                        Object.freeze(this.items)
+                        // console.log("this.items")
+                        // console.log(this.items)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            readProdutosFromMongoWithFilter() {
+                // const path = `/api/estoque/read_produtos_from_mongo_db_filter/${this.suggestion_selected.cod_marca}/${this.filters.des_produto}`
+                // this.data_movto_ini = '2000-01-01 01:01:01.000000'
+                // this.data_movto_fim = '2020-01-01 01:01:01.000000'
+                const path = `/api/estoque/read_produtos_from_mongo_db_beanie/${this.suggestion_selected.cod_marca}/${this.data_movto_ini}/${this.data_movto_fim}`
+                // const path = `/api/estoque/read_produtos_from_mongo_db/${this.cod_marca}`
+                console.log(path)
+                axios.get(path)
+                    .then((produtos) => {
+                        console.log("produtos")
+                        console.log(produtos)
+                        this.items = produtos.data
+                        Object.freeze(this.items)
                         // console.log("this.items")
                         // console.log(this.items)
                     })
