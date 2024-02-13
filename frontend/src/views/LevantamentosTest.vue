@@ -653,8 +653,7 @@
             },
             valoresFields() {
                 return [
-                    // {key: 'totais', label: 'Tot.', sortable: true},
-                    {key: 'vlr_custo_bruto', label: 'Custo', sortable: true},
+                    // {key: 'vlr_custo_bruto', label: 'Custo', sortable: true},
                     {key: 'vlr_venda1', label: 'Vlr. Venda', sortable: true}
                 ]
             },

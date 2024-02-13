@@ -62,7 +62,8 @@
         <b-row>
             <b-input v-model="filter" placeholder="Filtros OU separados por vírgulas"></b-input>
             <!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="items" :filter-function="filterFn"-->
-            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredItemsComputed" :filter-function="filterFn"
+<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredItemsComputed" :filter-function="filterFn"-->
+            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredData" :filter-function="filterFn"
                  :small=true
                   @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px" striped>
 <!--                 :sort-compare="dateSorter" @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
@@ -71,20 +72,29 @@
                 <div v-if="item.estoque_history[item.estoque_history.length-1]"><!-- eslint-disable-line-->
                     {{item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key+"_E"]}}<br>
                 <b>{{item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key]}}</b>
-<!--                    <div v-if="this.grade_estoque_totais[field.key+'_E']">-->
-<!--                        {{this.grade_estoque_totais[field.key+"_E"] = this.grade_estoque_totais[field.key+"_E"] + item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key+"_E"]}}-->
-<!--                    </div>-->
-<!--                    <div v-else>-->
-<!--                        {{this.grade_estoque_totais[field.key+"_E"] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key+"_E"]}}-->
-<!--                    </div>-->
-<!--                    <div v-if="this.grade_estoque_totais[field.key]">-->
-<!--                        {{this.grade_estoque_totais[field.key] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key]}}-->
-<!--                    </div>-->
-<!--                    <div v-else>-->
-<!--                        {{this.grade_estoque_totais[field.key] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key]}}-->
-<!--                    </div>-->
                 </div>
+
+
+                    <div v-if="grade_estoque_totais[field.key+'_E']"><!-- eslint-disable-line-->
+                        {{grade_estoque_totais[field.key+"_E"] = grade_estoque_totais[field.key+"_E"] + item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key+"_E"]}}
+                    </div>
+                    <div v-else><!-- eslint-disable-line-->
+                        {{grade_estoque_totais[field.key+"_E"] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key+"_E"]}}
+                    </div>
+                    <div v-if="grade_estoque_totais[field.key]"><!-- eslint-disable-line-->
+                        {{grade_estoque_totais[field.key] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key]}}
+                    </div>
+                    <div v-else><!-- eslint-disable-line-->
+                        {{grade_estoque_totais[field.key] = item.estoque_history[item.estoque_history.length-1].grade_estoque[field.key]}}
+                    </div>
+
             </template>
+
+<!--                <template v-slot:cell(estoque_history)="data">-->
+<!--&lt;!&ndash;                    <div v-if="data.item.estoque_history">&ndash;&gt;-->
+<!--                    {{data.item.estoque_history}}-->
+<!--&lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--                </template>-->
 
 
                 <template v-slot:cell(saidas)="data">
@@ -104,18 +114,21 @@
 
                 <template scope="data" slot="top-row" ><!-- eslint-disable-line-->
                 <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
-                    <template v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_ultcompra'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
-                        <b-form-input :placeholder="field.label" class="col-sm" v-model="filters[field.key]"></b-form-input>
+                    <template v-if="field.key==='nom_marca'||field.key==='raz_fornecedor'||field.key==='dat_cadastro'||field.key==='dat_ultcompra'||field.key==='estoque_history'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
+                        <b-form-input :placeholder="field.label" class="col-sm" v-model="multiSearch[field.key]"></b-form-input>
+<!--                        <b-form-input :placeholder="field.label" class="col-sm" v-model="filters[field.key]"></b-form-input>-->
                     </template>
                     <template v-else>
 <!--                        {{this.grade_estoque_totais}}-->
-<!--                        <div v-if="this.grade_estoque_totais[field.key+'_E'] && this.grade_estoque_totais[field.key]">-->
-<!--                            <b>{{this.grade_estoque_totais[field.key+"_E"]}}</b>-->
-<!--                            {{this.grade_estoque_totais[field.key]}}-->
-<!--                        </div>-->
+                        <div v-if="grade_estoque_totais[field.key+'_E'] && grade_estoque_totais[field.key]">
+                            <b>{{grade_estoque_totais[field.key+"_E"]}}</b>
+                            {{grade_estoque_totais[field.key]}}
+                        </div>
                     </template>
                 </td>
                 </template>
+
+
 
 
             </b-table>
@@ -143,6 +156,7 @@
         },
         data() {
             return {
+                a_just_for_testing:'',
                 cod_marca: 0, //olympikus = 567
                 // cod_marca: '567', //olympikus = 567
                 // data_movto_ini: new Date('2019-01-01 03:00:00.000'),
@@ -157,6 +171,7 @@
                 filters: {nom_marca: '', dat_cadastro: '', des_cor: '', des_produto: ''},
                 grades_selected: [],
                 grade_estoque_totais: {},
+                soma_deletar: {},
                 grades_options: [
                     {
                         "name": 'Calçado Bebê',
@@ -324,6 +339,7 @@
                 items:[],
                 mapped_items: [],
                 marcas: {},
+                multiSearch: {},
                 suggestion_selected: {
                     cod_marca: 0,
                     fornecedores: [{fan_fornecedor: ''}],
@@ -344,6 +360,126 @@
             };
         },
         computed: {
+            filteredData() {
+                if (this.multiSearch) {
+                    return this.items.filter((item) => {
+                        return Object.entries(this.multiSearch).every(([key, value]) => {
+                            if (value.includes("|") && !value.includes("!")) {
+                                let el = value.split("|");
+                                return el.some((elem) =>
+                                    (item[key] || "").toString().toUpperCase().startsWith(elem.toString().toUpperCase())
+                                );
+                            }
+                            if (value.substring(0, 1) === "!" && !value.includes("|")) {
+                                let el = value.split("!");
+                                return el.some((elem) =>
+                                    !(item[key] || "").toString().toUpperCase().startsWith(elem.toString().toUpperCase())
+                                );
+                            }
+                            if (value.includes("|") && value.substring(0, 1) === "!") {
+                                let el = value.split("!")[1].split("|");
+                                return !el.some((elem) =>
+                                    (item[key] || "").toString().toUpperCase().startsWith(elem.toString().toUpperCase())
+                                );
+                            }
+                            if ((key === "dat_cadastro" || key === "dat_ultcompra") && value.substring(0, 1) === "<") {
+                                let el = value.split("<");
+                                if (item[key] !== " ") {
+                                    return moment(item[key], 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate();
+                                }
+                            }
+                            if ((key === "dat_cadastro" || key === "dat_ultcompra") && value.substring(0, 1) === ">") {
+                                let el = value.split(">");
+                                if (item[key] !== " ") {
+                                    return moment(item[key], 'YYYY-MM-DD').toDate() > moment(el[1], 'YYYY-MM-DD').toDate();
+                                }
+                            }
+                            if (value.substring(0, 1) === ">") {
+                                let el = value.split(">");
+                                if (item[key] !== " ") {
+                                    return Number(item[key] || "") > el[1];
+                                }
+                            }
+
+                            if (value.substring(0, 1) === "<") {
+                                let el = value.split("<");
+                                if (item[key] !== " ") {
+                                    return Number(item[key] || "") < el[1];
+                                }
+                            }
+                            if (value.substring(0, 1) === "=") {
+                                let el = value.split("=");
+                                return (item[key] || "").toString().toUpperCase() === el[1].toString().toUpperCase();
+                            }
+                            // TODO - trying to implement estoque_history filter
+                            if ((key === "estoque_history") && value.substring(0, 1) === "m") {
+                                // let test = item[key].map(a => a.data_movto);
+                                console.log('test')
+
+                                let el = value.split("m");
+                                if (item[key] !== " ") {
+                                    console.log(el)
+                                    console.log("item[key]")
+                                    console.log(item[key])
+
+                                    let result = item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate());
+
+                                    // let result = item[key].filter( history_item => history_item.saidas >= -50 && history_item.saidas <= el[1])
+                                    console.log("result")
+                                    console.log(result)
+
+                                    // console.log(item[key].map(a => a.saidas))
+                                    // let retorno = Number(item[key].saidas || "") < el[1]
+                                    // console.log("item[key].saidas")
+                                    // console.log(item[key].saidas)
+                                    // console.log("retorno")
+                                    // console.log(retorno)
+                                    return item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate());
+                                    // return item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate());
+
+                                }
+                            }
+                            if ((key === "estoque_history") && value.substring(0, 1) === "M") {
+                                // let test = item[key].map(a => a.data_movto);
+                                console.log('test')
+
+                                let el = value.split("M");
+                                if (item[key] !== " ") {
+                                    console.log(el)
+                                    console.log("item[key]")
+                                    console.log(item[key])
+
+                                    let result = item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() > moment(el[1], 'YYYY-MM-DD').toDate());
+
+                                    // let result = item[key].filter( history_item => history_item.saidas >= -50 && history_item.saidas <= el[1])
+                                    console.log("result")
+                                    console.log(result)
+
+                                    // console.log(item[key].map(a => a.saidas))
+                                    // let retorno = Number(item[key].saidas || "") < el[1]
+                                    // console.log("item[key].saidas")
+                                    // console.log(item[key].saidas)
+                                    // console.log("retorno")
+                                    // console.log(retorno)
+                                    return item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate());
+                                    // return item[key].filter( history_item => moment(history_item.data_movto, 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate());
+                                }
+                            }
+                            // if (value.substring(0, 1) === "<" && (key === "dat_estoque_history_ini" || key === "dat_estoque_history_fim")) {
+                            //     // this.just_for_testing = item
+                            //     let el = value.split("<");
+                            //     if (item[key] !== " ") {
+                            //         return moment(item[key], 'YYYY-MM-DD').toDate() < moment(el[1], 'YYYY-MM-DD').toDate();
+                            //     }
+                            // }
+
+                            return (item[key] || "").toString().toUpperCase().includes(value.toString().toUpperCase());
+                        });
+                    });
+                } else {
+                    return this.items;
+                }
+            },
             // saldoEstoque() {
             //
             // },
@@ -400,9 +536,11 @@
                 return [
                     {key: 'selected', label: 'Sel.'},
                     {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
-                    {key: 'raz_fornècedor', label: 'Forn.', sortable: true},
+                    {key: 'raz_fornecedor', label: 'Forn.', sortable: true},
                     {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
                     {key: 'dat_ultcompra', label: 'Data UltCompra', sortable: true},
+                    {key: 'estoque_history', label: 'EstoqHist'},
+                    {key: 'estoque_history.data_movto', label: 'DatEstoqFim'},
                     {key: 'cod_referencia', label: 'Ref.', sortable: true},
                     {key: 'des_cor', label: 'Cor', sortable: true},
                     {key: 'img', label: 'Img.'},
