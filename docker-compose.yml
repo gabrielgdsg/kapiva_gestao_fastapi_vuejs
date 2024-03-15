@@ -11,17 +11,22 @@ services:
     ports:
       - 27017:27017
     volumes:
-      - mongodb-volume:/data/db
+      - D:/db_mongo/data:/data/db
+#      - ./db_mongo/data:/data/db
+#      - mongodb-volume:/data/db
   backend:
     container_name: backendcontainer
     build:
       context: ./backend
       dockerfile: ./Dockerfile
     image: gabrielgdsg/myrepo:backend
+#    image: gabrielgdsg/kapivagestao:backend
     restart: always
 #    command: uvicorn main:app --host 0.0.0.0 --port 80 --reload  # comment out this line for production
+#    command: uvicorn app/main:app --host 0.0.0.0 --port 80 --reload  # comment out this line for production
+
 #    volumes:
-#      - './backend/app:/app'
+#      - ./backend/app:/app
     ports:
       - "80:80"
     env_file:
@@ -37,11 +42,12 @@ services:
       target: 'production-stage'
 #      target: 'develop-stage'
     image: gabrielgdsg/myrepo:frontend
+#    image: gabrielgdsg/kapivagestao:frontend
     restart: always
     ports:
         - '8080:8080'
 #    volumes:
-#        - './frontend:/app'
+#        - ./frontend:/app
     env_file:
       - prod.env
 #      - develop_docker.env
