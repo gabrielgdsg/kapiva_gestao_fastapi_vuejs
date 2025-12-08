@@ -1,96 +1,83 @@
-# Never track backup folders
-_backups/
-
-
-# ==== PYTHON ====
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.so
-*.egg-info/
-dist/
-build/
-.env
+# ---------------------------------------------------------
+# Global
+# ---------------------------------------------------------
 *.log
+*.log.*
+*.tmp
+*.bak
+*.old
+*.swp
+*.swo
+*.DS_Store
+Thumbs.db
 
-# Virtual environments
-venv/
-.env/
-.venv/
-ENV/
-env/
-
-# Pipenv
-Pipfile.lock
-poetry.lock
-
-
-# ==== FASTAPI BACKEND ====
-backend/__pycache__/
-backend/**/__pycache__/
-backend/*.sqlite
-backend/*.db
-backend/logs/
-backend/tmp/
-
-
-# ==== FRONTEND (Vue + Node) ====
-frontend/node_modules/
-frontend/dist/
-frontend/.vite/
-frontend/.cache/
-frontend/.eslintcache
-frontend/yarn.lock
-*.tsbuildinfo
-
-
-# ==== DOCKER ====
-docker-compose.override.yml
-docker-compose.prod.yml
-docker/*.log
-docker/*.pid
-**/docker-data/
-**/.docker/
-
-# Docker volumes
-volumes/
-data/
-
-
-# ==== MONGODB ====
-# Never commit WiredTiger or DB data!
-db_mongo/data/
-db_mongo/logs/
-db_mongo/journal/
-db_mongo/*.wt
-db_mongo/*.ns
-db_mongo/dump/
-mongodb/
-mongo_data/
-
-# If you store seed scripts:
-!db_mongo/seeds/
-
-
-# ==== EDITORS ====
+# Ignore system files
 .vscode/
 .idea/
 *.iml
 
+# Ignore helper exports
+project_tree.txt
+status.txt
+allfiles.txt
+allfiles.txt~
 
-# ==== SYSTEM FILES ====
-.DS_Store
-Thumbs.db
-desktop.ini
+# ---------------------------------------------------------
+# Python / FastAPI backend
+# ---------------------------------------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
 
-# ==== BACKUPS ====
-*_backup/
-*~ 
-_backup/
-.backup/
-*.bak
-*.orig
-*.tmp
-*.swp
-._*
+# Virtual environments
+venv/
+.venv/
+ENV/
+env/
+
+# Python dependency management
+Pipfile.lock
+poetry.lock
+*.egg-info/
+.eggs/
+
+# ---------------------------------------------------------
+# MongoDB local data
+# ---------------------------------------------------------
+db_mongo/data/
+db_mongo/journal/
+db_mongo/*.wt
+db_mongo/*.ns
+*.wt
+*.ns
+
+# ---------------------------------------------------------
+# Vue frontend
+# ---------------------------------------------------------
+frontend/node_modules/
+frontend/dist/
+frontend/.env*
+frontend/backup/
+
+# Vue logs / caches
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.cache/
+
+# ---------------------------------------------------------
+# Docker
+# ---------------------------------------------------------
+docker-compose.override.yml
+*.pid
+
+# ---------------------------------------------------------
+# Backups (your old versions)
+# ---------------------------------------------------------
+_backups/
