@@ -14,6 +14,19 @@
                     <router-link class="nav-link" to="/levantamentos_test2">LevantamentosTest2</router-link>
                     <router-link class="nav-link" to="/googleimagetestview">GoogleImageTestView</router-link>
                     <router-link class="nav-link" to="/cliente">Cliente</router-link>
+<router-link class="nav-link" :to="{ name: 'VendedoresList' }">
+    Vendedor
+</router-link>
+                    <router-link class="nav-link" :to="{name: 'Vendas', params: {cod_vendedor: 74, date: '2025-07-23'}}">
+    Vendas
+</router-link>
+                    <router-link class="nav-link" :to="{name: 'Metas', params: {cod_vendedor: 74, currentComponent: 'selecionar'}}">
+    Metas
+</router-link>
+                    <router-link class="nav-link" to="/metas">Metas</router-link>
+                    <router-link class="nav-link" :to="{name: 'FinanceiroCaixa', params: {currentComponent: 'selecionar'}}">
+                        Caixa
+                    </router-link>
                     <router-link class="nav-link" to="/estoque">Estoque</router-link>
                     <router-link class="nav-link" to="/estoque_test">Estoque_test</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>

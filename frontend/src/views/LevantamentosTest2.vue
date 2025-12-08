@@ -205,6 +205,7 @@
         },
         data() {
             return {
+                isGradeTotalsInitialized: false,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -427,38 +428,104 @@
 
                 return filtered
             },
+
+            // new by deepai
             gradeTotals() {
-                const grade_totals = {}
-                if (this.filteredmappedItemsComputed.length > 0) {
-                    for (const item in this.filteredmappedItemsComputed) {
-                        for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
-                            if (numero_da_grade === 'nom_marca') {
-                                break; //break loop when finds anything different from "numeros de grade"
-                            }
-                            if (isNaN(grade_totals[numero_da_grade])) {
-                                    grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
-                                }
-                            else {
-                                grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
-                            }
+                const grade_totals = {};
+                const filteredItems = this.filteredmappedItemsComputed;
+
+                console.log("this.filteredmappedItemsComputed: ", Object.values(this.filteredmappedItemsComputed));
+                console.log("this.filteredmappedItemsComputed: actually ", this.filteredmappedItemsComputed);
+
+                if (filteredItems.length === 0) {
+                    return grade_totals; // Return early if no items found
+                }
+
+                // Initialize totals for grade categories
+                const grade_totals_split = {};
+                const grade_totals_split_E = {};
+                let total = 0;
+                let total_E = 0;
+
+                console.log("grade_totals_split:", grade_totals_split);
+console.log("Total E Calculation:", Object.values(grade_totals_split));
+console.log("Final total_E:", total);
+
+                for (const item of filteredItems) {
+                    for (const numero_da_grade in item) {
+                        console.log("numero_da_grade:", numero_da_grade);
+                        if (numero_da_grade === 'nom_marca') {
+                            break; // Break the loop when 'nom_marca' is found
+                        }
+
+                        const value = item[numero_da_grade];
+                        if (isNaN(value)) {
+                            continue; // Skip non-numeric values
+                        }
+
+                        // Initialize the grade_totals with 0 if not already set
+                        if (!grade_totals[numero_da_grade]) {
+                            grade_totals[numero_da_grade] = 0;
+                        }
+                        grade_totals[numero_da_grade] += value;
+
+                        // Distribute totals into split categories
+                        if (numero_da_grade.includes('E')) {
+                            grade_totals_split_E[numero_da_grade] = (grade_totals_split_E[numero_da_grade] || 0) + value;
+                        } else {
+                            grade_totals_split[numero_da_grade] = (grade_totals_split[numero_da_grade] || 0) + value;
                         }
                     }
                 }
-                let grade_totals_split = {}
-                let grade_totals_split_E = {}
-                let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
-                let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
 
-                for (const key in grade_totals_keys) {
-                    grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
-                    grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
-                }
+                // Calculate total for split
+                total = Object.values(grade_totals_split).reduce((a, b) => a + b, 0);
+                total_E = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0);
 
-                grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
-                grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+                grade_totals["totais"] = total;
+                grade_totals["totais_E"] = total_E;
 
-                return grade_totals
-            },
+                                console.log("grade_totals_split:", grade_totals_split);
+console.log("Total E Calculation:", Object.values(grade_totals_split));
+console.log("Final total_E:", total);
+
+                return grade_totals;
+                },
+
+            // before chatgpt update try
+            // gradeTotals() {
+            //     const grade_totals = {}
+            //     if (this.filteredmappedItemsComputed.length > 0) {
+            //         for (const item in this.filteredmappedItemsComputed) {
+            //             for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
+            //                 if (numero_da_grade === 'nom_marca') {
+            //                     break; //break loop when finds anything different from "numeros de grade"
+            //                 }
+            //                 if (isNaN(grade_totals[numero_da_grade])) {
+            //                         grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
+            //                     }
+            //                 else {
+            //                     grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     let grade_totals_split = {}
+            //     let grade_totals_split_E = {}
+            //     let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
+            //     let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
+            //
+            //     for (const key in grade_totals_keys) {
+            //         grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
+            //         grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
+            //     }
+            //
+            //     grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
+            //     grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+            //
+            //     return grade_totals
+            // },
+
             mappedItemsComputed() {
                 let mapped_items = [];
 

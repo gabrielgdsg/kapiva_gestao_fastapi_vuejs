@@ -3,19 +3,25 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Set the working directory inside the container
 WORKDIR /app
 
-# Install dependencies
-RUN pip install pipenv
+# Install the Python dependencies
+RUN pip install pipenv --upgrade
 #RUN /usr/bin/pip3 install pipenv
 
 #COPY ./app/Pipfile ./app/Pipfile.lock /containerworkdir/ #when using docker build
-COPY Pipfile Pipfile.lock /app/
+#COPY Pipfile Pipfile.lock ./
+COPY Pipfile Pipfile.lock ./
 RUN pipenv install --system --dev --deploy --ignore-pipfile
+#RUN pipenv install --deploy
 
-# Add metadata to the image to describe which port the container is listening on at runtime.
+# Copy the application code to the working directory
+#COPY . /code
+COPY ./app .
+# Expose the port on which the application will run
 EXPOSE 80
-COPY ./app /app/
+
 # Run the specified command within the container.
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload", "--forwarded-allow-ips='*'"]
 #CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "80", "--reload"]

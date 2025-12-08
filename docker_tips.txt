@@ -1,0 +1,119 @@
+when running containers, change the following files:
+ - database.py
+ - vue.config.js
+Enable/disable windows defender firewall
+Painel de Controle\Todos os Itens do Painel de Controle\Windows Defender Firewall
+
+testing ports on windows
+netstat -a -s -o -p tcp
+netstat -a -n -o
+netstat -a -s -o -p tcp
+
+
+-----------------dcoker installs
+https://stackoverflow.com/questions/36885985/cannot-start-docker-after-installation-on-windows
+-Create a virtual switch, refer to this article on how to do that
+-Create a docker machine using that network switch and hyper-V driver:
+docker-machine create -d hyperv --hyperv-virtual-switch "Comutador Virtual Externo" default
+
+https://stackoverflow.com/questions/53416685/docker-compose-tagging-and-pushing
+
+docker build -t gabrieldeoliveiraest/projetofinal2_web:latest -f Dockerfile .
+docker login -u "gabrielgdsg" -p "M@resdosu1" docker.io
+docker tag kapiva_gestao_fastapi_vuejs_frontend gabrielgdsg/myrepo:frontend
+docker tag kapiva_gestao_fastapi_vuejs_backend gabrielgdsg/myrepo:backend
+docker tag mongo gabrielgdsg/myrepo:mongodb
+docker push gabrielgdsg/myrepo:frontend
+docker push gabrielgdsg/myrepo:backend
+docker push gabrielgdsg/myrepo:mongodb
+
+
+maybe
+git@github.com:gabrielgdsg/kapiva_gestao_fastapi_vuejs.git
+better
+https://github.com/gabrielgdsg/kapiva_gestao_fastapi_vuejs
+
+--running
+docker run -dp 3000:3000 YOUR-USER-NAME/getting-started
+
+docker network create my-net
+docker run --env-file "C:/Users/Gabriel/PycharmProjects/kapiva_gestao_fastapi_vuejs/develop_docker.env" --network=my-net --name backendcontainer -dp 80:80 gabrielgdsg/myrepo:backend 
+docker run --network=my-net --name frontendcontainer -dp 8080:8080 gabrielgdsg/myrepo:frontend
+docker run --env-file "C:/Users/Gabriel/PycharmProjects/kapiva_gestao_fastapi_vuejs/develop_docker.env" --network=my-net --name mongodb -v mongodb-volume:/data/db -dp 27017:27017 gabrielgdsg/myrepo:mongodb
+
+docker login -u "gabrielgdsg" -p "M@resdosu1" docker.io
+$ docker login
+  # ? append the domain name of your Docker registry
+  #   if you are not using Docker Hub; for example:
+  # docker login quay.io
+$ docker-compose build --pull
+$ docker-compose push
+  # and optionally:
+$ docker logout
+
+
+docker-compose volumes to develop
+test 'change deployments'
+how to migrate databases
+
+docker exec <docker_container_name> sh -c 'mongodump --uri="mongodb://username:password@localhost:27017/db_name?authSource=admin&readPreference=primary" --archive' > db.dump
+
+docker exec mongodb sh -c "mongodump --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao?authSource=admin" --archive" > D:\mongodb_volume\backups\kapiva_gestao_db.dump
+
+docker exec -i mongodb sh -c "mongodump --archive -u root -p rootpassword" < D:\mongodb_volume\backups\kapiva_gestao.dump
+
+docker exec -i mongodb sh -c "mongorestore --archive -u root -p rootpassword" < C:\Users\Gabriel\kapivagestao\mongodb_export\kapiva_gestao_db.dump
+
+
+docker exec -i mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao?authSource=admin" --db=kapiva_gestao_db C:\Users\Gabriel\kapivagestao\mongodb_export"
+
+docker exec -i mongodb sh -c 'mongorestore -d kapiva_gestao -u root -p rootpassword --archive' < C:\Users\Gabriel\kapivagestao\mongodb_export\kapiva_gestao_db.dump
+
+docker exec -i mongodb sh -c "mongorestore -d kapiva_gestao2 -u root -p rootpassword --archive" < kapiva_gestao_db.dump
+
+docker exec mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao2?authSource=admin" --archive=< C:\Users\Gabriel\kapivagestao\mongodb_export\kapiva_gestao_db.dump"
+
+docker exec mongodb sh -c "mongorestore --nsFrom "kapiva_gestao.*" --nsTo "kapiva_gestao2.*" D:/mongodb_volume/backups/kapiva_gestao_db.dump"
+
+docker exec mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao2?authSource=admin" --archive="D:\mongodb_volume\backups\kapiva_gestao_db.dump""
+
+
+docker exec mongodb sh -c "mongodump --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao" --gzip --archive=kapiva_gestao_db.tar.gz"
+
+mongorestore --uri="mongodb://<USERNAME>:<PASSWORD>@<IP_OF_THE_MONGO_TO_BE_RESTORED_TO>:27017/<THE_NEW_DB_TO_BE>" --nsFrom "<THE_DB_THAT_WAS_DUMPED>" --nsTo "<THE_NEW_DB_TO_BE>" --gzip  --archive="<DUMP_NAME>.tar.gz"
+
+
+mongorestore --port 27017 -u="username" -p="password" 
+    --nsFrom "dbname.*" 
+    --nsTo "new_dbname.*" 
+    --authenticationDatabase admin /backup_path 
+
+docker exec mongodb sh -c "mongorestore --port 27017 -u="root" -p="rootpassword" --nsFrom "kapiva_gestao.*" --nsTo "kapiva_gestao2.*" --authenticationDatabase admin "D:/mongodb_volume/backups/kapiva_gestao_db.dump""
+
+
+docker exec mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/?authSource=admin" "D:\mongodb_volume\backups\2024_dump""
+
+docker exec mongodb sh -c "mongorestore --port 27017 -u="root" -p="rootpassword" --archive="mongodump-test-db" --nsFrom="test.*" --nsTo="examples.*""
+
+docker exec mongodb sh -c "mongorestore --archive="D:/mongodb_volume/backups/2024_dump/kapiva_gestao_db.dump" --nsFrom="kapiva_gestao.*" --nsTo="kapiva_gestao_test.*""
+
+mongodump --archive="mongodump-test-db" --db=test
+
+mongorestore --archive="mongodump-test-db" --nsFrom="test.*" --nsTo="examples.*"
+
+docker exec mongodb sh -c "mongorestore --port 27017 -u="root" -p="rootpassword" --archive="kapiva_gestao_db" --nsFrom="kapiva_gestao.*" --nsTo="kapiva_gestao2.*""
+
+
+
+
+https://kyrcha.info/bits/transfer-a-mongo-db-from-one-docker-container-to-another
+
+
+
+In VirtualBox:Click the appropriate machine (probably the one labeled "default")SettingsNetwork > Adapter 1 > Advanced > Port ForwardingClick "+" to add a new RuleSet Host Port 8080 & Guest Port 8080; be sure to leave Host IP and Guest IP empty
+
+
+
+-docker-compose up -d (usei isso para iniciar o mongodb container)
+--precisa ver como fazer para iniciar o mongodb container sozinho (sem docker-compose)
+--precisa ver como fazer para salvar e recuperar o mongodb database

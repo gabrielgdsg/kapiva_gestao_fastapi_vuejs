@@ -34,6 +34,7 @@ export default {
       const path = `/api/comissao/${this.data_ini}/${this.data_fim}`
       axios.get(path)
         .then((res) => {
+          console.log(res.data)
           this.$router.push({name: 'Comissao', params: {currentComponent: 'tabela', data_ini: this.data_ini, data_fim: this.data_fim, dados_comissao: res.data}})
         })
         .catch((error) => {

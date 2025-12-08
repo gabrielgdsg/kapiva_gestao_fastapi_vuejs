@@ -1,5 +1,5 @@
 from typing import List
-from fastapi_offline import FastAPIOffline
+# from fastapi_offline import FastAPIOffline
 from fastapi import FastAPI, HTTPException
 from starlette.middleware.cors import CORSMiddleware
 from api.comissao import api_comissao
@@ -11,14 +11,16 @@ from config import settings
 # from api.models import User
 from db_mongo.database import engine, ObjectId
 from db_mongo.database import init_db
+from api.vendas.api_vendas import router as vendas_router
 
-app = FastAPIOffline()
-# app = FastAPI()
+# app = FastAPIOffline()
+app = FastAPI()
 
 app.include_router(api_levantamentos.router)
 app.include_router(api_estoque.router)
 app.include_router(api_comissao.router)
 app.include_router(api_caixa.router)
+app.include_router(vendas_router)
 
 PostgresDatabase.initialise(user=settings.POSTGRES_USER, password=settings.POSTGRES_PASSWORD,
                             database=settings.POSTGRES_DATABASE, host=settings.POSTGRES_HOST,

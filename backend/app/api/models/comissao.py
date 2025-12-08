@@ -1,18 +1,18 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from odmantic import Model, EmbeddedModel
 from bson import Decimal128 as Decimal
 
 
 class ComissaoVendedor(EmbeddedModel):
-    cod_vendedor: int
-    nom_vendedor: str
-    base_calc_comissao: Decimal
-    vlr_comissao: Decimal
-    cred_dev: Decimal
+    cod_vendedor:  Optional[int]
+    nom_vendedor: Optional[str]
+    base_calc_comissao: Optional[Decimal]
+    vlr_comissao: Optional[Decimal]
+    cred_dev: Optional[Decimal]
     # percent_comissao: Decimal
-    data_ini: datetime
-    data_fim: datetime
+    data_ini: Optional[datetime]
+    data_fim: Optional[datetime]
 
 
 class ComissaoDia(Model):

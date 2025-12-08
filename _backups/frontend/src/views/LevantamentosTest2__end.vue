@@ -1,0 +1,1017 @@
+<template>
+    <div class="levantamentos">
+        <h1>Levantamentos</h1>
+        <b-form @submit.stop.prevent="onSubmit">
+            <b-row>
+                <b-col sm="2">
+                    <b-row>
+                        <div class="autosuggest">
+                            <b>Marca: </b>
+                            <vue-autosuggest
+                                    :get-suggestion-value="getSuggestionValue"
+                                    :input-props="{id:'autosuggest__input', placeholder:'Digite a marca', class:'form-control'}"
+                                    :suggestions="filteredOptions" @click="clickHandler" @focus="focusMe"
+                                    @input="onInputChange"
+                                    @selected="onSelected"
+                                    v-model="query">
+                                <div class="autosuggest-container-results" slot-scope="{suggestion}"
+                                     style=" align-items: center;">
+                                    <div> {{suggestion.item.nom_marca}} ({{suggestion.item.cod_marca}})</div>
+                                </div>
+                            </vue-autosuggest>
+                        </div>
+                    </b-row>
+                    <b-row>
+                        <div>
+                            <b-form @submit.stop.prevent="pesquisarImagens">
+                                <b-button type="submit" variant="primary">Pesquisar Imagens</b-button>
+                            </b-form>
+                            <b-form @submit.stop.prevent="carregarImagens">
+                                <b-button type="submit" variant="primary">Carregar Imagens</b-button>
+                            </b-form>
+                            <b-form @submit.stop.prevent="saveProdutos">
+                                <b-button type="submit" variant="primary">Salvar Produtos</b-button>
+                            </b-form>
+                        </div>
+                    </b-row>
+                </b-col>
+                <b-col sm="2">
+                    <b-row>
+                        <label for="datepicker-data-ini">Data Cadastr inicial: </label>
+                        <mydatepicker-ini :datepicker_default="datepicker_ini" @childToParent="receiveDataCadastroIni"
+                                          id="datepicker-data-ini"/>
+                        <br><br>
+                    </b-row>
+                    <b-row>
+                        <label for="datepicker-data-fim">Data Cadastro final: </label>
+                        <mydatepicker-fim :datepicker_default="datepicker_fim" @childToParent="receiveDataCadastroFim"
+                                          id="datepicker-data-fim"/>
+                        <br><br>
+
+                    </b-row>
+                </b-col>
+
+                <b-col sm="2">
+                    <b-row>
+                        <b-button type="submit" variant="primary">Enviar</b-button>
+                    </b-row>
+                    <b-row>
+                        <br>
+                    </b-row>
+
+                    <b-row>
+                        <b-form-group>
+
+                            <b-input-group size="sm">
+                                <b-form-input
+                                        id="filter-input"
+                                        placeholder="Filtrar por.."
+                                        type="search"
+                                        v-model="filter"
+                                ></b-form-input>
+
+                                <b-input-group-append>
+                                    <b-button :disabled="!filter" @click="filter = ''">Limpar</b-button>
+                                </b-input-group-append>
+                            </b-input-group>
+                        </b-form-group>
+                    </b-row>
+
+                </b-col>
+
+                <b-col sm="4">
+                    <b-row>
+                        <b-col :key="grade.name" sm="6" v-for="grade in grades_options">
+
+                            <div class='form-check form-switch'>
+                                <div>
+
+                                    <input :value="grade" class='form-check-input' type="checkbox"
+                                           v-model="grades_selected"/>
+                                    <label class='form-check-label'>{{grade.name}}</label>
+                                    <!--                        <br>-->
+                                </div>
+                            </div>
+
+                        </b-col>
+                    </b-row>
+                </b-col>
+
+            </b-row>
+
+            <b-row>
+
+            </b-row>
+
+
+        </b-form>
+        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mappedItemsComputed" :small=true
+                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>
+
+<!--            <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="mapped_items" :small=true-->
+<!--                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped>-->
+
+
+
+            <template #cell(selected)="row">  <!-- eslint-disable-line-->
+<!--                <input type="checkbox" v-model="this.subgrouped_items_bycolor_obj[0][0][0].selected" />-->
+<!--                <input type="checkbox" v-model="row.item.selected" />-->
+                <input type="checkbox" v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected" />
+<!--                <input type="checkbox" v-model="this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected" />-->
+<!--                {{this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected}}-->
+<!--                <div v-if="this.subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected=true">-->
+<!--                <div v-if="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected==true">-->
+<!--                    {{subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected}}-->
+<!--                </div>-->
+<!--                <div v-else>-->
+<!--                    {{subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected}}-->
+<!--                    null or false-->
+<!--                </div>-->
+<!--                    {{row.item.selected}}-->
+            </template>
+
+            // eslint-disable-next-line vue/no-unused-vars
+            <template #cell(img)="data">  <!-- eslint-disable-line-->
+                <!--            <template slot="[img]" slot-scope="data">-->
+                <!--                <img :src="this.produtos.img" v-bind="imageProps"/>-->
+                <!--                <img :src=imagem_test v-bind="imageProps"/>-->
+                <img :src="data.value" v-bind="imageProps"/>
+            </template>
+
+
+            <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
+                <!-- eslint-disable-line-->
+                {{item[field.key+"_E"]}}
+                <br><!-- eslint-disable-line-->
+                <b> {{item[field.key]}} </b><!-- eslint-disable-line-->
+            </template>
+
+        </b-table>
+
+        <!--            <b-table :fields="fields" :items="filtered">-->
+        <!--                <template v-for="field in editableFields" v-slot:[`cell(${field.key})`]="{ item }">-->
+        <!--                    <b-input :key="field.key" v-model="item[field.key]"/>-->
+        <!--                </template>-->
+        <!--            </b-table>-->
+    </div>
+</template>
+
+<script>
+    import Mydatepicker from '../components/Mydatepicker'
+    import axios from "axios"
+    import {VueAutosuggest} from 'vue-autosuggest'
+    import moment from "moment";
+
+    export default {
+        name: "LevantamentosTest",
+        components: {
+            'mydatepicker-ini': Mydatepicker,
+            'mydatepicker-fim': Mydatepicker,
+            'vue-autosuggest': VueAutosuggest
+        },
+        data() {
+            return {
+                image_index: 0,
+                produtos_selected: [],
+                fields_selected: [],
+                grades_selected: [],
+                grades_options: [
+
+                    {
+                        "name": 'Calçado Bebê',
+                        "grade": [{key: '1', label: '1'},
+                            {key: '2', label: '2'},
+                            {key: '3', label: '3'},
+                            {key: '4', label: '4'}]
+                    },
+                     {
+                        "name": 'Roupa Infantil PI-MI-GI',
+                        "grade": [
+                            {key: 'PI', label: 'PI'},
+                            {key: 'MI', label: 'MI'},
+                            {key: 'GI', label: 'GI'}]
+                    },
+                    {
+                        "name": 'Calçado Infantil',
+                        "grade": [{key: '17', label: '17'},
+                            {key: '18', label: '18'},
+                            {key: '19', label: '19'},
+                            {key: '20', label: '20'},
+                            {key: '21', label: '21'},
+                            {key: '22', label: '22'},
+                            {key: '23', label: '23'},
+                            {key: '24', label: '24'},
+                            {key: '25', label: '25'},
+                            {key: '26', label: '26'},
+                            {key: '27', label: '27'},
+                            {key: '28', label: '28'},
+                            {key: '29', label: '29'},
+                            {key: '30', label: '30'},
+                            {key: '31', label: '31'},
+                            {key: '32', label: '32'},
+                            {key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'}]
+                    },
+                    {
+                        "name": 'Roupa Infantil 8-16',
+                        "grade": [
+                            {key: '8', label: '8'},
+                            {key: '10', label: '10'},
+                            {key: '12', label: '12'},
+                            {key: '14', label: '14'},
+                            {key: '16', label: '16'}]
+                    },
+                    {
+                        "name": 'Calçado Infantil Duplo',
+                        "grade": [{key: '17/18', label: '17/18'},
+                            {key: '19/20', label: '19/20'},
+                            {key: '21/22', label: '21/22'},
+                            {key: '23/24', label: '23/24'},
+                            {key: '25/26', label: '25/26'},
+                            {key: '27/28', label: '27/28'},
+                            {key: '29/30', label: '29/30'},
+                            {key: '31/32', label: '31/32'},
+                            {key: '33/34', label: '33/34'},
+                            {key: '35/36', label: '35/36'}]
+                    },
+                    {
+                        "name": 'Roupa Adulto PP',
+                        "grade": [
+                            {key: 'PP', label: 'PP'},
+                            {key: 'EP', label: 'EP'},]
+                    },
+                    {
+                        "name": 'Calçado Adulto',
+                        "grade": [{key: '33', label: '33'},
+                            {key: '34', label: '34'},
+                            {key: '35', label: '35'},
+                            {key: '36', label: '36'},
+                            {key: '37', label: '37'},
+                            {key: '38', label: '38'},
+                            {key: '39', label: '39'},
+                            {key: '40', label: '40'},
+                            {key: '41', label: '41'},
+                            {key: '42', label: '42'},
+                            {key: '43', label: '43'},
+                            {key: '44', label: '44'}]
+                    },
+                    {
+                        "name": 'Roupa Adulto 34-56',
+                        "grade": [
+                            {key: '34', label: '34'},
+                            {key: '36', label: '36'},
+                            {key: '38', label: '38'},
+                            {key: '40', label: '40'},
+                            {key: '42', label: '42'},
+                            {key: '44', label: '44'},
+                            {key: '46', label: '46'},
+                            {key: '48', label: '48'},
+                            {key: '50', label: '50'},
+                            {key: '52', label: '52'},
+                            {key: '54', label: '54'},
+                            {key: '56', label: '56'},
+                            {key: '58', label: '58'}]
+                    },
+                    {
+                        "name": 'Calçado Adulto Duplo',
+                        "grade": [
+                            {key: '33/34', label: '33/34'},
+                            {key: '35/36', label: '35/36'},
+                            {key: '37/38', label: '37/38'},
+                            {key: '39/40', label: '39/40'},
+                            {key: '41/42', label: '41/42'},
+                            {key: '43/44', label: '43/44'},
+                            {key: '45/46', label: '45/46'},
+                            {key: '47/48', label: '47/48'}]
+                    },
+                    {
+                        "name": 'Roupa Adulto P-M-G-GG',
+                        "grade": [
+                            {key: 'P', label: 'P'},
+                            {key: 'M', label: 'M'},
+                            {key: 'G', label: 'G'},
+                            {key: 'GG', label: 'GG'}]
+                    },
+                    {
+                        "name": 'Calçado Adulto Big',
+                        "grade": [{key: '45', label: '45'},
+                            {key: '46', label: '46'},
+                            {key: '47', label: '47'},
+                            {key: '48', label: '48'}]
+                    },
+                    {
+                        "name": 'Roupa Adulto XGs',
+                        "grade": [
+                            {key: 'XG', label: 'XG'},
+                            {key: 'X1', label: 'X1'},
+                            {key: 'X2', label: 'X2'},
+                            {key: 'X3', label: 'X3'},
+                            {key: 'GGG', label: 'GGG'},
+                            {key: 'EG', label: 'EG'},
+                            {key: 'EGG', label: 'EGG'},
+                            {key: 'EXGG', label: 'EXGG'},
+                            {key: 'G1', label: 'G1'},
+                            {key: 'G2', label: 'G2'},
+                            {key: 'G3', label: 'G3'},
+                            {key: 'G4', label: 'G4'},
+                            {key: '1G', label: '1G'},
+                            {key: '2G', label: '2G'},
+                            {key: '3G', label: '3G'},
+                            {key: '4G', label: '4G'}]
+                    },
+                    {
+                        "name": 'Cinto',
+                        "grade": [
+                            {key: '90', label: '90'},
+                            {key: '95', label: '95'},
+                            {key: '100', label: '100'},
+                            {key: '105', label: '105'},
+                            {key: '110', label: '110'},
+                            {key: '115', label: '115'},
+                            {key: '120', label: '120'}]
+                    },
+                ],
+                graded_prods_entrada: '',
+                graded_prods_estoq: '',
+                array: [],
+                filter: null,
+                google_search_array: [],
+                produtos: [],
+                ref_cor_marca: [],
+                refs_array: '',
+                mapped_items: [],
+                form_selected: [],
+                form_allSelected: true,
+                form_indeterminate: false,
+                grouped_items_byref_map: [],
+                subgrouped_items_bycolor_obj: {},
+                query: "",
+                imageProps: {blank: true, width: 75, height: 75, class: 'm1'},
+                imagem_test: 'https://www.katy.com.br/cdn/imagens/produtos/original/indoor-nike-beco-2-a451f3b4e2327ab6c8dc817bbc0250a3.jpg',
+                suggestion_selected: {
+                    cod_marca: 0,
+                    fornecedores: [{fan_fornecedor: ''}],
+                    nom_marca: "carregando",
+                },
+                suggestions: [
+                    {
+                        data: [
+                            {
+                                cod_marca: 0,
+                                fornecedores: [],
+                                nom_marca: "carregando marcas",
+                            }
+                        ]
+                    }
+                ],
+                datepicker_ini: new Date(2019, 0, 1),
+                datepicker_fim: new Date(2019, 11, 16),
+                data_cadastro_ini: '',
+                data_cadastro_fim: '',
+                cod_fornecedor: 70,
+                items: [],
+                // fields: [
+                //     {key: 'nom_marca', label: 'Nom. Marca'},
+                //     {key: 'dat_cadastro', label: 'Data Cad.'},
+                //     {key: 'dat_alteracao', label: 'Data Alt.'},
+                //     {key: 'cod_referencia', label: 'Ref.'},
+                //     {key: 'des_cor', label: 'Cor'},
+                //     {key: 'img', label: 'Img.'},
+                //     {key: 'des_produto', label: 'Descrição.'},
+                // ]
+            }
+        },
+        computed: {
+            mappedItemsComputed() {
+                let mapped_items = [];
+                // this.produtos = [];
+
+                for (const ref_group in this.subgrouped_items_bycolor_obj) {
+                    for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
+                        let saldo_estoq_entrada = 0;
+                        let saldo_estoq = 0;
+                        let graded_prods_estoq = {};
+
+                        for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
+                            var estoq_entrada = 0;
+                            // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].img = 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg';
+
+                            // {
+                            // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E' &&
+                            //     (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7)) {
+
+                                if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E' &&
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) &&
+                                (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+                                    new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+                                    new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+                                    new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+
+                                // fazer um filtro por dat_movto???
+                                //
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group]")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group])
+                                //
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto)
+                                //
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto)
+                                //
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+                                //
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto)
+
+
+                                // {(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
+                                //         this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3)) {
+
+
+                                // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
+                                // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+                                //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+                                //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+                                //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+
+                                // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+
+                                estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
+
+                                if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
+                                    graded_prods_estoq[estoq_entrada_name] = estoq_entrada
+                                } else {
+                                    graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada
+                                }
+                                saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
+
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
+                                // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
+                                // console.log("estoq_entrada_name")
+                                // console.log(estoq_entrada_name)
+                                // console.log("estoq_entrada")
+                                // console.log(estoq_entrada)
+                                // console.log("saldo_estoq_entrada")
+                                // console.log(saldo_estoq_entrada)
+
+
+                            }
+                            //calculating saldo_estoq summing saldo.estoque only once per item
+                            if (isNaN(graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho])) {
+                                saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+                            }
+
+                            graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+
+                        }
+
+                        graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
+                        graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
+                        graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
+                        graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
+                        graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
+                        graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
+                        // graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.slice(0, -3);
+                        // graded_prods_estoq['img'] = this.imagem_test;
+                        // graded_prods_estoq['img'] = this.computedImage;
+                        // graded_prods_estoq['img'] = this.fetchImage(this.refs_array[ref_group][0].nom_marca, this.refs_array[ref_group][0].cod_referencia, this.refs_array[ref_group][0].des_cor);
+                        graded_prods_estoq['img'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[this.image_index];
+                        // graded_prods_estoq['img'] = 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg';
+                        // graded_prods_estoq['img'] = 'No';
+                        graded_prods_estoq['selected'] =this.subgrouped_items_bycolor_obj[ref_group][cor][0].selected;
+                        graded_prods_estoq['totais_E'] = saldo_estoq_entrada;
+                        graded_prods_estoq['totais'] = saldo_estoq;
+                        graded_prods_estoq['vlr_custo_bruto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_custo_bruto;
+                        graded_prods_estoq['vlr_venda1'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_venda1;
+
+                        // this.graded_prods_estoq = graded_prods_estoq
+
+                        mapped_items.push(graded_prods_estoq);
+                        // this.produtos.push({
+                        //     // selectable: false,
+                        //
+                        //     nom_marca: this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca,
+                        //     cod_referencia: this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia,
+                        //     des_cor: this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor,
+                        //     // img: this.subgrouped_items_bycolor_obj[ref_group][cor][0].img,
+                        //     img: 'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxAQDw8PDQ8QDQ8PEA8NDg8PDxANDRAQFREWFhURFRUYHSggGBolHRUVITEiJSkrLy4uFx84ODMsNygtLisBCgoKDg0OGA8PFisdHR4rKystKy0tLS0rLSstLS0tKystLS0rKzctLSstLSs3LTcrLSsrKzctKystNy0rLSsrK//AABEIAOEA4QMBIgACEQEDEQH/xAAbAAEAAgMBAQAAAAAAAAAAAAAAAQUCBAYDB//EAEQQAAICAQEDBQ0GBAMJAAAAAAABAgMRBAUSIQYTMVFxIiMyM0FhcoGRobGywQcUJEJzgjRikqJSwtEVFiU1dIOz8PH/xAAXAQEBAQEAAAAAAAAAAAAAAAAAAQID/8QAHBEBAQEBAQEAAwAAAAAAAAAAAAERAjESAyFB/9oADAMBAAIRAxEAPwD7iAAAAAAAAAAAAAEEgAAAIJAAAAAAAAAAAAAAAAAAgAASAAAAAAEZAkHnKzzGDm//AIB6ykl0sjnY9aPDdG6XEbCmute0yyam4RujBuA08PrftJ3pdbGGtsGrzkuv3E89LqQxWyDWWoflj7zL7z5mQe4PFamPnXqJ5+PWB6g81bHrXtM00+jiBIAAAAAAAIAAEgAAAABq6t8V2G0aus6V6xB4qx9bMuel1+5HmDSPVXvqXsHP/wAq9rPIAe3PLqftJ52Pn9h4AYNhTj1+5k5XWvbg1gMG1js9o3PMapKb6wNhxI3TxVkut+0y56XWQZ7pDilxbSXW+CMJ3tQm+GUljh5ytsscnmTb7SyJW5bqoLwVvvrfCJ67NulJy3uhJYSWEuJVljsjpn+36ls/RKswAYaAAAAAEAACQAAAAA1tZ5PWbJravyessGsACsgAAAAAAAAAAAACLfF2di+ZFcWFvi59kfmRoFiVBZbH/P8At+pWllsj8/q+ovhPVkADDYAAAAAgAASCCQAAAGtq/J6zZNfWdC7SwaoIBWUggASCABIIAEggASCABF3i5/t+KNA3r/Fz/b8SvyWJUlnsjon2oq8lpsfwZdq+AvhPViADDYAAAAAgAASAAAAAGtrehdpsmtrvBXb9Cwclyv5TPQfd92j7w75zgoqe5JNYxjg85yOT3K2rVytqlVZpdRTFznRb4W6ulplD9qtu5LZs8OW5qJz3Y8ZSw63hefgeWwVfq9p6jaEtNZpKY6aylK2LhKUtxJLiuL6W+xHWSY57dXOg+0PZ1sowdk6XLCXO1tRy+uSykdPfqYVwdlk41wXFzlJRgl2s+HaTaVL2VPRc1KzVWahTpagnhdzwUunPkwus6nlNRZbbsXZt8moyqqlqEnxckt1+tKMl6xeYn0+iaLaFN6cqLa7orpdc4zx24NlP/wB6T5xt3QV7K2hs+/RJ013zdF9Sk3CSzFeXzSz2pHhrtlPWbd1VH3i7TqNKtjOmbjLeUYJLs7onyv0+nEZOI5KbZ1CW0NDqrOcv0MZuu58ZTjiWG89LXcv1npyY29qLNj3au2asvq+8OMpRSXcRTjlLpJeV+nZ5JOGq5UbRlodNrKtLTqFKN8tVxlUoKEsRcVvdSfX0G3yW5X3ayUec0U6KZQsl95U3OjMOlZcVjy+wfNPp12Qca/tI0POOGL3WpbvPqvNPb05x6jrqbYzjGcJKcJJSjKLzFxaymmSyxdTqH3qfbD5ityWGqfep9sPiysyWJWeS32L4MvS+hS5LrYfgS9L6IdeHPqyABzbAAAAAEAACQAAAAA1tf4K7TZNbX+B60WDiuWew7tXPQyo3Mae/nbFKW693MOjhxfcs6TUZcJJcW4ySXnwycjJvWMfK9Pyb1EdkSlKmdWr0upepqju5sccRT3cdPkeP5Sy5UX2SWy9sRqm1TurU17rU4ZfdZT6OO8vWj6FkPjlPinwafFYL9J8vmvKHa9W1dbs6jQuVka7HbbLdlFRWYt5z1KL9qNzT6uurlDq53WQqj93xvTkoRzivhl9jO302jqqbdVVdTl4ThCMG+3CK7aXJjRambsv08Z2SxvTzKMnjoy00XYZXJ8mp/edoba1VOXVKqdcJY4SbjhY9UG/WhyRkv93dXx6Fq0/N3C/1O72fs+nT1qrT1xqrWXuxXBt9LfWzkdb9n6crVptZdptPfLft067qDeeOOK96GxMenJX/AJA/0NV8ZmlsKxx5NXOPB83ql6nNp/E61bJjXopaPT9zFUTorc35XFrek+15Zocm9gSp2a9DqnBuSvhN1yco7tjlxTaXkfUTVxocltn1T2EoOKatpvsnw6Z708S7Vhew9fst1Mp7NgpPPN221R9HhJL+4oaf9qaLTW7Oho3qYvnIUamvjFQm3nK9b6cYydfyN2PLRaKuizHOZlZZh5SnJ8Un5lheovX9SLnVvvM/Sh9SryWWsfeZelD6lTkzFrPJfbC8XL038Ec9k6HYHin6b+CHXi8+rIAHNsAAAAAQAAJAAAAADW1/getGya20PAfaviIVW5GTHIydGGrte6+FE5aSuN16xzdcmoxl3SystryZOP0nLnWO2dE9mOdlTUbo02uTry8ZaUWved1k4nkm/wDjG1+2PzliVua/l7p6NRdp7Kb26ZbkpwipxfBcenKXEtdTym0lVFOout5qvURU6lKMnZJNZ8GKb4ZRw9G07dNtfaU6NLPWZajOFed6MeD3sYZuctE1ds3aN2nlPTQhGOoolHLqcu6xJPh+by44wRfmJtdfVyj0Uq42rVU83OW5GUp7i38Z3XnGHjyM3NPr6bMc3dXZno3LIyb9jKerZeztVpVKqmmyibnfFRW7FWOO63heDLhhryHK/ZnsSiyqWrnGXP06iyFclJqO7zUeDj0PwmTIuvpS83EZPlHIjY0dTCdj112mtrv3Y1wtSUopRlxjnLy8o+qixZdZZGTHIyQYa595l6cPgypyWm0H3h+nD4Mp8l5SvTJ0ewPE/vkcxk6fk/4helL4k68OfVmADm6AAAAACAABIAAAAAa20PFv1fE2TW2h4uXq+IgqRkwyMnRhnk53Ymw7aNfrtVNwdepadai25rus90sF/kZCODnTtDR7R1uqo0L1Vd7Si1ZGPcrDyknnydRa7W5TyphWtXoLZVajTqdm4t9QsllSpnleZcfOdPknJrUxxv2a6eyGk1EpwlXXZbKdEJZTUN1pvj5Oj2GP2VS/A3/9TZ/4qzs8mFVUIJqEIwTeWoxUU31tLsXsGmPmXITZOgvhKzVSjHUV6jNWbublupRa7nPFZyfU8nO28jdnyal92jFpqScJThxznPBl/klurGeRkwyMkVhtF94f6kflZT5LXab7x/3V8rKbJrlmvTJ1fJ/+Hj2y+JyGTr+T38PDtl8zM9+Lx6sgAc3QAAAAAQAAJAAAAADX2h4qXZ9TYNfX+Kn2AUeRkwyMnRzZ5GTDIyBnkZMMjIGeRkwyMgZ5GTDIyMGeRkwyMjB57UfeF+r/AJClyW+1X+Hj+r/kKXJvnxKzydlye/hq/wB3zM4rJ2ewX+Hr7H8zM9+Lx6tESYJmSZydEgAAAAIAAEgAAAABr6/xU/RZsHhrvFT9F/ADnMjJhkZOrmzyMmGRkIzyMmGRkDPIyYZGQM8jJhkZCs8jJhkZA89rv8PD9Z/IUmS42w/w9f6svkKTJvnxms8nZ7Ef4er0fqzicnY7Il3ir0UZ/J4vK2jI9FI1YyPWMjk6NhMk8kz0RFSAAIAAEgAAAABrbSk1VY1Fz7l8I4z7zZPPULMJrrjJe4DjXq4rwlKHpQkl7egzqvjPjCUZ+i1I9UmeN2lhPjOEZPrcVve3pOrk9cjJqvQRXgTtqf8ALY5L+meUYum9eDbXP9Svdfti/oUbeScmg9RfHw9Pv+em2M/dLdZg9r1R8bzlH61U61/U1j3gWWRk1qNXXYs12Qs9CcZfA9gM8jJhkZAzyMmGRkDx20+8Vfqz+VFJvFxtx94p/Ut+EShuujCLlNqMV0tmufGens5pLLeEul+Q63ZNuaKmuhwi15OB8v1e0JWvCzGHkj+aXnf+h9T2No7HTTw3VzdfGXD8q8hPyeRrj1vQme9WX0HpToorp7p+72GykcHSMK4Y6T0ACgAAgAASAAAAAGM1wfYzIhgc66zB1llKgwdBvWMVzrMXWb7pMHUUaO4Rus3HUYusJio1OytPY82UVSl/i3FGf9S4ms9iRXidRqaPNG3nYf02Jl66zF1l0xQvTa6Hi76NQuq6qVUn+6Dx7jze0NXDx2hlJeWWnuhcv6XiR0DrMXAamOeXKjSp4ulZppdV9VlX9zWPeWWl19NvGq2uz0Jxl8Gbs45WJLK6msoqtXyb0VrzZpq97/FBc1P2xwX9CeVOqjVp9O55zK22MIRWZzk1HEYrys5K3Z11086hqtLwaYPe3O19DkX89gVaaUbKucnOSlCErbJWuqKxlV73g5z0nrRpfMWXExX6TZsILuY8et8WfVdJHFda6oQX9qOKo0p3MFwS6kkc+7rpzGQAMNAAAAACAABIAAAAAAAPJ1mLqPcDRqukwdJuEOJdTGhKk85UFk4GLrGmKyVB5ypLR1GMqS6mKp1GLqLN0mDoLpisdZi6yxlR5jzlQNTFVtCjKq83OfFGNGlLW3T53PNvfE9qNL5hpjV0+l6C/Rr11JGwZtagACKAAAAAIAAAAAAAAAAAAAAAAAAAhgAYsxYBUYM82AVEP8vr+JsQ6CQSqziSARQAAAAAAAAAAf/Z'
+                        // })
+                    }
+                }
+                return mapped_items
+            },
+            todosProdutos() {
+               var produtos =  this.mappedItemsComputed.map(produto => {
+                   if(!produto.cod_referencia) {produto.cod_referencia = ''}
+                   if(!produto.des_cor) {produto.des_cor = ''}
+                   if(!produto.nom_marca) {produto.nom_marca = ''}
+                   if(!produto.des_produto) {produto.des_produto = ''}
+                    return {cod_referencia: produto.cod_referencia, des_cor: produto.des_cor, img: produto.img, nom_marca: produto.nom_marca, des_produto: produto.des_produto}
+                })
+                return produtos
+            },
+            produtosSelecionados() {
+                var selected_rows = this.mappedItemsComputed.filter(row => row.selected==true)
+                // return selected_rows
+                return selected_rows.map(produto => {
+                    return {cod_referencia: produto.cod_referencia, des_cor: produto.des_cor, img: produto.img, nom_marca: produto.nom_marca, des_produto: produto.des_produto}
+                })
+            },
+            computedFields() {
+                // return [].concat(this.baseFields, this.adultoFields, this.valoresFields)
+                return [].concat(this.baseFields, this.gradeFields, this.valoresFields)
+            },
+            gradeFields() {
+                var grades = this.grades_selected.map(selected => {
+                    return selected.grade
+                })
+
+                return [].concat(grades.flat(1), this.totaisFields) //manter totaisFields aqui para que os totais fiquem corretos
+                // return [].concat(this.infantoFields, this.adultoFields, this.totaisFields)
+            },
+            baseFields() {
+                return [
+                    {key: 'selected', label: 'Sel.'},
+                    {key: 'nom_marca', label: 'Nom. Marca', sortable: true},
+                    {key: 'dat_cadastro', label: 'Data Cad.', sortable: true},
+                    {key: 'dat_alteracao', label: 'Data Alt.', sortable: true},
+                    {key: 'cod_referencia', label: 'Ref.', sortable: true},
+                    {key: 'des_cor', label: 'Cor', sortable: true},
+                    {key: 'img', label: 'Img.'},
+                    {key: 'des_produto', label: 'Descrição.', sortable: true}
+                ]
+            },
+            valoresFields() {
+                return [
+                    // {key: 'totais', label: 'Tot.', sortable: true},
+                    {key: 'vlr_custo_bruto', label: 'Custo', sortable: true},
+                    {key: 'vlr_venda1', label: 'Vlr. Venda', sortable: true}
+                ]
+            },
+            totaisFields() {
+                return [
+                    {key: 'totais', label: 'Tot.', sortable: true}
+                ]
+            },
+            filteredOptions() {
+                return [
+                    {
+                        data: this.suggestions[0].data
+                            .filter(option => {
+                                return option.nom_marca.toLowerCase().indexOf(this.query.toLowerCase()) > -1;
+                            })
+                            .map(filtered_items => {
+                                const mapped_items = filtered_items;
+                                return mapped_items;
+                            })
+                    }
+                ];
+            },
+            availableFornecedores() {
+                return this.suggestion_selected.fornecedores
+                    .filter(item => item)
+                    .map(item => item.fan_fornecedor)
+            },
+            computedItems() {
+                return this.items
+                    .filter(item => item)
+                    .map(item => item)
+            },
+            computedImage() {
+                return this.imagem_test
+                // return this.fetchImage('nike', '646433', 'preto')
+
+            },
+        },
+        beforeMount() {
+            this.loadMarcas()
+        },
+        methods: {
+            clearGradesSelected() {
+                console.log("this.grades_selected")
+                console.log(this.grades_selected)
+                // this.grades_selected = [];
+            },
+            dateSorter(a, b, key) {
+                // console.log('a')
+                // console.log(a)
+                // console.log(a[key])
+                // console.log('a[key]')
+                // console.log(b.key)
+                // console.log('b.key')
+                // console.log(key)
+                // if (key !== 'dat_cadastro') {
+                // if (key !== 'dat_alteracao') {
+                if (key === 'dat_alteracao' || key === 'dat_cadastro') {
+                    if (moment(a[key], 'DD/MM/YYYY').toDate() > moment(b[key], 'DD/MM/YYYY').toDate()) return 1;
+                    if (moment(a[key], 'DD/MM/YYYY').toDate() < moment(b[key], 'DD/MM/YYYY').toDate()) return -1;
+                    return 0;
+                } else {
+                    return false       // If field is not `date` we let b-table handle the sorting
+                }
+            },
+            objectify(element) {
+                var result =
+                    {
+                        cod_grupo: element[0],
+                        des_grupo: element[1],
+                        cod_subgrupo: element[2],
+                        des_subgrupo: element[3],
+                        cod_produto: element[4],
+                        des_produto: element[5],
+                        cod_barra: element[6],
+                        cod_referencia: element[7],
+                        qtd: element[8],
+                        saldo_estoque: element[9],
+                        vlr_custo_bruto: element[10],
+                        vlr_custo_aquis: element[11],
+                        vlr_venda1: element[12],
+                        total: element[13],
+                        cod_grade: element[14],
+                        des_grade: element[15],
+                        cod_tamanho: element[16],
+                        des_tamanho: element[17],
+                        cod_cor: element[18],
+                        des_cor: element[19],
+                        // dat_cadastro: element[20],
+                        // dat_cadastro: moment(element[20]),
+                        dat_cadastro: moment(element[20]).format('DD/MM/YYYY'),
+                        dat_alteracao: moment(element[21]).format('DD/MM/YYYY'),
+                        dat_emissao: moment(element[22]).format('DD/MM/YYYY'),
+                        dat_lancamento: moment(element[23]).format('DD/MM/YYYY'),
+                        dat_saida: moment(element[24]).format('DD/MM/YYYY'),
+                        cod_fornecedor: element[25],
+                        raz_fornecedor: element[26],
+                        fan_fornecedor: element[27],
+                        cod_marca: element[28],
+                        nom_marca: element[29],
+                        tipo_movto: element[30],
+                        qtd_movto: element[31],
+                        data_movto: moment(element[32]).format('DD/MM/YYYY'),
+                        cod_movto: element[33],
+                        cod_origem_movto: element[34],
+                        selected:false,
+                        img: ['data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAMFBMVEXp7vG6vsG3u77s8fTCxsnn7O/f5OfFyczP09bM0dO8wMPk6ezY3eDd4uXR1tnJzdBvAX/cAAACVElEQVR4nO3b23KDIBRA0ShGU0n0//+2KmO94gWZ8Zxmr7fmwWEHJsJUHw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwO1MHHdn+L3rIoK6eshsNJ8kTaJI07fERPOO1Nc1vgQm2oiBTWJ+d8+CqV1heplLzMRNonED+4mg7L6p591FC+133/xCRNCtd3nL9BlxWP++MOaXFdEXFjZ7r8D9l45C8y6aG0cWtP/SUGhs2d8dA/ZfGgrzYX+TVqcTNRRO9l+fS5eSYzQs85psUcuzk6igcLoHPz2J8gvzWaH/JLS+95RfOD8o1p5CU5R7l5LkfKEp0mQ1UX7hsVXqDpRrifILD/3S9CfmlUQFhQfuFu0STTyJ8gsP3PH7GVxN1FC4t2sbBy4TNRTu7LyHJbqaqKFw+/Q0ncFloo7CjRPwMnCWqKXQZ75El4nKC9dmcJaou9AXOE5UXbi+RGeJygrz8Uf+GewSn9uXuplnWDZJ7d8f24F/s6iq0LYf9olbS3Q8i5oKrRu4S9ybwaQ/aCkqtP3I28QDgeoK7TBya/aXqL5COx67PTCD2grtdOwH+pQV2r0a7YVBgZoKwwIVFQYG6ikMDVRTGByopjD8ATcKb0UhhRTe77sKs2DV7FKSjId18TUEBYVyLhUThWfILHTDqmI85/2RWWjcE/bhP6OD7maT3h20MHsA47JC3PsW0wcwLhv9t0OOPOIkCn21y2bXXwlyylxiYMPk1SuCSmpfK8bNQvIrpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwNX4BCbAju9/X67UAAAAASUVORK5CYII=', 'https://lojaferracini.vteximg.com.br/arquivos/ids/265063-800-800/Pro_0000022240415-0001.jpg?v=637406341029930000']
+                    };
+                return result
+            },
+            onSubmit() {
+                const path = `/api/levantamentos/${this.data_cadastro_ini}/${this.data_cadastro_fim}/${this.suggestion_selected.cod_marca}/`;
+                axios.get(path)
+                    .then((res) => {
+                        console.log(res);
+                        this.items = [];
+                        res.data.forEach(item => this.items.push(this.objectify(item)));
+                        this.groupItemsByRef()
+                        this.subgroupItemsByColor()
+                        // this.gradearProdutosOld()
+                        // faz grade dos produtos (de acordo com entradas e saídas no estoque) por numeração
+                        this.mapped_items = []
+                        // this.gradearProdutos()
+                        // this.carregarImagens()
+                        // this.saveProdutos()
+
+                        // const produtos_com_imagens = this.carregarImagens()
+                        // this.saveProdutos(produtos_com_imagens)
+
+                        // 2021-09-07 trying to merger 2 rows in one
+                        // maybe this is the way https://stackoverflow.com/questions/67868703/how-to-use-rowspan-in-bootstrap-vue-b-table
+                        // i think I should put the initial estoque and actual estoque in the same item  row
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            groupItemsByRef() {
+                this.grouped_items_byref_map = this.items.reduce(
+                    (entryMap, e) => entryMap.set(e.cod_referencia, [...entryMap.get(e.cod_referencia) || [], e]),
+                    new Map()
+                );
+                this.refs_array = Object.fromEntries(this.grouped_items_byref_map);
+            },
+            subgroupItemsByColor() {
+                this.subgrouped_items_bycolor_obj = {};
+                // this.produtos = [];
+                for (const ref_group in this.refs_array) {
+                    let subgrouped_by_color_map = this.refs_array[ref_group].reduce(
+                        (entryMap, e) => entryMap.set(e.des_cor, [...entryMap.get(e.des_cor) || [], e]),
+                        new Map()
+                    );
+                    this.subgrouped_items_bycolor_obj[ref_group] = Object.fromEntries(subgrouped_by_color_map)
+
+                    // this.produtos.push({nom_marca:this.refs_array[ref_group][0]['nom_marca'], cod_referencia:ref_group, des_cor:Object.keys(this.subgrouped_items_bycolor_obj[ref_group])})
+                }
+
+            },
+            // gradearProdutos() {
+            //     // this.mapped_items = [];
+            //     // this.produtos = [];
+            //
+            //     for (const ref_group in this.subgrouped_items_bycolor_obj) {
+            //         for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
+            //             let saldo_estoq_entrada = 0;
+            //             let saldo_estoq = 0;
+            //             let graded_prods_estoq = {};
+            //
+            //             for (const prod in this.subgrouped_items_bycolor_obj[ref_group][cor]) {
+            //                 var estoq_entrada = 0;
+            //
+            //                 // {
+            //                 // if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto == 'E' &&
+            //                 //     (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7)) {
+            //
+            //                     if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E' &&
+            //                     (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) &&
+            //                     (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+            //                         new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+            //                         new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+            //                         new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+            //
+            //                     // fazer um filtro por dat_movto???
+            //                     //
+            //                     console.log("this.subgrouped_items_bycolor_obj[ref_group]")
+            //                     console.log(this.subgrouped_items_bycolor_obj[ref_group])
+            //
+            //                     console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto")
+            //                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto)
+            //
+            //                     console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto")
+            //                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto)
+            //
+            //                     console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto")
+            //                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+            //
+            //                     console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto")
+            //                     console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto)
+            //
+            //
+            //                     // {(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 7 ||
+            //                     //         this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 3)) {
+            //
+            //
+            //                     // this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto == 2) &&
+            //                     // (new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) >=
+            //                     //     new Date(moment(this.data_cadastro_ini).format('YYYY/MM/DD')) &&
+            //                     //     new Date(moment(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto).format('DD/MM/YYYY')) <=
+            //                     //     new Date(moment(this.data_cadastro_fim).format('YYYY/MM/DD')))) {
+            //
+            //                     // console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto')
+            //                     // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto)
+            //
+            //                     estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+            //                     let estoq_entrada_name = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString() + "_E"
+            //
+            //                     if (isNaN(graded_prods_estoq[estoq_entrada_name])) {
+            //                         graded_prods_estoq[estoq_entrada_name] = estoq_entrada
+            //                     } else {
+            //                         graded_prods_estoq[estoq_entrada_name] = graded_prods_estoq[estoq_entrada_name] + estoq_entrada
+            //                     }
+            //                     saldo_estoq_entrada = saldo_estoq_entrada + estoq_entrada
+            //
+            //                     // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia")
+            //                     // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia)
+            //                     // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor")
+            //                     // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor)
+            //                     // console.log("estoq_entrada_name")
+            //                     // console.log(estoq_entrada_name)
+            //                     // console.log("estoq_entrada")
+            //                     // console.log(estoq_entrada)
+            //                     // console.log("saldo_estoq_entrada")
+            //                     // console.log(saldo_estoq_entrada)
+            //
+            //
+            //                 }
+            //                 //calculating saldo_estoq summing saldo.estoque only once per item
+            //                 if (isNaN(graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho])) {
+            //                     saldo_estoq = saldo_estoq + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+            //                 }
+            //
+            //                 graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
+            //
+            //             }
+            //
+            //
+            //             graded_prods_estoq['nom_marca'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca;
+            //             graded_prods_estoq['dat_cadastro'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].dat_cadastro;
+            //             graded_prods_estoq['dat_alteracao'] = this.subgrouped_items_bycolor_obj[ref_group][cor][this.subgrouped_items_bycolor_obj[ref_group][cor].length - 1].dat_alteracao;
+            //             graded_prods_estoq['cod_referencia'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia;
+            //             graded_prods_estoq['des_cor'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor
+            //             graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_tamanho, '').replace(this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca, '');
+            //             // graded_prods_estoq['des_produto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_produto.slice(0, -3);
+            //             // graded_prods_estoq['img'] = this.imagem_test;
+            //             // graded_prods_estoq['img'] = this.computedImage;
+            //             // graded_prods_estoq['img'] = this.fetchImage(this.refs_array[ref_group][0].nom_marca, this.refs_array[ref_group][0].cod_referencia, this.refs_array[ref_group][0].des_cor);
+            //             graded_prods_estoq['img'] = 'https://martialartsplusinc.com/wp-content/uploads/2017/04/default-image.jpg';
+            //             // graded_prods_estoq['img'] = 'No';
+            //             graded_prods_estoq['totais_E'] = saldo_estoq_entrada;
+            //             graded_prods_estoq['totais'] = saldo_estoq;
+            //             graded_prods_estoq['vlr_custo_bruto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_custo_bruto;
+            //             graded_prods_estoq['vlr_venda1'] = this.subgrouped_items_bycolor_obj[ref_group][cor][0].vlr_venda1;
+            //
+            //             // this.graded_prods_estoq = graded_prods_estoq
+            //
+            //             this.mapped_items.push(graded_prods_estoq);
+            //             // this.produtos.push({
+            //             //     // selectable: false,
+            //             //
+            //             //     nom_marca: this.subgrouped_items_bycolor_obj[ref_group][cor][0].nom_marca,
+            //             //     cod_referencia: this.subgrouped_items_bycolor_obj[ref_group][cor][0].cod_referencia,
+            //             //     des_cor: this.subgrouped_items_bycolor_obj[ref_group][cor][0].des_cor,
+            //             //     // img: this.subgrouped_items_bycolor_obj[ref_group][cor][0].img,
+            //             //     img: 'data:image/jpeg;base64,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'
+            //             // })
+            //         }
+            //     }
+            // },
+            carregarImagens() {
+                // const payload = this.produtos[0]
+                // console.log('this.produtos')
+                // console.log(this.produtos)
+                console.log('this.todosProdutos')
+                console.log(this.todosProdutos)
+                const path = `/api/produtos/images/`;
+                axios.put(path, this.todosProdutos)
+                // axios.put(path, this.produtos)
+                    .then((res) => {
+                        console.log('res.data carregar imagens');
+                        console.log(res.data);
+                        for (const key in res.data) {
+                            console.log('res.data')
+                            console.log(res.data)
+
+                            console.log('res.data[key].img')
+                            console.log(res.data[key].img)
+                            console.log('this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img')
+                            console.log(this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img)
+                            this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img[this.image_index] = res.data[key].img
+                            // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img = image_url[0]
+                            this.image_index =1 //theses both lines are needed to auto refresh images
+                            this.image_index =0 //theses both lines are needed to auto refresh images
+                        }
+
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            async pesquisarImagens() {
+                // const produtos = []
+                // for (const key in this.mapped_items) {
+                for (const key in this.produtosSelecionados) {
+                    const marca = this.produtosSelecionados[key]['nom_marca']
+                    const cor = this.produtosSelecionados[key]['des_cor']
+                    const ref_group = this.produtosSelecionados[key]['cod_referencia']
+                    const descricao = this.produtosSelecionados[key]['des_produto']
+                    console.log('key')
+                    console.log(key)
+                // for (const key in this.produtos) {
+                    let image_url = await this.fetchImage(marca, ref_group, cor, descricao)
+                    // let image_url = await this.fetchImage(this.produtosSelecionados[key]['nom_marca'], this.produtosSelecionados[key]['cod_referencia'], this.produtosSelecionados[key]['des_cor'])
+                    if (typeof image_url == 'undefined')
+                        image_url = 'data:image/png;base64,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'
+
+                    console.log('this.produtos_from_carregarImagens')
+
+                    console.log('marca')
+                    console.log(marca)
+                    console.log('cor')
+                    console.log(cor)
+                    console.log('ref_group')
+                    console.log(ref_group)
+
+                    console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].img')
+                    console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].img)
+                    // this.subgrouped_items_bycolor_obj[ref_group][cor][0].img = image_url[0]
+                    this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[0] = image_url[0]
+                    this.subgrouped_items_bycolor_obj[ref_group][cor][0].img[1] = image_url[1]
+                    console.log('this.subgrouped_items_bycolor_obj[ref_group][cor][0].img')
+                    console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][0].img)
+
+                }
+            },
+            //maybe remove asyncs..
+
+            async saveProdutos() {
+                // const api_path = `/api/produtos/images/`
+                const api_path = `/api/produtos/save`
+                axios.put(api_path, this.produtosSelecionados)
+                    .then((res) => {
+                        console.log('axios.put')
+                        console.log(res.data)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+
+            },
+            async fetchImage(nom_marca, cod_referencia, des_cor, des_produto) {
+                const base_path = `https://www.googleapis.com/customsearch/v1?key=AIzaSyAxkljtWwOvBkyVgaCgQQYR2bgFMUdzrQs&cx=f5c6bf2ce19682bb8&&searchType=image&&num=10&lr=lang_pt&q=`
+
+                const query = des_produto + '+' + nom_marca + '+' + cod_referencia + '+' + des_cor
+
+                const path = base_path + query
+                var path_without_spaces = path.replace(/\s/g, '+');
+                console.log('path_without_spaces')
+                console.log(path_without_spaces)
+
+                let image_url = axios.get(path_without_spaces)
+                    .then((response) => {
+                        console.log("response from fetchImage")
+                        console.log(response)
+                        return response.data.items.map((item) => {
+                            // console.log('item.link')
+                            // console.log(item.link)
+                            // this.imagem_test = item.link
+                            return item.link
+                        });
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                console.log('image_url_from fetchimage')
+                console.log(image_url)
+                console.log('typeof image_url')
+                console.log(typeof image_url)
+                if (typeof image_url == 'undefined')
+                    image_url = 'data:image/png;base64,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'
+                //TESTING TO RETURN A DEFAULT IMAGE IF UNINDETIFIED
+                return image_url
+
+            },
+            receiveDataCadastroIni(value) {
+                this.data_cadastro_ini = value
+            },
+            receiveDataCadastroFim(value) {
+                this.data_cadastro_fim = value
+            },
+            loadMarcas() {
+                const path = `/api/read/marcas/`;
+                axios.get(path)
+                    .then((res) => {
+                        console.log('res');
+                        console.log(res);
+                        this.suggestions[0].data = res.data
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            },
+            clickHandler(item) {
+                console.log(item)
+                // event fired when clicking on the input
+            },
+            onSelected(item) {
+                this.suggestion_selected = item.item;
+                this.form_selected = this.availableFornecedores
+            },
+            onInputChange(text) {
+                console.log(text)
+            },
+            /**
+             * This is what the <input/> value is set to when you are selecting a suggestion.
+             */
+            getSuggestionValue(suggestion) {
+                return suggestion.item.nom_marca;
+            },
+            focusMe(e) {
+                console.log(e) // FocusEvent
+            },
+            form_toggleAll(checked) {
+                this.form_selected = checked ? this.availableFornecedores.slice() : []
+            }
+        }
+    }
+</script>
+
+<style>
+    /*<style scoped>*/
+    .autosuggest-container {
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        width: 280px;
+
+    }
+
+    .autosuggest__results {
+        z-index: 1000;
+        position: absolute;
+        display: flex;
+        /*justify-content: center;*/
+        /*width: 280px;*/
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, .15);
+        border-radius: .25rem;
+
+    }
+
+
+</style>

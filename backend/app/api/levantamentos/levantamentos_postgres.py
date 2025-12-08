@@ -10,7 +10,7 @@ class LevantamentoPostgres:
             cursor.execute('''
                 select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
             pro.cod_produto, pro.des_produto, pro.cod_barra, pro.cod_referencia,
-            sum(it.qtd_produto) as qtd, e.saldo_estoque,
+            sum(it.qtd_produto) as qtd, pro.saldo_estoque,
             pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1, sum(it.vlr_total) as total,
             pro.cod_grade, g.des_grade,
             pro.cod_tamanho, t.des_tamanho,
@@ -21,8 +21,6 @@ class LevantamentoPostgres:
             pfe.tipo_movto, pfe.qtd_movto, pfe.data as data_movto, pfe.cod_movto, pfe.cod_origem_movto
     FROM PRODUTO pro
              LEFT OUTER JOIN MARCA m ON (m.COD_MARCA = pro.COD_MARCA)
-             LEFT OUTER JOIN PRODUTO_ESTOQUE e ON (e.COD_EMPRESA = pro.COD_EMPRESA and
-                                                 e.COD_PRODUTO = pro.COD_PRODUTO)
             LEFT OUTER JOIN nfcompraitem it on (pro.cod_empresa = it.cod_empresa and pro.cod_produto = it.cod_produto)
             LEFT OUTER JOIN produto_ficha_estoq pfe on (pfe.cod_produto = pro.cod_produto )
         LEFT OUTER JOIN grupo_produto gu on (gu.cod_grupo = pro.cod_grupo)
@@ -41,7 +39,7 @@ class LevantamentoPostgres:
     group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
                  pro.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
                  pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1,
-                 pro.cod_grade, g.des_grade, e.saldo_estoque,
+                 pro.cod_grade, g.des_grade, pro.saldo_estoque,
                  pro.cod_tamanho, t.des_tamanho,
                  pro.cod_cor,  c.des_cor,
                  pro.dat_cadastro,pro.dat_ultcompra, cb.cod_fornece,
@@ -58,7 +56,7 @@ class LevantamentoPostgres:
             cursor.execute('''
             select pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
         it.cod_produto, pro.des_produto, pro.cod_barra, pro.cod_referencia,
-        sum(it.qtd_produto) as qtd, e.saldo_estoque,
+        sum(it.qtd_produto) as qtd, pro.saldo_estoque,
         pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1, sum(it.vlr_total) as total,
         pro.cod_grade, g.des_grade,
         pro.cod_tamanho, t.des_tamanho,
@@ -89,7 +87,7 @@ where cb.cod_empresa = '1'
 group by pro.cod_grupo, gu.des_grupo, pro.cod_subgrupo, su.des_subgrupo,
              it.cod_produto, pro.des_produto,  pro.cod_barra, pro.cod_referencia,
              pro.vlr_custo_bruto, pro.vlr_custo_aquis, pro.vlr_venda1,
-             pro.cod_grade, g.des_grade, e.saldo_estoque,
+             pro.cod_grade, g.des_grade, pro.saldo_estoque,
              pro.cod_tamanho, t.des_tamanho,
              pro.cod_cor,  c.des_cor,
              cb.dat_cadastro,cb.dat_alteracao, cb.dat_emissao, cb.dat_lancamento, cb.dat_saida, cb.cod_fornece,

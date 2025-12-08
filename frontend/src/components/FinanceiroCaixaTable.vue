@@ -252,23 +252,24 @@ export default {
           // xhr.setRequestHeader('accept-encoding', 'gzip')
           xhr.send(data)
       },
-      getDadosStoneNode() {
-          var request = require('request')
-          var options = {
-              method: 'GET',
-              url: 'https://conciliation.stone.com.br/conciliation-file/v2.2/20200317?affiliationCode=232084871',
-              headers: {
-                  authorization: 'Bearer 7b5fd261-3537-4a8a-bffc-0f2d5ec34501',
-                  'x-authorization-raw-data': 'kapivacalcados2020emmovimento',
-                  'x-authorization-encrypted-data': '084da7241e06fa5612edf44693991cb5b1af63e118cf5fdaa27a1faaa866f04162eee459d7536bcdf00ff80e512aa3ad1d9f408b64d3a06b94791d484de09c95',
-                  'accept-encoding': 'gzip'
-              }
-          }
-          request(options, function (error, response, body) {
-              if (error) throw new Error(error)
-              console.log(body)
-          })
-      },
+      // commented to compile in 2024-02-20
+      // getDadosStoneNode() {
+      //     var request = require('request')
+      //     var options = {
+      //         method: 'GET',
+      //         url: 'https://conciliation.stone.com.br/conciliation-file/v2.2/20200317?affiliationCode=232084871',
+      //         headers: {
+      //             authorization: 'Bearer 7b5fd261-3537-4a8a-bffc-0f2d5ec34501',
+      //             'x-authorization-raw-data': 'kapivacalcados2020emmovimento',
+      //             'x-authorization-encrypted-data': '084da7241e06fa5612edf44693991cb5b1af63e118cf5fdaa27a1faaa866f04162eee459d7536bcdf00ff80e512aa3ad1d9f408b64d3a06b94791d484de09c95',
+      //             'accept-encoding': 'gzip'
+      //         }
+      //     }
+      //     request(options, function (error, response, body) {
+      //         if (error) throw new Error(error)
+      //         console.log(body)
+      //     })
+      // },
       valorTdClass(value, key, item) {
           var firstChar = String(value).charAt(0)
           if (firstChar !== '-' && item.item === 'RESULTADO') {

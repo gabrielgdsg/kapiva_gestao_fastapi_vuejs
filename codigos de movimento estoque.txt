@@ -8,3 +8,6 @@ cod_origem_mvto 	origem
 
 console6_maybe_new output right
 cant get some result from console_testing
+
+
+cod_origem(from table comissao) = cod_cupom(table paf_cupom_fiscal) = coddav(paf_dav)=cod_movto(produto_ficha_estoq) = orig_doc(receber);when tipo_origem(comissao)=2

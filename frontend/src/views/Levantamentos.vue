@@ -1,4 +1,4 @@
-<template>
+<template xmlns:v-slot="http://www.w3.org/1999/XSL/Transform">
     <div class="levantamentos">
         <h1>Levantamentos</h1>
         <b-form @submit.stop.prevent="onSubmit">
@@ -33,11 +33,9 @@
                                 <b-button type="submit" variant="primary">Salvar Produtos</b-button>
                             </b-form>
                         </div>
-
                         <b-form-checkbox name="check-button" switch v-model="showHideImgLink">
                             Link Imagens <b></b>
                         </b-form-checkbox>
-
                     </b-row>
                 </b-col>
                 <b-col sm="2">
@@ -90,7 +88,6 @@
 
                             <div class='form-check form-switch'>
                                 <div>
-
                                     <input :value="grade" class='form-check-input' type="checkbox"
                                            v-model="grades_selected"/>
                                     <label class='form-check-label'>{{grade.name}}</label>
@@ -110,22 +107,25 @@
         </b-form>
 
 
-        <b-table :bordered="true" :fields="computedFields" :filter="filter" :items="filteredmappedItemsComputed" :small=true
-                 :sort-compare="dateSorter" class="text-right" head-variant="light" hover sticky-header="700px" striped
-                 @row-clicked="expandAdditionalInfo" >
+        <b-table :bordered="true" :fields="computedFields" :items="filteredmappedItemsComputed"
+                 :small=true
+                 :sort-compare="dateSorter" @row-clicked="expandAdditionalInfo" class="text-right" head-variant="light" hover sticky-header="700px"
+                 striped>
 
-<template v-slot:cell(actions)="{ detailsShowing, item }" >
-        <!-- Use the built in method from the scoped data to toggle the row details -->
-        <b-btn @click="toggleDetails(item)">{{ detailsShowing ? '-' : '+'}}</b-btn>
+            <template v-slot:cell(actions)="{ detailsShowing, item }">
+                <!-- Use the built in method from the scoped data to toggle the row details -->
+                <b-btn @click="toggleDetails(item)">{{ detailsShowing ? '-' : '+'}}</b-btn>
 
-      </template>
-      <template v-slot:row-details="{ item }">
-          <b-table :sort-compare="dateSorter" :sort-by="'data_movto'" :sort-asc=true :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>
-<!--          <b-table :sort-by="sortBy" :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
+            </template>
+            <template v-slot:row-details="{ item }">
+                <b-table :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" :sort-asc=true
+                         :sort-by="'data_movto'"
+                         :sort-compare="dateSorter" sticky-header></b-table>
+                <!--          <b-table :sort-by="sortBy" :sort-compare="dateSorter" :fields="[{key:'data_movto', sortable: true},'tipo_movto','qtd_movto',...gradeFields]" :items="item.movtos" sticky-header> </b-table>-->
 
-      </template>
+            </template>
 
-            <template scope="data" slot="top-row"><!-- eslint-disable-line-->
+            <template slot-scope="data" slot="top-row"><!-- eslint-disable-line-->
                 <td :key="field.key" v-for="field in [...baseFields,...gradeFields,...valoresFields]">
                     <template
                             v-if="field.key==='nom_marca'||field.key==='dat_cadastro'||field.key==='dat_ultcompra'||field.key==='cod_referencia'||field.key==='des_cor'||field.key==='des_produto'||field.key==='vlr_custo_bruto'||field.key==='vlr_venda1'">
@@ -141,23 +141,36 @@
                 </td>
             </template>
 
-      <template #head(selected)="row"><!-- eslint-disable-line-->
-        <b-form-checkbox
-                                    :indeterminate="form_indeterminate"
-                                    @change="form_toggleAll"
-                                    v-model="form_allSelected">
-                            </b-form-checkbox>
-      </template>
+            <template #head(selected)="row"><!-- eslint-disable-line-->
+                <b-form-checkbox
+                        :indeterminate="form_indeterminate"
+                        @change="form_toggleAll"
+                        v-model="form_allSelected">
+                </b-form-checkbox>
+            </template>
 
 
             <template #cell(selected)="row">  <!-- eslint-disable-line-->
 
-                <input type="checkbox" @change="formAnySelected"
+                <input @change="formAnySelected" type="checkbox"
                        v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].selected"/>
             </template>
 
-            <template #cell(img)="data">  <!-- eslint-disable-line-->
-                <img @click="increaseImageIndex(data.item.cod_referencia, data.item.des_cor)" :src="data.value" v-bind="imageProps"/>
+<!--            <template #cell(img)="data">  &lt;!&ndash; eslint-disable-line&ndash;&gt;-->
+<!--                <img :src="data.value" @click="increaseImageIndex(data.item.cod_referencia, data.item.des_cor)"-->
+<!--                     v-bind="imageProps"/>-->
+<!--            </template>-->
+
+          <template #cell(img)="data">
+                <div>
+                    <img
+                        :src="data.value"
+                        @click="increaseImageIndex(data.item.cod_referencia, data.item.des_cor)"
+                        class="image-thumbnail"
+                        alt="Product Image"
+                        v-bind="imageProps"
+                    />
+                </div>
             </template>
 
             <template v-slot:head(img_link)="row">
@@ -166,13 +179,15 @@
 
             <template #cell(img_link)="row">
                 <div v-show="showHideImgLink">
-                    <b-form-input v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
-                    <b-form-file placeholder="Nenhum arquivo" accept="image/*" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" ref="file-input"></b-form-file>
-<!--                    <input type="file" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" accept="image/*">-->
-<!--                    <img class="preview" :src="imageData">-->
+                    <b-form-input
+                            v-model="subgrouped_items_bycolor_obj[row.item.cod_referencia][row.item.des_cor][0].img[0]"/>
+                    <b-form-file @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" accept="image/*"
+                                 placeholder="Nenhum arquivo"
+                                 ref="file-input"></b-form-file>
+                    <!--                    <input type="file" @change="previewImage($event, row.item.cod_referencia, row.item.des_cor)" accept="image/*">-->
+                    <!--                    <img class="preview" :src="imageData">-->
                 </div>
             </template>
-
 
 
             <template v-for="field in gradeFields" v-slot:[`cell(${field.key})`]="{ item }">
@@ -202,6 +217,7 @@
         },
         data() {
             return {
+                isGradeTotalsInitialized: false,
                 showHideImgLink: false,
                 form_selected_: [],
                 image_index: 0,
@@ -225,7 +241,10 @@
                     },
                     {
                         "name": 'Calçado Infantil',
-                        "grade": [{key: '17', label: '17'},
+                        "grade": [
+                            {key: '15', label: '15'},
+                            {key: '16', label: '16'},
+                            {key: '17', label: '17'},
                             {key: '18', label: '18'},
                             {key: '19', label: '19'},
                             {key: '20', label: '20'},
@@ -402,7 +421,7 @@
                         ]
                     }
                 ],
-                datepicker_ini: new Date(2019, 0, 1),
+                datepicker_ini: new Date(1900, 0, 1),
                 datepicker_fim: new Date(2019, 11, 16),
                 data_cadastro_ini: '',
                 data_cadastro_fim: '',
@@ -421,38 +440,104 @@
 
                 return filtered
             },
+
+            // new by deepai
             gradeTotals() {
-                const grade_totals = {}
-                if (this.filteredmappedItemsComputed.length > 0) {
-                    for (const item in this.filteredmappedItemsComputed) {
-                        for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
-                            if (numero_da_grade === 'nom_marca') {
-                                break; //break loop when finds anything different from "numeros de grade"
-                            }
-                            if (isNaN(grade_totals[numero_da_grade])) {
-                                    grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
-                                }
-                            else {
-                                grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
-                            }
+                const grade_totals = {};
+                const filteredItems = this.filteredmappedItemsComputed;
+
+                console.log("this.filteredmappedItemsComputed: ", Object.values(this.filteredmappedItemsComputed));
+                console.log("this.filteredmappedItemsComputed: actually ", this.filteredmappedItemsComputed);
+
+                if (filteredItems.length === 0) {
+                    return grade_totals; // Return early if no items found
+                }
+
+                // Initialize totals for grade categories
+                const grade_totals_split = {};
+                const grade_totals_split_E = {};
+                let total = 0;
+                let total_E = 0;
+
+                console.log("grade_totals_split:", grade_totals_split);
+console.log("Total E Calculation:", Object.values(grade_totals_split));
+console.log("Final total_E:", total);
+
+                for (const item of filteredItems) {
+                    for (const numero_da_grade in item) {
+                        console.log("numero_da_grade:", numero_da_grade);
+                        if (numero_da_grade === 'nom_marca') {
+                            break; // Break the loop when 'nom_marca' is found
+                        }
+
+                        const value = item[numero_da_grade];
+                        if (isNaN(value)) {
+                            continue; // Skip non-numeric values
+                        }
+
+                        // Initialize the grade_totals with 0 if not already set
+                        if (!grade_totals[numero_da_grade]) {
+                            grade_totals[numero_da_grade] = 0;
+                        }
+                        grade_totals[numero_da_grade] += value;
+
+                        // Distribute totals into split categories
+                        if (numero_da_grade.includes('E')) {
+                            grade_totals_split_E[numero_da_grade] = (grade_totals_split_E[numero_da_grade] || 0) + value;
+                        } else {
+                            grade_totals_split[numero_da_grade] = (grade_totals_split[numero_da_grade] || 0) + value;
                         }
                     }
                 }
-                let grade_totals_split = {}
-                let grade_totals_split_E = {}
-                let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
-                let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
 
-                for (const key in grade_totals_keys) {
-                    grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
-                    grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
-                }
+                // Calculate total for split
+                total = Object.values(grade_totals_split).reduce((a, b) => a + b, 0);
+                total_E = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0);
 
-                grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
-                grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+                grade_totals["totais"] = total;
+                grade_totals["totais_E"] = total_E;
 
-                return grade_totals
-            },
+                                console.log("grade_totals_split:", grade_totals_split);
+console.log("Total E Calculation:", Object.values(grade_totals_split));
+console.log("Final total_E:", total);
+
+                return grade_totals;
+                },
+
+            // before chatgpt update try
+            // gradeTotals() {
+            //     const grade_totals = {}
+            //     if (this.filteredmappedItemsComputed.length > 0) {
+            //         for (const item in this.filteredmappedItemsComputed) {
+            //             for (const numero_da_grade in this.filteredmappedItemsComputed[item]) {
+            //                 if (numero_da_grade === 'nom_marca') {
+            //                     break; //break loop when finds anything different from "numeros de grade"
+            //                 }
+            //                 if (isNaN(grade_totals[numero_da_grade])) {
+            //                         grade_totals[numero_da_grade]= this.filteredmappedItemsComputed[item][numero_da_grade]
+            //                     }
+            //                 else {
+            //                     grade_totals[numero_da_grade]= grade_totals[numero_da_grade] + this.filteredmappedItemsComputed[item][numero_da_grade]
+            //                 }
+            //             }
+            //         }
+            //     }
+            //     let grade_totals_split = {}
+            //     let grade_totals_split_E = {}
+            //     let grade_totals_keys_E = Object.keys(grade_totals).filter((key) => key.includes('E'))
+            //     let grade_totals_keys = Object.keys(grade_totals).filter((key) => !key.includes('E'))
+            //
+            //     for (const key in grade_totals_keys) {
+            //         grade_totals_split_E[grade_totals_keys_E[key]]=grade_totals[grade_totals_keys_E[key]]
+            //         grade_totals_split[grade_totals_keys[key]]=grade_totals[grade_totals_keys[key]]
+            //     }
+            //
+            //     grade_totals["totais"] = Object.values(grade_totals_split).reduce((a, b) => a + b, 0)
+            //     grade_totals["totais_E"]  = Object.values(grade_totals_split_E).reduce((a, b) => a + b, 0)
+            //
+            //     return grade_totals
+            // },
+
             mappedItemsComputed() {
                 let mapped_items = [];
 
@@ -472,15 +557,19 @@
                                     graded_prods_estoq[estoq_entrada_name] = 0
                                 }
                             if (
-                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)) {
-                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 4)) {
-                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3)|| (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9)) {
+                                (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) ||  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9) ||  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 12)) {
+                                // (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 7) || (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 3) ||  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 9) ||  (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 12)) {
+                                // cod_origem_movto 3 = requisicao
 
                                 if (isNaN(movtos[prod])) {movtos[prod] = {};}
                                 if (isNaN(movtos[prod]['data_movto'])) {movtos[prod]['data_movto'] = {};}
 
 
-                                if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
+
+
+                                if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S' && this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto === 12) {
+                                    estoq_entrada = estoq_entrada - this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
+                                } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'E') {
                                     movimento = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                     estoq_entrada = estoq_entrada + this.subgrouped_items_bycolor_obj[ref_group][cor][prod].qtd_movto;
                                 } else if (this.subgrouped_items_bycolor_obj[ref_group][cor][prod].tipo_movto === 'S') {
@@ -489,6 +578,8 @@
                                 }
 
                                 movtos[prod]['data_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].data_movto;
+
+                                // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto)
                                 movtos[prod]['tipo_movto'] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].cod_origem_movto;
                                 movtos[prod][this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho.toString()] = movimento
 
@@ -514,30 +605,30 @@
                             }
                             graded_prods_estoq[this.subgrouped_items_bycolor_obj[ref_group][cor][prod].des_tamanho] = this.subgrouped_items_bycolor_obj[ref_group][cor][prod].saldo_estoque
                         }
-                        console.log("movtos")
-                        console.log(movtos)
+                        // console.log("movtos")
+                        // console.log(movtos)
 
                            let reduced_movtos = Object.values(movtos.reduce((r, {data_movto, ...rest}) => {
                                 r[data_movto] = r[data_movto] || {data_movto};
-                               let result = Object.keys(rest)[0] in r[data_movto]
-                               console.log("result")
-                               console.log(result)
+                               // let result = Object.keys(rest)[0] in r[data_movto]
+                               // console.log("result")
+                               // console.log(result)
 
                                if(Object.keys(rest)[0] in r[data_movto]){
                                    // let grade_name = Object.keys(rest)[0].toString()
                                    let existent_grade ={
                                        [Object.keys(rest)[0].toString()] : r[data_movto][Object.keys(rest)[0]]+rest[Object.keys(rest)[0]]
                                    }
-                                   console.log("existent_grade")
-                                   console.log(existent_grade)
+                                   // console.log("existent_grade")
+                                   // console.log(existent_grade)
                                    r[data_movto] = {...r[data_movto], ...existent_grade };
                                } else {r[data_movto] = {...r[data_movto], ...rest};}
 
 
-                               console.log("rest")
-                               console.log(rest)
-                               console.log("{...r[data_movto], ...rest}")
-                               console.log(r[data_movto])
+                               // console.log("rest")
+                               // console.log(rest)
+                               // console.log("{...r[data_movto], ...rest}")
+                               // console.log(r[data_movto])
                                 return r;
                             }, {}));
 
@@ -550,7 +641,7 @@
                                 data = [...data, aux];
                             }
                             else {
-                                console.log("else")
+                                // console.log("else")
                                 data = [...data, data[index-1]|| array[index]];
                             }
                             data = [...data, data[index-1]|| array[index]];}
@@ -613,9 +704,7 @@
                     if (!produto.vlr_venda1) {produto.vlr_venda1 = 0.0}
                     if (!produto.cod_grade) {produto.cod_grade = 0}
                     if (!produto.des_grade) {produto.des_grade = ''}
-                    // if (!produto.dat_cadastro) {produto.dat_cadastro = ''}
-                    // if (isNaN(produto.dat_ultcompra)) {produto.dat_ultcompra = '01/01/1900'}
-                    if (!moment(produto.dat_cadastro, "DD/MM/YYYY", false).isValid())
+                    if (!moment(produto.dat_cadastro, "DD/MM/YYYY", true).isValid())
                         {produto.dat_cadastro = '01/01/1900'}
                     if (!moment(produto.dat_ultcompra, "DD/MM/YYYY", false).isValid())
                         {produto.dat_ultcompra = '01/01/1900'}
@@ -637,7 +726,6 @@
                         cod_cor: produto.cod_cor,
                         dat_cadastro: moment(produto.dat_cadastro, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         dat_ultcompra: moment(produto.dat_ultcompra, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
-                        // dat_lancamento: moment(produto.dat_lancamento, 'DD/MM/YYYY', true).format('YYYY-MM-DDTHH:mm:ss.SSSSSS'),
                         cod_fornecedor: produto.cod_fornecedor,
                         raz_fornecedor: produto.raz_fornecedor,
                         fan_fornecedor: produto.fan_fornecedor,
@@ -694,6 +782,8 @@
                 ]
             },
             filteredOptions() {
+                console.log('this.suggestions')
+                console.log(this.suggestions)
                 return [
                     {
                         data: this.suggestions[0].data
@@ -717,25 +807,14 @@
                     .filter(item => item)
                     .map(item => item)
             }
-        },
+        }
+,
+
+
         beforeMount() {
             this.loadMarcas()
         },
-        // watch: {
-        //     selected(newValue) {
-        //         // Handle changes in individual flavour checkboxes
-        //         if (newValue.length === 0) {
-        //             this.indeterminate = false
-        //             this.allSelected = false
-        //         } else if (newValue.length === this.flavours.length) {
-        //             this.indeterminate = false
-        //             this.allSelected = true
-        //         } else {
-        //             this.indeterminate = true
-        //             this.allSelected = false
-        //         }
-        //     }
-        // },
+
         methods: {
             expandAdditionalInfo(row) {
       row._showDetails = !row._showDetails;
@@ -765,8 +844,8 @@
                 // this.index = (this.index + 1) % this.images.length;
             },
             clearGradesSelected() {
-                console.log("this.grades_selected")
-                console.log(this.grades_selected)
+                // console.log("this.grades_selected")
+                // console.log(this.grades_selected)
                 // this.grades_selected = [];
             },
             dateSorter(a, b, key) {
@@ -831,8 +910,8 @@
                 const path = `/api/levantamentos/${this.data_cadastro_ini}/${this.data_cadastro_fim}/${this.suggestion_selected.cod_marca}/`;
                 axios.get(path)
                     .then((res) => {
-                        console.log("res");
-                        console.log(res);
+                        // console.log("res");
+                        // console.log(res);
                         this.items = [];
                         res.data.forEach(item => this.items.push(this.objectify(item)));
                         this.groupItemsByRef()
@@ -887,25 +966,56 @@
                 }
 
             },
+//           //depAI version of carregar imagens
+//           carregarImagens() {
+//     const selectedProducts = this.produtosSelecionados; // This should be the array of products you want to load images for
+//     const path = `/api/produtos/images/`;
+//
+//     // Send the selected products to the server
+//     axios.put(path, selectedProducts)
+//         .then((res) => {
+//             // Loop through the response data
+//             for (const key in res.data) {
+//                 const item = res.data[key];
+//                 const { cod_referencia, des_cor } = item;
+//
+//                 // Check if the item exists in the subgrouped_items_bycolor_obj
+//                 if (this.subgrouped_items_bycolor_obj[cod_referencia] && this.subgrouped_items_bycolor_obj[cod_referencia][des_cor]) {
+//                     // Update the images in the respective item
+//                     this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].img = item.img;
+//
+//                     // Resetting image index to refresh the display
+//                     this.subgrouped_items_bycolor_obj[cod_referencia][des_cor][0].image_index = 0; // Optionally reset to the first image
+//                 }
+//             }
+//
+//             // Since Vue automatically re-renders based on reactive data properties, you don't need to call an explicit refresh function here
+//         })
+//         .catch((error) => {
+//             console.error(error);
+//             console.error(error.response.data); // The response payload
+//         });
+// },
+
             carregarImagens() {
 
-                console.log('this.todosProdutos')
-                console.log(this.todosProdutos)
+                // console.log('this.todosProdutos')
+                // console.log(this.todosProdutos)
                 const path = `/api/produtos/images/`;
                 // axios.put(path, this.produtosSelecionados)
                 axios.put(path, this.todosProdutos)
                     // axios.put(path, this.produtos)
                     .then((res) => {
-                        console.log('res.data carregar imagens');
-                        console.log(res.data);
+                        // console.log('res.data carregar imagens');
+                        // console.log(res.data);
                         for (const key in res.data) {
-                            console.log('res.data')
-                            console.log(res.data)
-
-                            console.log('res.data[key].img')
-                            console.log(res.data[key].img)
-                            console.log('this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img')
-                            console.log(this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img)
+                            // console.log('res.data')
+                            // console.log(res.data)
+                            //
+                            // console.log('res.data[key].img')
+                            // console.log(res.data[key].img)
+                            // console.log('this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img')
+                            // console.log(this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img)
 
                             this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].img[this.subgrouped_items_bycolor_obj[res.data[key].cod_referencia][res.data[key].des_cor][0].image_index] = res.data[key].img
                             //these next 3 lines make the images auto refresh
@@ -928,8 +1038,8 @@
                     const cor = this.produtosSelecionados[key]['des_cor']
                     const ref_group = this.produtosSelecionados[key]['cod_referencia']
                     const descricao = this.produtosSelecionados[key]['des_produto']
-                    console.log('key')
-                    console.log(key)
+                    // console.log('key')
+                    // console.log(key)
                     // for (const key in this.produtos) {
                     let image_url = await this.fetchImage(marca, ref_group, cor, descricao)
                     // let image_url = await this.fetchImage(this.produtosSelecionados[key]['nom_marca'], this.produtosSelecionados[key]['cod_referencia'], this.produtosSelecionados[key]['des_cor'])
@@ -953,12 +1063,12 @@
 
             async saveProdutos() {
                 // const api_path = `/api/produtos/images/`
-                console.log('this.produtosSelecionados')
-                console.log(this.produtosSelecionados)
+                // console.log('this.produtosSelecionados')
+                // console.log(this.produtosSelecionados)
                 const api_path = `/api/produtos/save`
                 axios.put(api_path, this.produtosSelecionados)
                     .then((res) => {
-                        console.log('axios.put')
+                        // console.log('axios.put')
                         console.log(res.data)
                     })
                     .catch((error) => {
@@ -974,16 +1084,12 @@
 
                 const path = base_path + query
                 var path_without_spaces = path.replace(/\s/g, '+');
-                console.log('path_without_spaces')
-                console.log(path_without_spaces)
+
 
                 let image_url = axios.get(path_without_spaces)
                     .then((response) => {
-                        console.log("response from fetchImage")
-                        console.log(response)
+
                         return response.data.items.map((item) => {
-                            // console.log('item.link')
-                            // console.log(item.link)
                             // this.imagem_test = item.link
                             return item.link
                         });
@@ -992,10 +1098,10 @@
                         console.log(error)
                         console.log(error.response.data); // => the response payload
                     })
-                console.log('image_url_from fetchimage')
-                console.log(image_url)
-                console.log('typeof image_url')
-                console.log(typeof image_url)
+                // console.log('image_url_from fetchimage')
+                // console.log(image_url)
+                // console.log('typeof image_url')
+                // console.log(typeof image_url)
                 if (typeof image_url == 'undefined')
                     image_url = 'data:image/png;base64,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'
                 //TESTING TO RETURN A DEFAULT IMAGE IF UNINDETIFIED
@@ -1013,8 +1119,8 @@
                 // const path = `http://localhost/api/read/marcas/`; //this way works
                 axios.get(path)
                     .then((res) => {
-                        console.log('res');
-                        console.log(res);
+                        // console.log('res');
+                        // console.log(res);
                         this.suggestions[0].data = res.data
                     })
                     .catch((error) => {
@@ -1045,11 +1151,11 @@
             form_toggleAll() {
 
                     for (const ref_group in this.subgrouped_items_bycolor_obj) {
-                        console.log("this.subgrouped_items_bycolor_obj[ref_group]")
-                        console.log(this.subgrouped_items_bycolor_obj[ref_group])
+                        // console.log("this.subgrouped_items_bycolor_obj[ref_group]")
+                        // console.log(this.subgrouped_items_bycolor_obj[ref_group])
                         for (const cor in this.subgrouped_items_bycolor_obj[ref_group]) {
-                            console.log("this.subgrouped_items_bycolor_obj[ref_group][cor]")
-                            console.log(this.subgrouped_items_bycolor_obj[ref_group][cor])
+                            // console.log("this.subgrouped_items_bycolor_obj[ref_group][cor]")
+                            // console.log(this.subgrouped_items_bycolor_obj[ref_group][cor])
                             this.subgrouped_items_bycolor_obj[ref_group][cor][0].selected = this.form_allSelected
                         }
                     }
@@ -1061,8 +1167,8 @@
                 this.form_selected_ = selected_rows
                 console.log("checked")
                 console.log(checked)
-                console.log("this.produtosSelecionados")
-                console.log(this.produtosSelecionados)
+                // console.log("this.produtosSelecionados")
+                // console.log(this.produtosSelecionados)
             },
             previewImage(event, cod_referencia, des_cor) {
             // Reference to the DOM input element

@@ -1,4 +1,4 @@
-import '@babel/polyfill'
+//import '@babel/polyfill'
 import 'mutationobserver-shim'
 import Vue from 'vue'
 Vue.config.devtools = true

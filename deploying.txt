@@ -39,6 +39,13 @@ npm install @googleapis/customsearch
 npm install --save image-downloader
 
 
+if needed to restore pipfiles
+
+pipenv run pip freeze > requirements.txt
+pipenv install -r requirements.txt
+del requirements.txt
+
+
 
 
 

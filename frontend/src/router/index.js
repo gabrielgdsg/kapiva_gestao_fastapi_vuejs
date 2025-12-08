@@ -1,5 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+// import Vendedor from "../components/Vendedor.vue";
+// import Vendas from "../components/Vendas.vue";
+import VendedoresList from "../components/VendedoresList.vue";
+import VendedorDetail from "../components/VendedorDetail.vue";
+
 
 Vue.use(VueRouter)
 
@@ -61,6 +66,35 @@ const routes = [
     path: '/googleimagetestview',
     name: 'GoogleImageTestView',
     component: () => import('../views/GoogleImageTestView'),
+    props: true
+  },
+    {
+    path: '/metas/:currentComponent',
+    name: 'Metas',
+    component: () => import('../views/Metas.vue'),
+    props: true
+  },
+   {
+    path: "/vendedores",
+    name: "VendedoresList",
+    component: VendedoresList
+  },
+  {
+    path: "/vendedor/:cod_vendedor",
+    name: "VendedorDetail",
+    component: VendedorDetail,
+    props: true
+  },
+  {
+    path: "/vendedor/:cod_vendedor/vendas",
+    name: "Vendas",
+    component: () => import("../components/Vendas.vue"),
+    props: true
+  },
+  {
+    path: "/vendedor/:cod_vendedor/metas",
+    name: "Metas",
+    component: () => import("../components/Metas.vue"),
     props: true
   }
 

@@ -19,7 +19,6 @@ docker-machine create -d hyperv --hyperv-virtual-switch "Comutador Virtual Exter
 https://stackoverflow.com/questions/53416685/docker-compose-tagging-and-pushing
 
 docker build -t gabrieldeoliveiraest/projetofinal2_web:latest -f Dockerfile .
-tbx1234
 docker login -u "gabrielgdsg" -p "M@resdosu1" docker.io
 docker tag kapiva_gestao_fastapi_vuejs_frontend gabrielgdsg/myrepo:frontend
 docker tag kapiva_gestao_fastapi_vuejs_backend gabrielgdsg/myrepo:backend
@@ -27,6 +26,12 @@ docker tag mongo gabrielgdsg/myrepo:mongodb
 docker push gabrielgdsg/myrepo:frontend
 docker push gabrielgdsg/myrepo:backend
 docker push gabrielgdsg/myrepo:mongodb
+
+
+maybe
+git@github.com:gabrielgdsg/kapiva_gestao_fastapi_vuejs.git
+better
+https://github.com/gabrielgdsg/kapiva_gestao_fastapi_vuejs
 
 --running
 docker run -dp 3000:3000 YOUR-USER-NAME/getting-started
@@ -53,17 +58,46 @@ how to migrate databases
 
 docker exec <docker_container_name> sh -c 'mongodump --uri="mongodb://username:password@localhost:27017/db_name?authSource=admin&readPreference=primary" --archive' > db.dump
 
-docker exec mongodb sh -c "mongodump --uri="mongodb://root:rootpassword@localhost:27017/kapivagestao?authSource=admin" --archive" > D:\mongodb_volume\backups\kapiva_gestao_db.dump
+docker exec mongodb sh -c "mongodump --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao?authSource=admin" --archive" > D:\mongodb_volume\backups\kapiva_gestao_db.dump
 
 docker exec -i mongodb sh -c "mongodump --archive -u root -p rootpassword" < D:\mongodb_volume\backups\kapiva_gestao.dump
 
-docker exec -i mongodb sh -c "mongorestore --archive -u root -p rootpassword" < D:\mongodb_volume\backups\kapiva_gestao.dump
+docker exec -i mongodb sh -c "mongorestore --archive -u root -p rootpassword" < C:\Users\Gabriel\kapivagestao\mongodb_export\kapiva_gestao_db.dump
 
 
+docker exec -i mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao?authSource=admin" --db=kapiva_gestao_db C:\Users\Gabriel\kapivagestao\mongodb_export"
 
+docker exec -i mongodb sh -c 'mongorestore -d kapiva_gestao -u root -p rootpassword --archive' < C:\Users\Gabriel\kapivagestao\mongodb_export\kapiva_gestao_db.dump
+
+docker exec -i mongodb sh -c "mongorestore -d kapiva_gestao -u root -p rootpassword --archive" < kapiva_gestao_db.dump
+
+docker exec mongodb sh -c "mongorestore --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao?authSource=admin" --archive" < C:\Users\Gabriel\kapivagestao\mongodb_export
+
+mongodump --uri="mongodb://root:rootpassword@localhost:27017/kapiva_gestao>" --gzip --archive=kapiva_gestao_db.tar.gz
+
+mongorestore --uri="mongodb://<USERNAME>:<PASSWORD>@<IP_OF_THE_MONGO_TO_BE_RESTORED_TO>:27017/<THE_NEW_DB_TO_BE>" --nsFrom "<THE_DB_THAT_WAS_DUMPED>" --nsTo "<THE_NEW_DB_TO_BE>" --gzip  --archive="<DUMP_NAME>.tar.gz"
+
+
+docker exec -i mongodb sh -c 'mongorestore --db kapiva_gestao --verbose C:\Users\Gabriel\kapivagestao\mongodb_export'
+
+docker exec -i mongodb sh -c 'mongorestore --verbose --username root --password rootpassword mongodb://localhost:27017/kapiva_gestao kapiva_gestao_db
+
+
+docker exec -i mongodb sh -c "mongorestore --uri 'mongodb://root:rootpassword@localhost:27017/kapiva_gestao>' C:\Users\Gabriel\kapivagestao\mongodb_export"
+mongorestore --uri <connection string> <path to the backup>
+
+mongorestore --authenticationDatabase admin -u root -p rootpassword --db kapivagestao --archive' < kapiva_gestao_db.dump
+
+mongorestore -d kapiva_gestao -u root -p rootpassword --archive < kapiva_gestao_db.dump
 
 In VirtualBox:Click the appropriate machine (probably the one labeled "default")SettingsNetwork > Adapter 1 > Advanced > Port ForwardingClick "+" to add a new RuleSet Host Port 8080 & Guest Port 8080; be sure to leave Host IP and Guest IP empty
 
+
+{data_comissao: {$gt: ISODate('2024-03-01T03:00:00.000Z')}}
+
+inside docker desktop, inside the running container ('mongodb' container) exec the dump (in the original container), copy the file to the new container and exec the restore (in the new container)
+mongodump --archive="mongodump-test-db" --db=kapiva_gestao --uri="mongodb://root:rootpassword@localhost:27017/?authSource=admin"
+mongorestore --archive="mongodump-test-db" --nsFrom="kapiva_gestao.*" --nsTo="kapiva_gestao.*" --uri="mongodb://root:rootpassword@localhost:27017/?authSource=admin"
 
 
 -docker-compose up -d (usei isso para iniciar o mongodb container)
