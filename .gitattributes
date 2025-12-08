@@ -1,0 +1,19 @@
+* text=auto
+
+*.py   text eol=lf
+*.js   text eol=lf
+*.ts   text eol=lf
+*.vue  text eol=lf
+*.json text eol=lf
+*.css  text eol=lf
+*.html text eol=lf
+*.sh   text eol=lf
+
+# Do NOT normalize binaries
+*.png  -text
+*.jpg  -text
+*.jpeg -text
+*.gif  -text
+*.pdf  -text
+*.zip  -text
+*.ico  -text
