@@ -1,3 +1,7 @@
+# Never track backup folders
+_backups/
+
+
 # ==== PYTHON ====
 __pycache__/
 *.py[cod]
