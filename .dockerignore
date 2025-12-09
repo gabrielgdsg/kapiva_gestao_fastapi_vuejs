@@ -1,0 +1,15 @@
+.git
+.gitignore
+.vscode
+.idea
+*.pyc
+__pycache__
+node_modules
+frontend/node_modules
+backend/.venv
+db_mongo/data
+_backups
+*.log
+status.txt
+project_tree.txt
+allfiles.txt
