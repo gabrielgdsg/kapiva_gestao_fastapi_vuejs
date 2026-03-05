@@ -16,15 +16,12 @@ try {
   };
 }
 module.exports = {
+    publicPath: '/',
     devServer: {
-        // host: 'localhost',
-        // host: '127.0.0.1',
-        // host: '0.0.0.0',
-        // port: 8080,
-        // public: 'localhost:8080',
+        port: 8080,
         proxy: {
-            '/api/*': {
-                target: process.env.VUE_APP_TARGET,
+            '/api': {
+                target: process.env.VUE_APP_TARGET || 'http://localhost:8000',
                 secure: false,
                 changeOrigin: true
             }
@@ -37,5 +34,57 @@ module.exports = {
           ''
         ]
       }
-    }
+    },
+
+    // Bundle Optimization
+    configureWebpack: {
+        optimization: {
+            splitChunks: {
+                chunks: 'all',
+                cacheGroups: {
+                    // Vendor chunks - separate large libraries
+                    vendor: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendors',
+                        priority: 10,
+                        reuseExistingChunk: true
+                    },
+                    // Bootstrap Vue - large library, separate chunk
+                    bootstrapVue: {
+                        test: /[\\/]node_modules[\\/]bootstrap-vue[\\/]/,
+                        name: 'bootstrap-vue',
+                        priority: 20,
+                        reuseExistingChunk: true
+                    },
+                    // Moment.js - can be large, separate chunk
+                    moment: {
+                        test: /[\\/]node_modules[\\/]moment[\\/]/,
+                        name: 'moment',
+                        priority: 20,
+                        reuseExistingChunk: true
+                    },
+                    // Vue and core libraries
+                    vue: {
+                        test: /[\\/]node_modules[\\/](vue|vue-router|vuex)[\\/]/,
+                        name: 'vue-core',
+                        priority: 30,
+                        reuseExistingChunk: true
+                    },
+                    // Common chunk for shared code
+                    common: {
+                        minChunks: 2,
+                        priority: 5,
+                        reuseExistingChunk: true
+                    }
+                }
+            }
+        }
+    },
+
+    // Production optimizations
+    productionSourceMap: false,
+
+    css: {
+        extract: false,
+    },
 };

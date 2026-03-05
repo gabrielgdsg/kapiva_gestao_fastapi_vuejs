@@ -2,13 +2,28 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-*.sqlite
-*.db
+*.swp
+*.swo
+
 .env
-.venv
-venv
-*.log
-.git
-_backups
-db_mongo
-node_modules
+.env.*
+!.env.example
+
+.vscode/
+.idea/
+dist/
+build/
+node_modules/
+
+# Python virtual environments
+.venv/
+venv/
+env/
+
+# Git
+.git/
+.gitignore
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,5 +1,5 @@
 # from ..postgresdatabase import CursorFromConnectionFromPool
-from db_postgres.connection import CursorFromConnectionFromPool
+from app.db_postgres.connection import CursorFromConnectionFromPool
 
 
 class CaixaPostgres:

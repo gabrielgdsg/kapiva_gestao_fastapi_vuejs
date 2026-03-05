@@ -78,6 +78,13 @@ docker-compose.override.yml
 *.pid
 
 # ---------------------------------------------------------
+# Pedidos Chegando (Gmail OAuth + uploads)
+# ---------------------------------------------------------
+backend/.env
+backend/client_secret.json
+backend/uploads/
+
+# ---------------------------------------------------------
 # Backups (your old versions)
 # ---------------------------------------------------------
 _backups/

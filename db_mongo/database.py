@@ -1,14 +1,21 @@
 from odmantic import AIOEngine, Model, ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import settings
+from app.config import settings
 
 from beanie import init_beanie
-from api.models.estoque import ProdutoEstoqueMongoBeanie
+from app.api.models.estoque import ProdutoEstoqueMongoBeanie
 
 
 
 # client = AsyncIOMotorClient("mongodb://localhost:27017")
-client = AsyncIOMotorClient(settings.MONGODB_URL)       # ODMantic
+# Timeout configurable via MONGODB_TIMEOUT_MS (default 15s) — avoids long blocks when Mongo unreachable
+_timeout = getattr(settings, "MONGODB_TIMEOUT_MS", 15000)
+client = AsyncIOMotorClient(
+    settings.MONGODB_URL,
+    serverSelectionTimeoutMS=_timeout,
+    connectTimeoutMS=_timeout,
+    socketTimeoutMS=max(_timeout * 2, 30000),
+)  # ODMantic
 # client = AsyncIOMotorClient(settings.MONGODB_URL, authSource="admin")
 # client = AsyncIOMotorClient("mongodb://mongodb:27017")
 # client = AsyncIOMotorClient("mongodb://root:rootpassword@mongodb:27017")

@@ -1,6 +1,7 @@
 from datetime import datetime, date
 from typing import List
 from odmantic import Model, EmbeddedModel
+from pydantic import BaseModel
 from bson import Decimal128 as Decimal, Binary as binData
 
 
@@ -92,8 +93,8 @@ class Produto(Model):
     cod_referencia: str
     nom_marca: str
     des_cor: str
-    # img: str
-    img: binData
+    # Simplified: single image as base64 string (not binary, not array)
+    img: str
     # selected: bool
 
     class Config:
@@ -102,3 +103,20 @@ class Produto(Model):
             # date: lambda v: datetime.strptime(str(v), "%Y-%m-%d").strftime("%d/%m/%Y"),
             # Decimal: lambda v: v.to_decimal()
         }
+
+
+# Simplified model for image loading - only requires identifiers, not strict validation
+class ProdutoIdentifier(BaseModel):
+    cod_referencia: str
+    nom_marca: str
+    des_cor: str
+    des_produto: str
+
+
+# Minimal model for saving a single product image (paste/URL)
+class ProdutoImageSave(BaseModel):
+    cod_referencia: str
+    nom_marca: str
+    des_cor: str
+    des_produto: str = ""
+    img: str

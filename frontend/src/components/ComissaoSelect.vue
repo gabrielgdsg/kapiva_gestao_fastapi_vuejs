@@ -1,15 +1,14 @@
 <template>
   <div class="comissao-select">
-    <h1>Comissão</h1>
     <b-form @submit.stop.prevent="onSubmit">
-      <label for="datepicker-data-ini">Data inicial: </label>
+      <label for="datepicker-data-ini">Data inicial:</label>
       <mydatepicker-ini id="datepicker-data-ini" datepicker_default="2019/12/01" @childToParent="receiveDataIni"/>
       <br><br>
-      <label for="datepicker-data-fim">Data final: </label>
+      <label for="datepicker-data-fim">Data final:</label>
       <mydatepicker-fim id="datepicker-data-fim" datepicker_default="2019/12/31" @childToParent="receiveDataFim"/>
       <br><br>
       <b-button type="submit" variant="primary">Enviar</b-button>
-      </b-form>
+    </b-form>
   </div>
 </template>
 

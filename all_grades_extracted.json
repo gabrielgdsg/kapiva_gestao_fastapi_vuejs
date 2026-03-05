@@ -1,0 +1,2467 @@
+{
+  "total_unique_sizes": 224,
+  "all_sizes": [
+    "04",
+    "05",
+    "06",
+    "07",
+    "08",
+    "09",
+    "1",
+    "1/4",
+    "1/8",
+    "10",
+    "100",
+    "105",
+    "105/110",
+    "11",
+    "110",
+    "115",
+    "12",
+    "120",
+    "125",
+    "129 MM",
+    "130",
+    "135",
+    "139 MM",
+    "14",
+    "140",
+    "15",
+    "16",
+    "16-22",
+    "17",
+    "17-20",
+    "17/18",
+    "18",
+    "18/19",
+    "19",
+    "19/20",
+    "1GG",
+    "1X",
+    "1XGG",
+    "2",
+    "2-3",
+    "20",
+    "20/21",
+    "21",
+    "21-24",
+    "21/22",
+    "22",
+    "22-26",
+    "22/23",
+    "23",
+    "23/24",
+    "24",
+    "24/25",
+    "25",
+    "25-28",
+    "25/26",
+    "26",
+    "26-33",
+    "26/27",
+    "27",
+    "27/28",
+    "28",
+    "28/29",
+    "29",
+    "29-33",
+    "29-34",
+    "29/30",
+    "2G",
+    "2GG",
+    "2X",
+    "2XG",
+    "2XGG",
+    "2XL",
+    "2XP",
+    "3",
+    "3-4",
+    "3/8",
+    "30",
+    "30/31",
+    "31",
+    "31-34",
+    "31/32",
+    "32",
+    "32/33",
+    "33",
+    "33 A 38",
+    "33-38",
+    "33/34",
+    "34",
+    "34-38",
+    "34-39",
+    "34/35",
+    "35",
+    "35-38",
+    "35/36",
+    "36",
+    "36/37",
+    "37",
+    "37,5",
+    "37/38",
+    "38",
+    "38-43",
+    "38/39",
+    "38/43",
+    "39",
+    "39,5",
+    "39-42",
+    "39-43",
+    "39-44",
+    "39/40",
+    "39/44",
+    "3G",
+    "3GG",
+    "3X",
+    "3XG",
+    "3XL",
+    "4",
+    "4-5",
+    "40",
+    "40,5",
+    "40/41",
+    "41",
+    "41/42",
+    "42",
+    "42/43",
+    "43",
+    "43-45",
+    "43-47",
+    "43/44",
+    "44",
+    "44/45",
+    "45",
+    "45/46",
+    "46",
+    "46/47",
+    "47",
+    "47/48",
+    "48",
+    "4G",
+    "4GG",
+    "4X",
+    "5",
+    "5 MM",
+    "5-6",
+    "50",
+    "51 MM",
+    "52",
+    "52 MM",
+    "53 MM",
+    "54",
+    "54 MM",
+    "56",
+    "6",
+    "6 MM",
+    "7",
+    "7 '9",
+    "7'67",
+    "7,75",
+    "7,9",
+    "7/PKS",
+    "8",
+    "8'0",
+    "8'180",
+    "8'25",
+    "8,25",
+    "8,5",
+    "8.1",
+    "8.125",
+    "85/90",
+    "9",
+    "9/KS",
+    "90",
+    "95",
+    "95/100",
+    "B",
+    "BB",
+    "BORDO",
+    "EE",
+    "EG",
+    "EG1",
+    "EG2",
+    "EG3",
+    "EG4",
+    "EG5",
+    "EGG",
+    "EM",
+    "EP",
+    "ES",
+    "EX",
+    "EXG",
+    "EXGG",
+    "EXXGG",
+    "G",
+    "G/GG",
+    "G1",
+    "G2",
+    "G3",
+    "G4",
+    "G5",
+    "GG",
+    "GGG",
+    "GI",
+    "JG",
+    "LARGE",
+    "M",
+    "MC",
+    "MEDIA",
+    "MG",
+    "MI",
+    "O",
+    "P",
+    "P/M",
+    "PI",
+    "PM",
+    "PP",
+    "RN",
+    "UN",
+    "UND",
+    "UNICO",
+    "XG",
+    "XGG",
+    "XP",
+    "XXG",
+    "XXGG",
+    "XXL"
+  ],
+  "by_grade_type": {
+    "ACESSORIO": [
+      "04",
+      "05",
+      "06",
+      "07",
+      "08",
+      "09",
+      "1/4",
+      "1/8",
+      "10",
+      "100",
+      "105",
+      "105/110",
+      "11",
+      "110",
+      "115",
+      "12",
+      "120",
+      "129 MM",
+      "130",
+      "135",
+      "139 MM",
+      "140",
+      "16-22",
+      "17-20",
+      "21-24",
+      "22-26",
+      "23/24",
+      "25-28",
+      "26-33",
+      "29-33",
+      "29-34",
+      "3/8",
+      "31-34",
+      "33 A 38",
+      "33-38",
+      "34-38",
+      "34-39",
+      "35-38",
+      "37/38",
+      "38-43",
+      "38/43",
+      "39-42",
+      "39-43",
+      "39-44",
+      "39/40",
+      "39/44",
+      "41/42",
+      "43-45",
+      "43-47",
+      "51 MM",
+      "52 MM",
+      "53 MM",
+      "54 MM",
+      "7 '9",
+      "7/PKS",
+      "8'180",
+      "8'25",
+      "85/90",
+      "9/KS",
+      "90",
+      "95",
+      "95/100",
+      "BB",
+      "BORDO",
+      "EG",
+      "G",
+      "G/GG",
+      "GG",
+      "JG",
+      "LARGE",
+      "M",
+      "MEDIA",
+      "P",
+      "P/M",
+      "PM",
+      "PP",
+      "RN",
+      "UN",
+      "UND",
+      "XGG",
+      "XXGG"
+    ],
+    "CALCADO": [
+      "1",
+      "10",
+      "12",
+      "14",
+      "15",
+      "16",
+      "17",
+      "17/18",
+      "18",
+      "18/19",
+      "19",
+      "19/20",
+      "2",
+      "20",
+      "20/21",
+      "21",
+      "21/22",
+      "22",
+      "22/23",
+      "23",
+      "23/24",
+      "24",
+      "24/25",
+      "25",
+      "25/26",
+      "26",
+      "26/27",
+      "27",
+      "27/28",
+      "28",
+      "28/29",
+      "29",
+      "29/30",
+      "3",
+      "30",
+      "30/31",
+      "31",
+      "31/32",
+      "32",
+      "32/33",
+      "33",
+      "33/34",
+      "34",
+      "34/35",
+      "35",
+      "35/36",
+      "36",
+      "36/37",
+      "37",
+      "37,5",
+      "37/38",
+      "38",
+      "38/39",
+      "39",
+      "39,5",
+      "39/40",
+      "4",
+      "40",
+      "40,5",
+      "40/41",
+      "41",
+      "41/42",
+      "42",
+      "42/43",
+      "43",
+      "43/44",
+      "44",
+      "44/45",
+      "45",
+      "45/46",
+      "46",
+      "46/47",
+      "47",
+      "47/48",
+      "48",
+      "5",
+      "6",
+      "8",
+      "EX",
+      "G",
+      "GG",
+      "M",
+      "P",
+      "PP"
+    ],
+    "CINTO": [
+      "100",
+      "105",
+      "110",
+      "115",
+      "120",
+      "125",
+      "90",
+      "95"
+    ],
+    "ESPORTIVO": [
+      "5 MM",
+      "51 MM",
+      "52 MM",
+      "53 MM",
+      "6 MM",
+      "7'67",
+      "7,75",
+      "7,9",
+      "8'0",
+      "8,25",
+      "8,5",
+      "8.1",
+      "8.125",
+      "P",
+      "UNICO"
+    ],
+    "ROUPA": [
+      "1",
+      "10",
+      "12",
+      "14",
+      "16",
+      "1GG",
+      "1X",
+      "1XGG",
+      "2",
+      "2-3",
+      "2G",
+      "2GG",
+      "2X",
+      "2XG",
+      "2XGG",
+      "2XL",
+      "2XP",
+      "3",
+      "3-4",
+      "34",
+      "36",
+      "38",
+      "39",
+      "3G",
+      "3GG",
+      "3X",
+      "3XG",
+      "3XL",
+      "4",
+      "4-5",
+      "40",
+      "41",
+      "42",
+      "43",
+      "44",
+      "46",
+      "48",
+      "4G",
+      "4GG",
+      "4X",
+      "5",
+      "5-6",
+      "50",
+      "52",
+      "54",
+      "56",
+      "6",
+      "7",
+      "8",
+      "9",
+      "B",
+      "BB",
+      "EE",
+      "EG",
+      "EG1",
+      "EG2",
+      "EG3",
+      "EG4",
+      "EG5",
+      "EGG",
+      "EM",
+      "EP",
+      "ES",
+      "EXG",
+      "EXGG",
+      "EXXGG",
+      "G",
+      "G1",
+      "G2",
+      "G3",
+      "G4",
+      "G5",
+      "GG",
+      "GGG",
+      "GI",
+      "M",
+      "MC",
+      "MG",
+      "MI",
+      "O",
+      "P",
+      "PI",
+      "PM",
+      "PP",
+      "UN",
+      "XG",
+      "XGG",
+      "XP",
+      "XXG",
+      "XXL"
+    ]
+  },
+  "detailed": [
+    {
+      "des_tamanho": "04",
+      "des_grade": "ACESSORIO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "05",
+      "des_grade": "ACESSORIO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "06",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "07",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "08",
+      "des_grade": "ACESSORIO",
+      "product_count": 8,
+      "reference_count": 8,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "09",
+      "des_grade": "ACESSORIO",
+      "product_count": 8,
+      "reference_count": 8,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "1",
+      "des_grade": "CALCADO",
+      "product_count": 16,
+      "reference_count": 13,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "1",
+      "des_grade": "ROUPA",
+      "product_count": 6,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "1/4",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "1/8",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "10",
+      "des_grade": "ACESSORIO",
+      "product_count": 10,
+      "reference_count": 9,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "10",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "10",
+      "des_grade": "ROUPA",
+      "product_count": 170,
+      "reference_count": 129,
+      "brand_count": 28
+    },
+    {
+      "des_tamanho": "100",
+      "des_grade": "ACESSORIO",
+      "product_count": 16,
+      "reference_count": 11,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "100",
+      "des_grade": "CINTO",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "105",
+      "des_grade": "ACESSORIO",
+      "product_count": 12,
+      "reference_count": 10,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "105",
+      "des_grade": "CINTO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "105/110",
+      "des_grade": "ACESSORIO",
+      "product_count": 12,
+      "reference_count": 7,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "11",
+      "des_grade": "ACESSORIO",
+      "product_count": 7,
+      "reference_count": 7,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "110",
+      "des_grade": "ACESSORIO",
+      "product_count": 15,
+      "reference_count": 10,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "110",
+      "des_grade": "CINTO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "115",
+      "des_grade": "ACESSORIO",
+      "product_count": 6,
+      "reference_count": 5,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "115",
+      "des_grade": "CINTO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "12",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "12",
+      "des_grade": "CALCADO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "12",
+      "des_grade": "ROUPA",
+      "product_count": 180,
+      "reference_count": 136,
+      "brand_count": 27
+    },
+    {
+      "des_tamanho": "120",
+      "des_grade": "ACESSORIO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "120",
+      "des_grade": "CINTO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "125",
+      "des_grade": "CINTO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "129 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "130",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "135",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "139 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 5,
+      "reference_count": 5,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "14",
+      "des_grade": "CALCADO",
+      "product_count": 5,
+      "reference_count": 5,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "14",
+      "des_grade": "ROUPA",
+      "product_count": 192,
+      "reference_count": 137,
+      "brand_count": 25
+    },
+    {
+      "des_tamanho": "140",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "15",
+      "des_grade": "CALCADO",
+      "product_count": 9,
+      "reference_count": 9,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "16",
+      "des_grade": "CALCADO",
+      "product_count": 43,
+      "reference_count": 42,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "16",
+      "des_grade": "ROUPA",
+      "product_count": 156,
+      "reference_count": 111,
+      "brand_count": 19
+    },
+    {
+      "des_tamanho": "16-22",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "17",
+      "des_grade": "CALCADO",
+      "product_count": 123,
+      "reference_count": 113,
+      "brand_count": 9
+    },
+    {
+      "des_tamanho": "17-20",
+      "des_grade": "ACESSORIO",
+      "product_count": 8,
+      "reference_count": 8,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "17/18",
+      "des_grade": "CALCADO",
+      "product_count": 69,
+      "reference_count": 45,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "18",
+      "des_grade": "CALCADO",
+      "product_count": 207,
+      "reference_count": 188,
+      "brand_count": 12
+    },
+    {
+      "des_tamanho": "18/19",
+      "des_grade": "CALCADO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "19",
+      "des_grade": "CALCADO",
+      "product_count": 379,
+      "reference_count": 316,
+      "brand_count": 19
+    },
+    {
+      "des_tamanho": "19/20",
+      "des_grade": "CALCADO",
+      "product_count": 16,
+      "reference_count": 10,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "1GG",
+      "des_grade": "ROUPA",
+      "product_count": 7,
+      "reference_count": 5,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "1X",
+      "des_grade": "ROUPA",
+      "product_count": 31,
+      "reference_count": 24,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "1XGG",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "2",
+      "des_grade": "CALCADO",
+      "product_count": 24,
+      "reference_count": 21,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "2",
+      "des_grade": "ROUPA",
+      "product_count": 17,
+      "reference_count": 16,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "2-3",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "20",
+      "des_grade": "CALCADO",
+      "product_count": 429,
+      "reference_count": 361,
+      "brand_count": 23
+    },
+    {
+      "des_tamanho": "20/21",
+      "des_grade": "CALCADO",
+      "product_count": 72,
+      "reference_count": 42,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "21",
+      "des_grade": "CALCADO",
+      "product_count": 446,
+      "reference_count": 373,
+      "brand_count": 23
+    },
+    {
+      "des_tamanho": "21-24",
+      "des_grade": "ACESSORIO",
+      "product_count": 19,
+      "reference_count": 13,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "21/22",
+      "des_grade": "CALCADO",
+      "product_count": 21,
+      "reference_count": 14,
+      "brand_count": 7
+    },
+    {
+      "des_tamanho": "22",
+      "des_grade": "CALCADO",
+      "product_count": 555,
+      "reference_count": 444,
+      "brand_count": 27
+    },
+    {
+      "des_tamanho": "22-26",
+      "des_grade": "ACESSORIO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "22/23",
+      "des_grade": "CALCADO",
+      "product_count": 5,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "23",
+      "des_grade": "CALCADO",
+      "product_count": 470,
+      "reference_count": 388,
+      "brand_count": 24
+    },
+    {
+      "des_tamanho": "23/24",
+      "des_grade": "ACESSORIO",
+      "product_count": 3,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "23/24",
+      "des_grade": "CALCADO",
+      "product_count": 230,
+      "reference_count": 147,
+      "brand_count": 15
+    },
+    {
+      "des_tamanho": "24",
+      "des_grade": "CALCADO",
+      "product_count": 475,
+      "reference_count": 389,
+      "brand_count": 25
+    },
+    {
+      "des_tamanho": "24/25",
+      "des_grade": "CALCADO",
+      "product_count": 5,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "25",
+      "des_grade": "CALCADO",
+      "product_count": 629,
+      "reference_count": 503,
+      "brand_count": 31
+    },
+    {
+      "des_tamanho": "25-28",
+      "des_grade": "ACESSORIO",
+      "product_count": 20,
+      "reference_count": 14,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "25/26",
+      "des_grade": "CALCADO",
+      "product_count": 154,
+      "reference_count": 100,
+      "brand_count": 14
+    },
+    {
+      "des_tamanho": "26",
+      "des_grade": "CALCADO",
+      "product_count": 552,
+      "reference_count": 441,
+      "brand_count": 30
+    },
+    {
+      "des_tamanho": "26-33",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "26/27",
+      "des_grade": "CALCADO",
+      "product_count": 114,
+      "reference_count": 86,
+      "brand_count": 8
+    },
+    {
+      "des_tamanho": "27",
+      "des_grade": "CALCADO",
+      "product_count": 614,
+      "reference_count": 488,
+      "brand_count": 34
+    },
+    {
+      "des_tamanho": "27/28",
+      "des_grade": "CALCADO",
+      "product_count": 150,
+      "reference_count": 90,
+      "brand_count": 15
+    },
+    {
+      "des_tamanho": "28",
+      "des_grade": "CALCADO",
+      "product_count": 808,
+      "reference_count": 632,
+      "brand_count": 52
+    },
+    {
+      "des_tamanho": "28/29",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "29",
+      "des_grade": "CALCADO",
+      "product_count": 855,
+      "reference_count": 665,
+      "brand_count": 55
+    },
+    {
+      "des_tamanho": "29-33",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "29-34",
+      "des_grade": "ACESSORIO",
+      "product_count": 19,
+      "reference_count": 14,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "29/30",
+      "des_grade": "CALCADO",
+      "product_count": 159,
+      "reference_count": 97,
+      "brand_count": 15
+    },
+    {
+      "des_tamanho": "2G",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "2GG",
+      "des_grade": "ROUPA",
+      "product_count": 13,
+      "reference_count": 10,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "2X",
+      "des_grade": "ROUPA",
+      "product_count": 25,
+      "reference_count": 19,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "2XG",
+      "des_grade": "ROUPA",
+      "product_count": 47,
+      "reference_count": 41,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "2XGG",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "2XL",
+      "des_grade": "ROUPA",
+      "product_count": 11,
+      "reference_count": 10,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "2XP",
+      "des_grade": "ROUPA",
+      "product_count": 14,
+      "reference_count": 14,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "3",
+      "des_grade": "CALCADO",
+      "product_count": 26,
+      "reference_count": 22,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "3",
+      "des_grade": "ROUPA",
+      "product_count": 13,
+      "reference_count": 12,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "3-4",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "3/8",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "30",
+      "des_grade": "CALCADO",
+      "product_count": 872,
+      "reference_count": 680,
+      "brand_count": 55
+    },
+    {
+      "des_tamanho": "30/31",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "31",
+      "des_grade": "CALCADO",
+      "product_count": 882,
+      "reference_count": 688,
+      "brand_count": 55
+    },
+    {
+      "des_tamanho": "31-34",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "31/32",
+      "des_grade": "CALCADO",
+      "product_count": 159,
+      "reference_count": 97,
+      "brand_count": 15
+    },
+    {
+      "des_tamanho": "32",
+      "des_grade": "CALCADO",
+      "product_count": 767,
+      "reference_count": 613,
+      "brand_count": 52
+    },
+    {
+      "des_tamanho": "32/33",
+      "des_grade": "CALCADO",
+      "product_count": 118,
+      "reference_count": 82,
+      "brand_count": 9
+    },
+    {
+      "des_tamanho": "33",
+      "des_grade": "CALCADO",
+      "product_count": 1712,
+      "reference_count": 1385,
+      "brand_count": 96
+    },
+    {
+      "des_tamanho": "33-38",
+      "des_grade": "ACESSORIO",
+      "product_count": 5,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "33 A 38",
+      "des_grade": "ACESSORIO",
+      "product_count": 6,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "33/34",
+      "des_grade": "CALCADO",
+      "product_count": 415,
+      "reference_count": 216,
+      "brand_count": 27
+    },
+    {
+      "des_tamanho": "34",
+      "des_grade": "CALCADO",
+      "product_count": 4637,
+      "reference_count": 3352,
+      "brand_count": 138
+    },
+    {
+      "des_tamanho": "34",
+      "des_grade": "ROUPA",
+      "product_count": 29,
+      "reference_count": 29,
+      "brand_count": 7
+    },
+    {
+      "des_tamanho": "34-38",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "34-39",
+      "des_grade": "ACESSORIO",
+      "product_count": 28,
+      "reference_count": 21,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "34/35",
+      "des_grade": "CALCADO",
+      "product_count": 6,
+      "reference_count": 5,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "35",
+      "des_grade": "CALCADO",
+      "product_count": 4611,
+      "reference_count": 3331,
+      "brand_count": 139
+    },
+    {
+      "des_tamanho": "35-38",
+      "des_grade": "ACESSORIO",
+      "product_count": 6,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "35/36",
+      "des_grade": "CALCADO",
+      "product_count": 393,
+      "reference_count": 169,
+      "brand_count": 29
+    },
+    {
+      "des_tamanho": "36",
+      "des_grade": "CALCADO",
+      "product_count": 4470,
+      "reference_count": 3194,
+      "brand_count": 145
+    },
+    {
+      "des_tamanho": "36",
+      "des_grade": "ROUPA",
+      "product_count": 259,
+      "reference_count": 249,
+      "brand_count": 18
+    },
+    {
+      "des_tamanho": "36/37",
+      "des_grade": "CALCADO",
+      "product_count": 7,
+      "reference_count": 6,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "37",
+      "des_grade": "CALCADO",
+      "product_count": 4606,
+      "reference_count": 3336,
+      "brand_count": 142
+    },
+    {
+      "des_tamanho": "37,5",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "37/38",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "37/38",
+      "des_grade": "CALCADO",
+      "product_count": 632,
+      "reference_count": 251,
+      "brand_count": 29
+    },
+    {
+      "des_tamanho": "38",
+      "des_grade": "CALCADO",
+      "product_count": 5099,
+      "reference_count": 3741,
+      "brand_count": 153
+    },
+    {
+      "des_tamanho": "38",
+      "des_grade": "ROUPA",
+      "product_count": 622,
+      "reference_count": 586,
+      "brand_count": 41
+    },
+    {
+      "des_tamanho": "38-43",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "38/39",
+      "des_grade": "CALCADO",
+      "product_count": 9,
+      "reference_count": 8,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "38/43",
+      "des_grade": "ACESSORIO",
+      "product_count": 15,
+      "reference_count": 8,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "39",
+      "des_grade": "CALCADO",
+      "product_count": 4865,
+      "reference_count": 3629,
+      "brand_count": 147
+    },
+    {
+      "des_tamanho": "39",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "39-42",
+      "des_grade": "ACESSORIO",
+      "product_count": 30,
+      "reference_count": 19,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "39-43",
+      "des_grade": "ACESSORIO",
+      "product_count": 15,
+      "reference_count": 12,
+      "brand_count": 7
+    },
+    {
+      "des_tamanho": "39-44",
+      "des_grade": "ACESSORIO",
+      "product_count": 6,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "39,5",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "39/40",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "39/40",
+      "des_grade": "CALCADO",
+      "product_count": 582,
+      "reference_count": 235,
+      "brand_count": 27
+    },
+    {
+      "des_tamanho": "39/44",
+      "des_grade": "ACESSORIO",
+      "product_count": 15,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "3G",
+      "des_grade": "ROUPA",
+      "product_count": 11,
+      "reference_count": 10,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "3GG",
+      "des_grade": "ROUPA",
+      "product_count": 5,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "3X",
+      "des_grade": "ROUPA",
+      "product_count": 11,
+      "reference_count": 11,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "3XG",
+      "des_grade": "ROUPA",
+      "product_count": 43,
+      "reference_count": 37,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "3XL",
+      "des_grade": "ROUPA",
+      "product_count": 13,
+      "reference_count": 11,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "4",
+      "des_grade": "CALCADO",
+      "product_count": 25,
+      "reference_count": 21,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "4",
+      "des_grade": "ROUPA",
+      "product_count": 24,
+      "reference_count": 21,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "4-5",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "40",
+      "des_grade": "CALCADO",
+      "product_count": 2206,
+      "reference_count": 1770,
+      "brand_count": 135
+    },
+    {
+      "des_tamanho": "40",
+      "des_grade": "ROUPA",
+      "product_count": 807,
+      "reference_count": 749,
+      "brand_count": 43
+    },
+    {
+      "des_tamanho": "40,5",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "40/41",
+      "des_grade": "CALCADO",
+      "product_count": 8,
+      "reference_count": 7,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "41",
+      "des_grade": "CALCADO",
+      "product_count": 1419,
+      "reference_count": 1155,
+      "brand_count": 95
+    },
+    {
+      "des_tamanho": "41",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "41/42",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "41/42",
+      "des_grade": "CALCADO",
+      "product_count": 275,
+      "reference_count": 122,
+      "brand_count": 17
+    },
+    {
+      "des_tamanho": "42",
+      "des_grade": "CALCADO",
+      "product_count": 1393,
+      "reference_count": 1139,
+      "brand_count": 92
+    },
+    {
+      "des_tamanho": "42",
+      "des_grade": "ROUPA",
+      "product_count": 807,
+      "reference_count": 751,
+      "brand_count": 43
+    },
+    {
+      "des_tamanho": "42/43",
+      "des_grade": "CALCADO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "43",
+      "des_grade": "CALCADO",
+      "product_count": 1096,
+      "reference_count": 953,
+      "brand_count": 78
+    },
+    {
+      "des_tamanho": "43",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "43-45",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "43-47",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "43/44",
+      "des_grade": "CALCADO",
+      "product_count": 351,
+      "reference_count": 145,
+      "brand_count": 18
+    },
+    {
+      "des_tamanho": "44",
+      "des_grade": "CALCADO",
+      "product_count": 497,
+      "reference_count": 450,
+      "brand_count": 64
+    },
+    {
+      "des_tamanho": "44",
+      "des_grade": "ROUPA",
+      "product_count": 697,
+      "reference_count": 649,
+      "brand_count": 41
+    },
+    {
+      "des_tamanho": "44/45",
+      "des_grade": "CALCADO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "45",
+      "des_grade": "CALCADO",
+      "product_count": 89,
+      "reference_count": 65,
+      "brand_count": 22
+    },
+    {
+      "des_tamanho": "45/46",
+      "des_grade": "CALCADO",
+      "product_count": 54,
+      "reference_count": 23,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "46",
+      "des_grade": "CALCADO",
+      "product_count": 39,
+      "reference_count": 30,
+      "brand_count": 12
+    },
+    {
+      "des_tamanho": "46",
+      "des_grade": "ROUPA",
+      "product_count": 499,
+      "reference_count": 469,
+      "brand_count": 36
+    },
+    {
+      "des_tamanho": "46/47",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "47",
+      "des_grade": "CALCADO",
+      "product_count": 19,
+      "reference_count": 16,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "47/48",
+      "des_grade": "CALCADO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "48",
+      "des_grade": "CALCADO",
+      "product_count": 10,
+      "reference_count": 8,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "48",
+      "des_grade": "ROUPA",
+      "product_count": 303,
+      "reference_count": 286,
+      "brand_count": 30
+    },
+    {
+      "des_tamanho": "4G",
+      "des_grade": "ROUPA",
+      "product_count": 10,
+      "reference_count": 9,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "4GG",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "4X",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "5",
+      "des_grade": "CALCADO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "5",
+      "des_grade": "ROUPA",
+      "product_count": 13,
+      "reference_count": 12,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "5-6",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "5 MM",
+      "des_grade": "ESPORTIVO",
+      "product_count": 7,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "50",
+      "des_grade": "ROUPA",
+      "product_count": 127,
+      "reference_count": 118,
+      "brand_count": 19
+    },
+    {
+      "des_tamanho": "51 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "51 MM",
+      "des_grade": "ESPORTIVO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "52",
+      "des_grade": "ROUPA",
+      "product_count": 95,
+      "reference_count": 87,
+      "brand_count": 14
+    },
+    {
+      "des_tamanho": "52 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 2,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "52 MM",
+      "des_grade": "ESPORTIVO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "53 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 6,
+      "reference_count": 3,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "53 MM",
+      "des_grade": "ESPORTIVO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "54",
+      "des_grade": "ROUPA",
+      "product_count": 53,
+      "reference_count": 47,
+      "brand_count": 8
+    },
+    {
+      "des_tamanho": "54 MM",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "56",
+      "des_grade": "ROUPA",
+      "product_count": 34,
+      "reference_count": 29,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "6",
+      "des_grade": "CALCADO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "6",
+      "des_grade": "ROUPA",
+      "product_count": 23,
+      "reference_count": 20,
+      "brand_count": 5
+    },
+    {
+      "des_tamanho": "6 MM",
+      "des_grade": "ESPORTIVO",
+      "product_count": 5,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "7",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "7'67",
+      "des_grade": "ESPORTIVO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "7 '9",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "7,75",
+      "des_grade": "ESPORTIVO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "7,9",
+      "des_grade": "ESPORTIVO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "7/PKS",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "8",
+      "des_grade": "CALCADO",
+      "product_count": 5,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "8",
+      "des_grade": "ROUPA",
+      "product_count": 37,
+      "reference_count": 33,
+      "brand_count": 16
+    },
+    {
+      "des_tamanho": "8'0",
+      "des_grade": "ESPORTIVO",
+      "product_count": 17,
+      "reference_count": 13,
+      "brand_count": 9
+    },
+    {
+      "des_tamanho": "8'180",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "8'25",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "8,25",
+      "des_grade": "ESPORTIVO",
+      "product_count": 8,
+      "reference_count": 7,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "8,5",
+      "des_grade": "ESPORTIVO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "8.1",
+      "des_grade": "ESPORTIVO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "8.125",
+      "des_grade": "ESPORTIVO",
+      "product_count": 4,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "85/90",
+      "des_grade": "ACESSORIO",
+      "product_count": 12,
+      "reference_count": 7,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "9",
+      "des_grade": "ROUPA",
+      "product_count": 5,
+      "reference_count": 5,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "9/KS",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "90",
+      "des_grade": "ACESSORIO",
+      "product_count": 7,
+      "reference_count": 5,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "90",
+      "des_grade": "CINTO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "95",
+      "des_grade": "ACESSORIO",
+      "product_count": 11,
+      "reference_count": 9,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "95",
+      "des_grade": "CINTO",
+      "product_count": 5,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "95/100",
+      "des_grade": "ACESSORIO",
+      "product_count": 12,
+      "reference_count": 7,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "B",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "BB",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "BB",
+      "des_grade": "ROUPA",
+      "product_count": 6,
+      "reference_count": 4,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "BORDO",
+      "des_grade": "ACESSORIO",
+      "product_count": 7,
+      "reference_count": 4,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EE",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EG",
+      "des_grade": "ACESSORIO",
+      "product_count": 7,
+      "reference_count": 7,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "EG",
+      "des_grade": "ROUPA",
+      "product_count": 148,
+      "reference_count": 112,
+      "brand_count": 13
+    },
+    {
+      "des_tamanho": "EG1",
+      "des_grade": "ROUPA",
+      "product_count": 25,
+      "reference_count": 23,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "EG2",
+      "des_grade": "ROUPA",
+      "product_count": 12,
+      "reference_count": 10,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EG3",
+      "des_grade": "ROUPA",
+      "product_count": 6,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EG4",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EG5",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EGG",
+      "des_grade": "ROUPA",
+      "product_count": 24,
+      "reference_count": 19,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "EM",
+      "des_grade": "ROUPA",
+      "product_count": 11,
+      "reference_count": 11,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EP",
+      "des_grade": "ROUPA",
+      "product_count": 9,
+      "reference_count": 9,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "ES",
+      "des_grade": "ROUPA",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EX",
+      "des_grade": "CALCADO",
+      "product_count": 3,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "EXG",
+      "des_grade": "ROUPA",
+      "product_count": 9,
+      "reference_count": 6,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "EXGG",
+      "des_grade": "ROUPA",
+      "product_count": 8,
+      "reference_count": 6,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "EXXGG",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "G",
+      "des_grade": "ACESSORIO",
+      "product_count": 109,
+      "reference_count": 64,
+      "brand_count": 22
+    },
+    {
+      "des_tamanho": "G",
+      "des_grade": "CALCADO",
+      "product_count": 9,
+      "reference_count": 6,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "G",
+      "des_grade": "ROUPA",
+      "product_count": 7608,
+      "reference_count": 5345,
+      "brand_count": 101
+    },
+    {
+      "des_tamanho": "G/GG",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "G1",
+      "des_grade": "ROUPA",
+      "product_count": 384,
+      "reference_count": 262,
+      "brand_count": 32
+    },
+    {
+      "des_tamanho": "G2",
+      "des_grade": "ROUPA",
+      "product_count": 318,
+      "reference_count": 221,
+      "brand_count": 30
+    },
+    {
+      "des_tamanho": "G3",
+      "des_grade": "ROUPA",
+      "product_count": 238,
+      "reference_count": 184,
+      "brand_count": 34
+    },
+    {
+      "des_tamanho": "G4",
+      "des_grade": "ROUPA",
+      "product_count": 53,
+      "reference_count": 49,
+      "brand_count": 14
+    },
+    {
+      "des_tamanho": "G5",
+      "des_grade": "ROUPA",
+      "product_count": 11,
+      "reference_count": 9,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "GG",
+      "des_grade": "ACESSORIO",
+      "product_count": 57,
+      "reference_count": 35,
+      "brand_count": 13
+    },
+    {
+      "des_tamanho": "GG",
+      "des_grade": "CALCADO",
+      "product_count": 6,
+      "reference_count": 4,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "GG",
+      "des_grade": "ROUPA",
+      "product_count": 4985,
+      "reference_count": 3607,
+      "brand_count": 90
+    },
+    {
+      "des_tamanho": "GGG",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "GI",
+      "des_grade": "ROUPA",
+      "product_count": 9,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "JG",
+      "des_grade": "ACESSORIO",
+      "product_count": 7,
+      "reference_count": 5,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "LARGE",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "M",
+      "des_grade": "ACESSORIO",
+      "product_count": 105,
+      "reference_count": 62,
+      "brand_count": 22
+    },
+    {
+      "des_tamanho": "M",
+      "des_grade": "CALCADO",
+      "product_count": 8,
+      "reference_count": 6,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "M",
+      "des_grade": "ROUPA",
+      "product_count": 8118,
+      "reference_count": 5801,
+      "brand_count": 102
+    },
+    {
+      "des_tamanho": "MC",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "MEDIA",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "MG",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "MI",
+      "des_grade": "ROUPA",
+      "product_count": 9,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "O",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "P",
+      "des_grade": "ACESSORIO",
+      "product_count": 73,
+      "reference_count": 43,
+      "brand_count": 19
+    },
+    {
+      "des_tamanho": "P",
+      "des_grade": "CALCADO",
+      "product_count": 7,
+      "reference_count": 6,
+      "brand_count": 6
+    },
+    {
+      "des_tamanho": "P",
+      "des_grade": "ESPORTIVO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "P",
+      "des_grade": "ROUPA",
+      "product_count": 4769,
+      "reference_count": 3667,
+      "brand_count": 96
+    },
+    {
+      "des_tamanho": "P/M",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PI",
+      "des_grade": "ROUPA",
+      "product_count": 4,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PM",
+      "des_grade": "ACESSORIO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PM",
+      "des_grade": "ROUPA",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PP",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PP",
+      "des_grade": "CALCADO",
+      "product_count": 1,
+      "reference_count": 1,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "PP",
+      "des_grade": "ROUPA",
+      "product_count": 164,
+      "reference_count": 146,
+      "brand_count": 17
+    },
+    {
+      "des_tamanho": "RN",
+      "des_grade": "ACESSORIO",
+      "product_count": 2,
+      "reference_count": 2,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "UN",
+      "des_grade": "ACESSORIO",
+      "product_count": 742,
+      "reference_count": 331,
+      "brand_count": 57
+    },
+    {
+      "des_tamanho": "UN",
+      "des_grade": "ROUPA",
+      "product_count": 50,
+      "reference_count": 22,
+      "brand_count": 9
+    },
+    {
+      "des_tamanho": "UND",
+      "des_grade": "ACESSORIO",
+      "product_count": 67,
+      "reference_count": 33,
+      "brand_count": 11
+    },
+    {
+      "des_tamanho": "UNICO",
+      "des_grade": "ESPORTIVO",
+      "product_count": 16,
+      "reference_count": 7,
+      "brand_count": 4
+    },
+    {
+      "des_tamanho": "XG",
+      "des_grade": "ROUPA",
+      "product_count": 160,
+      "reference_count": 120,
+      "brand_count": 12
+    },
+    {
+      "des_tamanho": "XGG",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "XGG",
+      "des_grade": "ROUPA",
+      "product_count": 107,
+      "reference_count": 82,
+      "brand_count": 9
+    },
+    {
+      "des_tamanho": "XP",
+      "des_grade": "ROUPA",
+      "product_count": 13,
+      "reference_count": 13,
+      "brand_count": 2
+    },
+    {
+      "des_tamanho": "XXG",
+      "des_grade": "ROUPA",
+      "product_count": 9,
+      "reference_count": 9,
+      "brand_count": 3
+    },
+    {
+      "des_tamanho": "XXGG",
+      "des_grade": "ACESSORIO",
+      "product_count": 4,
+      "reference_count": 3,
+      "brand_count": 1
+    },
+    {
+      "des_tamanho": "XXL",
+      "des_grade": "ROUPA",
+      "product_count": 3,
+      "reference_count": 1,
+      "brand_count": 1
+    }
+  ]
+}

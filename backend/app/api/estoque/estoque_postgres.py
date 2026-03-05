@@ -1,4 +1,4 @@
-from db_postgres.connection import CursorFromConnectionFromPool
+from app.db_postgres.connection import CursorFromConnectionFromPool
 
 class EstoquePostgres:
     @classmethod

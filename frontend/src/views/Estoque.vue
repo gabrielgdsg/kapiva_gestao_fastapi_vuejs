@@ -1,4 +1,10 @@
 <template>
+  <div class="page-layout">
+    <div class="page-header">
+      <h1 class="page-title">Estoque</h1>
+      <div class="page-subtitle">Produtos, marcas e movimentação</div>
+    </div>
+    <div class="page-main">
     <div class="levantamento-row">
         <b-row>
             <b-col sm="2">
@@ -123,6 +129,8 @@
         </b-row>
 
     </div>
+    </div>
+  </div>
 </template>
 
 <script>

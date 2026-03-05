@@ -11,6 +11,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPlusCircle, faTrashAlt } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VueCurrencyInput from 'vue-currency-input'
+// Virtual Scrolling - register globally (CSS imported in component that uses it)
+import VueVirtualScroller from 'vue-virtual-scroller'
+Vue.use(VueVirtualScroller)
 
 
 // font awesome configs
@@ -20,6 +23,16 @@ Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.use(vueNumeralFilterInstaller, { locale: 'pt-BR' })
 
 Vue.config.productionTip = false
+
+// Reload on chunk load failure (e.g. stale chunk after deploy or dev rebuild)
+window.addEventListener('unhandledrejection', function (event) {
+  const m = event.reason && (event.reason.message || String(event.reason))
+  if (m && (m.indexOf('ChunkLoadError') !== -1 || m.indexOf('Loading chunk') !== -1)) {
+    event.preventDefault()
+    window.location.reload()
+    return
+  }
+})
 
 // My custom filters
 Vue.filter('dinheiro', function (value) {

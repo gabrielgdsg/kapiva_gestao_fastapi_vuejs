@@ -10,33 +10,16 @@
                         Comissão
                     </router-link>
                     <router-link class="nav-link" to="/levantamentos">Levantamentos</router-link>
-                    <router-link class="nav-link" to="/levantamentos_test">LevantamentosTest</router-link>
-                    <router-link class="nav-link" to="/levantamentos_test2">LevantamentosTest2</router-link>
-                    <router-link class="nav-link" to="/googleimagetestview">GoogleImageTestView</router-link>
-                    <router-link class="nav-link" to="/cliente">Cliente</router-link>
-<router-link class="nav-link" :to="{ name: 'VendedoresList' }">
-    Vendedor
-</router-link>
-                    <router-link class="nav-link" :to="{name: 'Vendas', params: {cod_vendedor: 74, date: '2025-07-23'}}">
-    Vendas
-</router-link>
-                    <router-link class="nav-link" :to="{name: 'Metas', params: {cod_vendedor: 74, currentComponent: 'selecionar'}}">
-    Metas
-</router-link>
+                    <router-link class="nav-link" to="/levantamentos2">Levantamentos 2</router-link>
+                    <router-link class="nav-link" to="/faturamento">Faturamento</router-link>
+                    <router-link class="nav-link" to="/vendedor">Vendedores</router-link>
+                    <router-link class="nav-link" to="/pedidos-chegando">Pedidos Chegando</router-link>
                     <router-link class="nav-link" to="/metas">Metas</router-link>
-                    <router-link class="nav-link" :to="{name: 'FinanceiroCaixa', params: {currentComponent: 'selecionar'}}">
-                        Caixa
-                    </router-link>
-                    <router-link class="nav-link" to="/estoque">Estoque</router-link>
-                    <router-link class="nav-link" to="/estoque_test">Estoque_test</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>
                         <b-dropdown-item class="nav-link" :to="{name: 'FinanceiroCaixa', params: {currentComponent: 'selecionar'}}">
                             Caixa
                         </b-dropdown-item>
-                        <b-dropdown-item class="nav-link" to="/financeiro/contas">Contas</b-dropdown-item>
                     </b-nav-item-dropdown>
-                    <b-button type="submit" variant="primary" @click="testApi">Toastar</b-button>
-                    <!--                  <b-button type="submit" variant="primary" @click="createToasts">Toastar</b-button>-->
                 </b-navbar-nav>
 
             </b-collapse>

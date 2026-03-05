@@ -2,12 +2,12 @@ from fastapi import APIRouter, HTTPException, Response, File, UploadFile, Query
 from .estoque_postgres import EstoquePostgres
 from ..models.estoque import ProdutoEstoquePostgres, ProdutoMovto, ProdutoEstoqueMongo, ProdutoEstoqueMongoBeanie
 from ..models.levantamentos import Marcas
-from ..models.configs import Configs
+# from ..models.configs import Configs  # TODO: Configs model missing - commented out for now
 from db_mongo.database import engine, db
 from fastapi.encoders import jsonable_encoder
 from datetime import datetime, timedelta
 from bson import Decimal128, ObjectId
-import orjson, datetime
+import orjson
 
 from odmantic import query
 from typing import List
@@ -190,8 +190,7 @@ async def read_produtos_from_postgres_db(cod_marca: str, dat_movto_ini: str):
                 elif produto.tipo_movto == 'S' and (produto.cod_origem_movto == 12):
                     #TODO tirado produto.cod_origem_movto == 3 para tentar consertar a ref 9240-572A Ferracini num. 38
                 # elif produto.tipo_movto == 'S' and (produto.cod_origem_movto == 12 or produto.cod_origem_movto == 3):
-                    if produto.des_tamanho == '39-42':
-                        print('pause')
+                    # Removed debug print statement - was: if produto.des_tamanho == '39-42': print('pause')
                     if produto.des_tamanho + '_E' in db_produto.grade_estoque:
                         db_produto.grade_estoque[produto.des_tamanho + '_E'] = db_produto.grade_estoque[produto.des_tamanho + '_E'] - produto.qtd_movto
                     else:
@@ -378,8 +377,7 @@ async def read_produtos_from_postgres_db_beanie(cod_marca: str, dat_movto_ini: s
                     db_produto.saldo_estoque_e = db_produto.saldo_estoque_e + produto.qtd_movto
                 elif produto.tipo_movto == 'S' and (
                         produto.cod_origem_movto == 12 or produto.cod_origem_movto == 3):
-                    if produto.des_tamanho == '39-42':
-                        print('pause')
+                    # Removed debug print statement - was: if produto.des_tamanho == '39-42': print('pause')
                     if produto.des_tamanho + '_E' in db_produto.grade_estoque:
                         db_produto.grade_estoque[produto.des_tamanho + '_E'] = db_produto.grade_estoque[
                                                                                    produto.des_tamanho + '_E'] - produto.qtd_movto
@@ -443,7 +441,9 @@ async def read_produtos_from_postgres_db_beanie(cod_marca: str, dat_movto_ini: s
             response_model_by_alias=False)
 async def update_produtos_from_postgres_to_beanie(cod_marca: str, dat_movto_ini: str):
     db_produto = []
-    dat_ult_atualizacao = await Configs.find_one(Configs.dat_last_movto_from_postgres_update)
+    # TODO: Configs model missing - using default date for now
+    # dat_ult_atualizacao = await Configs.find_one(Configs.dat_last_movto_from_postgres_update)
+    dat_ult_atualizacao = None
 
     # TODO check if dat_movto_ini is not date
     if dat_movto_ini == ' ':
@@ -574,8 +574,7 @@ async def update_produtos_from_postgres_to_beanie(cod_marca: str, dat_movto_ini:
                     db_produto.saldo_estoque_e = db_produto.saldo_estoque_e + produto.qtd_movto
                 elif produto.tipo_movto == 'S' and (
                         produto.cod_origem_movto == 12 or produto.cod_origem_movto == 3):
-                    if produto.des_tamanho == '39-42':
-                        print('pause')
+                    # Removed debug print statement - was: if produto.des_tamanho == '39-42': print('pause')
                     if produto.des_tamanho + '_E' in db_produto.grade_estoque:
                         db_produto.grade_estoque[produto.des_tamanho + '_E'] = db_produto.grade_estoque[
                                                                                    produto.des_tamanho + '_E'] - produto.qtd_movto

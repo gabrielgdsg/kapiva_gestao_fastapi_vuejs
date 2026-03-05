@@ -1,9 +1,8 @@
 from datetime import datetime, date
-from typing import List
+from typing import List, Optional
 from odmantic import Model, EmbeddedModel
 from bson import Decimal128 as Decimal, Binary as binData
 from pydantic import Extra, BaseModel
-from pydantic.schema import Optional
 
 from beanie import Document
 

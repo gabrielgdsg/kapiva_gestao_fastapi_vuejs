@@ -118,22 +118,36 @@ async def save_caixa_to_file(caixa: Caixa):
 
 @router.get("/api/financeiro/caixacartao/{data_caixa}")
 async def cartao(data_caixa: str, request: Request):
-    print('/cartao')
-    print(request)
+    """Get credit card sales data for a specific date."""
+    import logging
+    logger = logging.getLogger(__name__)
+    logger.debug(f"Processing cartao request for date: {data_caixa}")
+    
     if request.method == 'GET':
-        print('GET')
         data_caixa = datetime.strptime(data_caixa, '%Y-%m-%d').date()
         loj_cartao_value = get_cartao_vendas(data_caixa)
+        logger.info(f"Retrieved cartao value for {data_caixa}: {loj_cartao_value}")
         payload = {'loj_cartao': loj_cartao_value}
         return payload
 
 
 def get_cartao_dados(data_caixa_dateType):
+    """Get credit card reconciliation data from external API.
+    
+    WARNING: API keys are currently hardcoded. Should be moved to environment variables.
+    """
+    import logging
+    logger = logging.getLogger(__name__)
+    
     referenceDate = data_caixa_dateType.strftime('%Y') + data_caixa_dateType.strftime(
         '%m') + data_caixa_dateType.strftime('%d')
-    print(referenceDate)
+    logger.debug(f"Fetching cartao data for reference date: {referenceDate}")
+    
     url = "https://conciliation.stone.com.br/conciliation-file/v2.2/" + str(referenceDate)
     querystring = {"affiliationCode": "232084871"}
+    
+    # SECURITY: These API keys should be moved to environment variables
+    # TODO: Move to settings/environment variables for production
     headers = {
         'authorization': "Bearer 7b5fd261-3537-4a8a-bffc-0f2d5ec34501",
         'x-authorization-raw-data': "kapivacalcados2020emmovimento",
@@ -141,11 +155,15 @@ def get_cartao_dados(data_caixa_dateType):
         'accept-encoding': "gzip"
     }
     try:
-        response = requests.request("GET", url, headers=headers, params=querystring)
+        response = requests.request("GET", url, headers=headers, params=querystring, timeout=30)
+        logger.debug(f"API response status: {response.status_code}")
         return response
-    except:
-        response = False
-        return response
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching cartao data from external API: {str(e)}")
+        return False
+    except Exception as e:
+        logger.error(f"Unexpected error in get_cartao_dados: {str(e)}")
+        return False
     # return response
 
 

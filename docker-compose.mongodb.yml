@@ -1,0 +1,25 @@
+# MongoDB 6 - para upgrade ou uso standalone
+# Usar após backup/restore do MongoDB 4.4
+#
+# docker compose -f docker-compose.mongodb.yml up -d
+
+services:
+  mongo:
+    image: mongo:8
+    container_name: kapiva-mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo_data: {}

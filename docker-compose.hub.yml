@@ -1,0 +1,79 @@
+# Deploy using pre-built images from Docker Hub
+# Replace SEU_USUARIO with your Docker Hub username
+#
+# Build & push (on Linux):
+#   docker compose -f docker-compose.network.yml build
+#   docker tag kapiva_fixed-backend:latest SEU_USUARIO/kapiva-backend:latest
+#   docker tag kapiva_fixed-frontend:latest SEU_USUARIO/kapiva-frontend:latest
+#   docker push SEU_USUARIO/kapiva-backend:latest
+#   docker push SEU_USUARIO/kapiva-frontend:latest
+#
+# On Windows: docker compose -f docker-compose.hub.yml up -d
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: kapiva-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: LOGTEC
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mongo:
+    image: mongo:8
+    container_name: kapiva-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: SEU_USUARIO/kapiva-backend:latest
+    container_name: kapiva-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.network
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      MONGODB_URL: mongodb://mongo:27017
+      ALLOWED_ORIGINS: "*"
+    volumes:
+      - backend_uploads:/app/uploads
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    image: SEU_USUARIO/kapiva-frontend:latest
+    container_name: kapiva-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data: {}
+  mongo_data: {}
+  backend_uploads: {}

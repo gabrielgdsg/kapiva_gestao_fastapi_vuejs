@@ -1,12 +1,27 @@
 from fastapi import APIRouter, HTTPException
-from db_postgres.connection import CursorFromConnectionFromPool
+from app.db_postgres.connection import CursorFromConnectionFromPool
+import logging
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 @router.get("/api/vendas/{cod_vendedor}/{date}")
 async def get_vendas(cod_vendedor: int, date: str):
+    """
+    Get sales data for a specific vendor and date.
+    Uses COMISSAO table as the single source of truth (PROJECT_RULES Section 9.1).
+    
+    Args:
+        cod_vendedor: Vendor code
+        date: Sales date (YYYY-MM-DD format)
+        
+    Returns:
+        List of sales records with base_calc_comissao from COMISSAO table
+    """
     try:
         with CursorFromConnectionFromPool() as cursor:
+            # IMPORTANT: This query uses COMISSAO table as single source of truth
+            # Do not modify the query logic - only error handling around it
             cursor.execute('''SELECT cod_vendedor, nom_vendedor, base_calculo, cod_origem, tipo_origem
                               FROM (SELECT A.cod_vendedor, AB.nom_usuario AS nom_vendedor, 
                                            (a.base_calc_comissao) AS base_calculo, a.cod_origem, a.tipo_origem
@@ -18,10 +33,20 @@ async def get_vendas(cod_vendedor: int, date: str):
                               ORDER BY cod_vendedor DESC''', (date, cod_vendedor))
             vendas = cursor.fetchall()
             if not vendas:
-                raise HTTPException(status_code=404, detail="No sales found for the given date.")
+                logger.info(f"No sales found for vendor {cod_vendedor} on date {date}")
+                raise HTTPException(status_code=404, detail=f"No sales found for vendor {cod_vendedor} on date {date}.")
+            logger.debug(f"Retrieved {len(vendas)} sales records for vendor {cod_vendedor} on {date}")
             return vendas
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is (404, etc.)
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Log full error internally, but don't expose to client
+        logger.error(f"Error retrieving sales for vendor {cod_vendedor} on date {date}: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=500, 
+            detail="An error occurred while retrieving sales data. Please contact support if this persists."
+        )
 
 
 vendedor_urls = {

@@ -1,0 +1,55 @@
+# Docker Compose: backend + frontend + MongoDB
+# - PostgreSQL: remoto (192.168.1.151)
+# - MongoDB: container local (volume mongo_data)
+#
+# Uso no Windows PC:
+#   docker compose -f docker-compose.network-remote-with-mongo.yml up -d --build
+#
+# Acesso: http://localhost ou http://192.168.1.170
+
+services:
+  mongo:
+    image: mongo:8
+    container_name: kapiva-mongo
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: kapiva-backend
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env.network
+    environment:
+      POSTGRES_HOST: 192.168.1.151
+      MONGODB_URL: mongodb://mongo:27017
+      ALLOWED_ORIGINS: "*"
+    ports:
+      - "8000:8000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kapiva-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data: {}
