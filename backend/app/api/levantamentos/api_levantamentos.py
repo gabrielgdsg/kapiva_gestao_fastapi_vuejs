@@ -214,16 +214,21 @@ async def reloadfrompostgresdb_marcafornecedor():
 @router.get("/api/read/marcas/")
 async def read_marcas():
     """Return marcas from MongoDB. If empty (e.g. fresh DB), fallback to PostgreSQL."""
-    marcas_obj = await engine.find(Marcas)
+    try:
+        marcas_obj = await engine.find(Marcas)
+    except Exception as e:
+        logger.warning("read_marcas: MongoDB find failed: %s", e)
+        marcas_obj = []
     if marcas_obj:
         return jsonable_encoder(marcas_obj)
     # Fallback: MongoDB empty (fresh container or never synced) — load from PostgreSQL
+    logger.info("read_marcas: MongoDB empty, trying PostgreSQL fallback")
     try:
         marcas_list = LevantamentoPostgres.load_marcas_from_db()
+        logger.info("read_marcas: fallback returned %d marcas", len(marcas_list))
         return marcas_list
     except Exception as e:
-        import logging
-        logging.getLogger(__name__).warning("read_marcas: MongoDB empty and PostgreSQL fallback failed: %s", e)
+        logger.warning("read_marcas: PostgreSQL fallback failed: %s", e)
         return []
 
 

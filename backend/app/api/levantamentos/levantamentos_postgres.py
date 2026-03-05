@@ -65,13 +65,28 @@ class LevantamentoPostgres:
     def load_marcas_from_db(cls) -> List[Dict]:
         """Load distinct marcas (cod_marca, nom_marca) from PostgreSQL for dropdown. Used when MongoDB is empty."""
         with CursorFromConnectionFromPool() as cursor:
-            cursor.execute('''
-                SELECT cod_marca, nom_marca FROM marca
-                WHERE cod_marca IS NOT NULL AND (nom_marca IS NOT NULL AND TRIM(nom_marca) != '')
-                ORDER BY nom_marca
-            ''')
-            rows = cursor.fetchall()
-        return [{"cod_marca": r[0], "nom_marca": r[1] or ""} for r in rows]
+            # Try direct table first; fallback to join with produto (same pattern as load_estoque)
+            for query in [
+                '''SELECT cod_marca, nom_marca FROM marca
+                   WHERE cod_marca IS NOT NULL AND (nom_marca IS NOT NULL AND TRIM(COALESCE(nom_marca,'')) != '')
+                   ORDER BY nom_marca''',
+                '''SELECT DISTINCT m.cod_marca, m.nom_marca FROM produto p
+                   JOIN marca m ON (p.cod_marca = m.cod_marca)
+                   WHERE p.cod_empresa = '1'
+                   ORDER BY m.nom_marca''',
+            ]:
+                try:
+                    cursor.execute(query)
+                    rows = cursor.fetchall()
+                    result = [{"cod_marca": r[0], "nom_marca": r[1] or ""} for r in rows]
+                    if result:
+                        logger.info("load_marcas_from_db: loaded %d marcas from PostgreSQL", len(result))
+                        return result
+                except Exception as e:
+                    logger.debug("load_marcas_from_db query failed: %s", e)
+                    continue
+        logger.warning("load_marcas_from_db: no marcas found in PostgreSQL")
+        return []
 
     @classmethod
     def get_selling_performance(cls, ano_analise: int = 2023) -> Dict[str, Dict]:
