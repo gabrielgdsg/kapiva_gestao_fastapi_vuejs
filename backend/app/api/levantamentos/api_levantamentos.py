@@ -214,6 +214,8 @@ async def reloadfrompostgresdb_marcafornecedor():
 @router.get("/api/read/marcas/")
 async def read_marcas():
     """Return marcas from MongoDB. If empty (e.g. fresh DB), fallback to PostgreSQL."""
+    print("[MARCAS] /api/read/marcas/ called", flush=True)
+    logger.warning("read_marcas: endpoint called")
     try:
         marcas_obj = await engine.find(Marcas)
     except Exception as e:
