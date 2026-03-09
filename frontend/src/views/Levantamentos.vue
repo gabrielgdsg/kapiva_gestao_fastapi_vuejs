@@ -331,6 +331,13 @@ export default {
   },
   mounted() {
     this.loadMarcas()
+    this._onMarcasUpdated = () => this.loadMarcas()
+    window.addEventListener('marcas-updated', this._onMarcasUpdated)
+  },
+  beforeDestroy() {
+    if (this._onMarcasUpdated) {
+      window.removeEventListener('marcas-updated', this._onMarcasUpdated)
+    }
   },
   methods: {
     sizeType(size) {

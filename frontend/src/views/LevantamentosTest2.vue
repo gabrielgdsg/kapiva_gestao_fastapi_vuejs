@@ -1446,6 +1446,8 @@
             this.loadMarcas()
         },
         async mounted() {
+            this._onMarcasUpdated = () => this.loadMarcas()
+            window.addEventListener('marcas-updated', this._onMarcasUpdated)
             // Start with default grade groups
             let allGradeGroups = [...this.defaultGradeGroups]
             
@@ -1496,6 +1498,11 @@
                     }
                 }
             })
+        },
+        beforeDestroy() {
+            if (this._onMarcasUpdated) {
+                window.removeEventListener('marcas-updated', this._onMarcasUpdated)
+            }
         },
         watch: {
             filters: {

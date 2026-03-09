@@ -84,11 +84,20 @@
             atualizarDB() {
                 this.busy = true
                 axios.get(`/api/reloadfrompostgresdb/marcafornecedor/`)
-                    .then(() => {
+                    .then((res) => {
                         this.busy = false
+                        const count = Array.isArray(res?.data) ? res.data.length : 0
+                        this.$bvToast.toast(count > 0 ? `Marcas atualizadas: ${count} carregadas do PostgreSQL` : 'Marcas atualizadas', {
+                            title: 'AtualizarDB',
+                            variant: 'success',
+                            autoHideDelay: 4000
+                        })
+                        window.dispatchEvent(new CustomEvent('marcas-updated'))
                     })
                     .catch((error) => {
-                        console.log(error)
+                        this.busy = false
+                        const msg = error.response?.data?.detail || error.message || 'Erro ao atualizar'
+                        this.$bvToast.toast(msg, { title: 'AtualizarDB falhou', variant: 'danger', noAutoHide: true })
                     })
             },
             onHidden() {

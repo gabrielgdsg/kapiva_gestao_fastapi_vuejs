@@ -64,6 +64,9 @@
           <small v-if="metasCalculadas" class="text-muted">Base: {{ getMonthYearLabel(metasCalculadas.ano_anterior, metasCalculadas.mes) }}</small>
         </div>
         <div class="d-flex align-items-center mt-1 mt-sm-0">
+          <b-button variant="outline-secondary" size="sm" @click="recalcGroupMedias" :disabled="!metasCalculadas" class="mr-2" title="Recalcular Média/Vendedor e Metas ao alterar ativos ou grupos">
+            Recalcular
+          </b-button>
           <b-button variant="outline-secondary" size="sm" @click="toggleEditarMetas" :disabled="loading || !metasCalculadas" class="mr-2">
             {{ metasEditMode ? 'Desativar edição' : 'Editar Metas' }}
           </b-button>
@@ -1681,6 +1684,7 @@ export default {
       if (item && item.cod_vendedor != null) {
         this.$set(item, 'ativo', !!value)
         this.hasChanges = true
+        this.recalcGroupMedias()
         this.$nextTick(() => this.salvarConfig(true))
       }
     },
@@ -1789,7 +1793,7 @@ export default {
       }
       this.novoVendedorCod = null
       this.hasChanges = true
-      this.recalcGroupAggregatesOnly()
+      this.recalcGroupMedias()
       this.$nextTick(() => this.salvarConfig(true))
     },
     aplicarGroupMeta(groupKey, field) {
@@ -2056,7 +2060,7 @@ export default {
             this.metasCalculadas[targetKey].vendedores_detalhes = targetDet
             this.$set(this.metasCalculadas[targetKey], 'count_atual', targetDet.length)
             if (this.metasCalculadas[g]) this.$set(this.metasCalculadas[g], 'count_atual', (this.metasCalculadas[g].vendedores_detalhes || []).length)
-            this.$nextTick(() => this.recalcGroupAggregatesOnly())
+            this.$nextTick(() => this.recalcGroupMedias())
             break
           }
         }

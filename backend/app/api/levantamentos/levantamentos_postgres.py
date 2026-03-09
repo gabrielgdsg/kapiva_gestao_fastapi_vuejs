@@ -85,12 +85,16 @@ class LevantamentoPostgres:
                 try:
                     cursor.execute(query)
                     rows = cursor.fetchall()
-                    result = [{"cod_marca": r[0], "nom_marca": r[1] or ""} for r in rows]
+                    result = [{"cod_marca": int(r[0]) if r[0] is not None else 0, "nom_marca": str(r[1] or "")} for r in rows]
                     if result:
                         logger.info("load_marcas_from_db: loaded %d marcas from PostgreSQL (query=%s)", len(result), name)
                         return result
                 except Exception as e:
                     logger.warning("load_marcas_from_db query '%s' failed: %s", name, e)
+                    try:
+                        cursor.connection.rollback()
+                    except Exception:
+                        pass
                     continue
         logger.warning("load_marcas_from_db: no marcas found in PostgreSQL")
         return []
@@ -98,16 +102,47 @@ class LevantamentoPostgres:
     @classmethod
     def load_marcas_fornecedores_from_db(cls):
         """Load marcas+fornecedores from Postgres for reload into MongoDB. Used by /api/reloadfrompostgresdb/marcafornecedor/"""
+        queries = [
+            # produto has cod_fornece (default supplier)
+            '''SELECT f.cod_fornece, f.raz_fornece, f.fan_fornece, m.cod_marca, m.nom_marca
+               FROM produto p
+               JOIN fornecedor f ON (p.cod_fornece = f.cod_fornece)
+               JOIN marca m ON (p.cod_marca = m.cod_marca)
+               WHERE p.cod_empresa = '1'
+               GROUP BY m.cod_marca, m.nom_marca, f.cod_fornece, f.raz_fornece, f.fan_fornece
+               ORDER BY m.nom_marca, f.raz_fornece''',
+            # produto without cod_empresa filter
+            '''SELECT f.cod_fornece, f.raz_fornece, f.fan_fornece, m.cod_marca, m.nom_marca
+               FROM produto p
+               JOIN fornecedor f ON (p.cod_fornece = f.cod_fornece)
+               JOIN marca m ON (p.cod_marca = m.cod_marca)
+               GROUP BY m.cod_marca, m.nom_marca, f.cod_fornece, f.raz_fornece, f.fan_fornece
+               ORDER BY m.nom_marca, f.raz_fornece''',
+            # via nfcompra (like load_estoque)
+            '''SELECT DISTINCT cb.cod_fornece, f.raz_fornece, f.fan_fornece, m.cod_marca, m.nom_marca
+               FROM produto pro
+               JOIN MARCA m ON (m.COD_MARCA = pro.COD_MARCA)
+               JOIN nfcompraitem it ON (pro.cod_empresa = it.cod_empresa AND pro.cod_produto = it.cod_produto)
+               JOIN nfcompra cb ON (cb.cod_empresa = it.cod_empresa AND cb.cod_interno = it.cod_interno)
+               JOIN fornecedor f ON (cb.cod_fornece = f.cod_fornece)
+               WHERE pro.cod_empresa = '1' AND (cb.flg_estorno IS NULL OR cb.flg_estorno = 'N')
+               ORDER BY m.nom_marca, f.raz_fornece''',
+        ]
         with CursorFromConnectionFromPool() as cursor:
-            cursor.execute('''
-                SELECT f.cod_fornece, f.raz_fornece, f.fan_fornece, m.cod_marca, m.nom_marca
-                FROM produto p
-                JOIN fornecedor f ON (p.cod_fornece = f.cod_fornece)
-                JOIN marca m ON (p.cod_marca = m.cod_marca)
-                GROUP BY m.cod_marca, m.nom_marca, f.cod_fornece, f.raz_fornece, f.fan_fornece
-                ORDER BY m.nom_marca, f.raz_fornece
-            ''')
-            return cursor.fetchall()
+            for q in queries:
+                try:
+                    cursor.execute(q)
+                    rows = cursor.fetchall()
+                    if rows:
+                        return rows
+                except Exception as e:
+                    logger.warning("load_marcas_fornecedores_from_db query failed: %s", e)
+                    try:
+                        cursor.connection.rollback()
+                    except Exception:
+                        pass
+                    continue
+        raise RuntimeError("load_marcas_fornecedores_from_db: no query succeeded")
 
     @classmethod
     def get_selling_performance(cls, ano_analise: int = 2023) -> Dict[str, Dict]:

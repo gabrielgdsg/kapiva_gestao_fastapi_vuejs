@@ -165,44 +165,45 @@ async def read_movimento(cod_produto: int):
 
 @router.get("/api/reloadfrompostgresdb/marcafornecedor/")
 async def reloadfrompostgresdb_marcafornecedor():
-    # marcas = await engine.find(Marcas)
-    # for marca in marcas:
-    #     await engine.delete(marca)
+    """Reload marcas from PostgreSQL into MongoDB. Returns marcas list or error detail."""
+    try:
+        marcas_collection = engine.get_collection(Marcas)
+        marcas_collection.drop()
 
-    marcas_collection = engine.get_collection(Marcas)
-    marcas_collection.drop()
+        dados_marcas_fornecedores = LevantamentoPostgres.load_marcas_fornecedores_from_db()
+        if not dados_marcas_fornecedores:
+            logger.warning("reloadfrompostgresdb_marcafornecedor: no data from PostgreSQL")
+            return []
 
-    dados_marcas_fornecedores = LevantamentoPostgres.load_marcas_fornecedores_from_db()
-    marcas_fornecedores_list = []
-    marcas_list = []
-    fornecedor_list = []
+        marcas_fornecedores_list = []
+        marcas_list = []
+        fornecedor_list = []
 
-    for i in range(len(dados_marcas_fornecedores)):
-        marca_fornecedor = MarcaFornecedor(
-            cod_marca=dados_marcas_fornecedores[i][3], nom_marca=dados_marcas_fornecedores[i][4],
-            cod_fornecedor=dados_marcas_fornecedores[i][0], raz_fornecedor=dados_marcas_fornecedores[i][1],
-            fan_fornecedor=dados_marcas_fornecedores[i][2]
-        )
-        marcas_fornecedores_list.append(marca_fornecedor)
+        for i in range(len(dados_marcas_fornecedores)):
+            row = dados_marcas_fornecedores[i]
+            marca_fornecedor = MarcaFornecedor(
+                cod_marca=row[3], nom_marca=row[4] or "",
+                cod_fornecedor=row[0], raz_fornecedor=row[1] or "", fan_fornecedor=row[2] or ""
+            )
+            marcas_fornecedores_list.append(marca_fornecedor)
 
-        fornecedor = Fornecedor(cod_fornecedor=dados_marcas_fornecedores[i][0],
-                                raz_fornecedor=dados_marcas_fornecedores[i][1],
-                                fan_fornecedor=dados_marcas_fornecedores[i][2])
+            fornecedor = Fornecedor(cod_fornecedor=row[0], raz_fornecedor=row[1] or "", fan_fornecedor=row[2] or "")
+            next_nom_marca = dados_marcas_fornecedores[i + 1][4] if i < len(dados_marcas_fornecedores) - 1 else None
 
-        if dados_marcas_fornecedores[i][4] == (
-        dados_marcas_fornecedores[i + 1][4] if i < len(dados_marcas_fornecedores) - 1
-        else None):
-            fornecedor_list.append(fornecedor)
-        else:
-            fornecedor_list.append(fornecedor)
-            marca = Marcas(cod_marca=dados_marcas_fornecedores[i][3], nom_marca=dados_marcas_fornecedores[i][4],
-                           fornecedores=fornecedor_list)
-            fornecedor_list = []
-            marcas_list.append(marca)
-    await engine.save_all(marcas_fornecedores_list)
-    await engine.save_all(marcas_list)
-    return jsonable_encoder(marcas_list)
-    # return jsonable_encoder(marcas_fornecedores_list)
+            if row[4] == next_nom_marca:
+                fornecedor_list.append(fornecedor)
+            else:
+                fornecedor_list.append(fornecedor)
+                marca = Marcas(cod_marca=row[3], nom_marca=row[4] or "", fornecedores=fornecedor_list)
+                fornecedor_list = []
+                marcas_list.append(marca)
+
+        await engine.save_all(marcas_fornecedores_list)
+        await engine.save_all(marcas_list)
+        return jsonable_encoder(marcas_list)
+    except Exception as e:
+        logger.exception("reloadfrompostgresdb_marcafornecedor failed: %s", e)
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 # @router.get("/api/read/marcafornecedor/")
