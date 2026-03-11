@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Response, File, UploadFile, Query,
 from fastapi.responses import FileResponse
 from .levantamentos_postgres import LevantamentoPostgres
 from ..models.levantamentos import LevantamentoEstoque, MarcaFornecedor, Marcas, Fornecedor, Produto, ProdutoIdentifier, ProdutoImageSave
-from db_mongo.database import engine
+from db_mongo.database import engine, db
 from datetime import datetime, timedelta
 from fastapi.encoders import jsonable_encoder
 import base64
@@ -62,35 +62,39 @@ def _cached_levantamentos_query(date_ini: str, date_fim: str, cod_marca: str, ti
 
 
 @router.get("/api/levantamentos/{data_cadastro_ini}/{data_cadastro_fim}/{cod_marca}")
-async def read_levantamentos(data_cadastro_ini: str, data_cadastro_fim: str, cod_marca: str):
+async def read_levantamentos(
+    data_cadastro_ini: str,
+    data_cadastro_fim: str,
+    cod_marca: str,
+    source: Optional[str] = Query(None, description="Use 'mongo' to prefer MongoDB cache (faster for large brands)"),
+):
     """
-    PERFORMANCE OPTIMIZED: 
-    1. Caches responses for 5 minutes (repeated queries <50ms)
-    2. Formats dates on backend (eliminates 800+ moment.js operations)
-    No PostgreSQL database changes - only code optimization.
+    PERFORMANCE OPTIMIZED:
+    1. If source=mongo: try MongoDB first (fast), fallback to PostgreSQL
+    2. In-memory cache for 5 minutes (repeated queries <50ms)
+    3. Formats dates on backend (eliminates 800+ moment.js operations)
     """
     start_time = time.time()
-    
-    data_cadastro_ini_datetime = datetime.fromisoformat(data_cadastro_ini)
-    data_cadastro_fim_datetime = datetime.fromisoformat(data_cadastro_fim)
 
-    # Calculate 5-minute time bucket for cache invalidation
-    # Cache refreshes every 5 minutes automatically
+    # Try MongoDB first when source=mongo
+    if source and source.lower() == "mongo":
+        from .levantamentos_sync import get_from_mongo
+        mongo_data = await get_from_mongo(data_cadastro_ini, data_cadastro_fim, cod_marca)
+        if mongo_data is not None:
+            execution_time = time.time() - start_time
+            print(f"[PERFORMANCE] Levantamentos query: {execution_time*1000:.0f}ms | {len(mongo_data)} rows | MONGO")
+            return jsonable_encoder(mongo_data)
+
+    # Fallback to PostgreSQL
     current_time = int(time.time())
-    time_bucket = current_time // 300  # 300 seconds = 5 minutes
-    
-    # Use cached query (instant if in cache, normal speed if not)
+    time_bucket = current_time // 300
     levantamento_loaded = _cached_levantamentos_query(
         data_cadastro_ini, data_cadastro_fim, cod_marca, time_bucket
     )
-    
-    # PERFORMANCE: Format dates here instead of on frontend
-    # This eliminates 800+ moment.js operations for 404 products
+
     formatted_data = []
     for row in levantamento_loaded:
         row_list = list(row)
-        
-        # Format dat_cadastro (index 20) - handle both datetime objects and strings
         if row_list[20]:
             if hasattr(row_list[20], 'strftime'):
                 row_list[20] = row_list[20].strftime('%Y-%m-%dT%H:%M:%S.%f')
@@ -98,8 +102,6 @@ async def read_levantamentos(data_cadastro_ini: str, data_cadastro_fim: str, cod
                 row_list[20] = str(row_list[20])
         else:
             row_list[20] = '1900-01-01T00:00:00.000000'
-            
-        # Format dat_ultcompra (index 21) - handle both datetime objects and strings  
         if row_list[21]:
             if hasattr(row_list[21], 'strftime'):
                 row_list[21] = row_list[21].strftime('%Y-%m-%dT%H:%M:%S.%f')
@@ -107,23 +109,59 @@ async def read_levantamentos(data_cadastro_ini: str, data_cadastro_fim: str, cod
                 row_list[21] = str(row_list[21])
         else:
             row_list[21] = '1900-01-01T00:00:00.000000'
-        
-        # Format data_movto (index 29) if it exists
         if len(row_list) > 29 and row_list[29]:
             if hasattr(row_list[29], 'strftime'):
                 row_list[29] = row_list[29].strftime('%Y-%m-%dT%H:%M:%S.%f')
             elif not isinstance(row_list[29], str):
                 row_list[29] = str(row_list[29])
-        
         formatted_data.append(row_list)
-    
-    # Log performance metrics
+
     execution_time = time.time() - start_time
     cache_info = _cached_levantamentos_query.cache_info()
     cache_status = "CACHED" if cache_info.hits > 0 else "FRESH"
     print(f"[PERFORMANCE] Levantamentos query: {execution_time*1000:.0f}ms | {len(formatted_data)} rows | {cache_status} | Cache: {cache_info.hits}/{cache_info.hits + cache_info.misses}")
-    
     return jsonable_encoder(formatted_data)
+
+
+@router.post("/api/levantamentos/sync")
+async def force_sync_levantamentos(
+    data_ini: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
+    data_fim: str = Query(..., description="Data final (YYYY-MM-DD)"),
+    cod_marca: str = Query(..., description="Código da marca"),
+):
+    """
+    Force sync levantamentos from PostgreSQL to MongoDB.
+    Use after loading to populate cache for faster subsequent loads.
+    """
+    from .levantamentos_sync import sync_levantamentos
+    result = await sync_levantamentos(data_ini, data_fim, cod_marca)
+    if not result.get("ok"):
+        raise HTTPException(status_code=500, detail=result.get("error", "Sync failed"))
+    return result
+
+
+@router.post("/api/levantamentos/sync-all")
+async def sync_all_marcas(
+    data_ini: str = Query(..., description="Data inicial (YYYY-MM-DD)"),
+    data_fim: str = Query(..., description="Data final (YYYY-MM-DD)"),
+):
+    """
+    Sync all marcas from PostgreSQL to MongoDB for the given date range.
+    Intended for daily cron: POST /api/levantamentos/sync-all?data_ini=2024-01-01&data_fim=2026-12-31
+    """
+    from .levantamentos_sync import sync_levantamentos
+    marcas = LevantamentoPostgres.load_marcas_from_db()
+    if not marcas:
+        return {"ok": True, "synced": 0, "message": "No marcas found"}
+    results = []
+    for m in marcas:
+        cod = str(m.get("cod_marca", ""))
+        if not cod:
+            continue
+        r = await sync_levantamentos(data_ini, data_fim, cod)
+        results.append({"cod_marca": cod, "nom_marca": m.get("nom_marca", ""), **r})
+    ok_count = sum(1 for r in results if r.get("ok"))
+    return {"ok": True, "synced": ok_count, "total_marcas": len(marcas), "results": results}
 
 
 @router.get("/api/movimento/{cod_produto}")
@@ -163,47 +201,113 @@ async def read_movimento(cod_produto: int):
     return jsonable_encoder(formatted_movimento)
 
 
+@router.get("/api/debug/reload-version")
+async def debug_reload_version():
+    """Returns a version string to verify backend deploy. Should be 'reload-v2' after fix."""
+    return {"version": "reload-v2", "method": "load_marcas_from_db"}
+
+
+@router.get("/api/debug/mongodb-images")
+async def debug_mongodb_images():
+    """
+    Diagnostic: check if product images exist in MongoDB.
+    Use after deploy/rebuild to verify mongo_data volume was preserved.
+    Returns: collection counts, Produto docs with/without img, sample brands.
+    """
+    out = {"mongo_ok": False, "collections": [], "produto": {}, "produtoestoque": {}, "hint": ""}
+    try:
+        # List collections
+        coll_names = await db.list_collection_names()
+        out["collections"] = coll_names
+        out["mongo_ok"] = True
+
+        # Produto (levantamentos - product images for Levantamentos view)
+        prod_coll = engine.get_collection(Produto)
+        total = await prod_coll.count_documents({})
+        with_img = await prod_coll.count_documents({"img": {"$exists": True, "$nin": [None, ""]}})
+        # Sample brands that have images
+        pipeline = [
+            {"$match": {"img": {"$exists": True, "$nin": [None, ""]}}},
+            {"$group": {"_id": "$nom_marca", "count": {"$sum": 1}}},
+            {"$limit": 5},
+        ]
+        brands_with_img = []
+        async for doc in prod_coll.aggregate(pipeline):
+            brands_with_img.append({"marca": doc["_id"], "count": doc["count"]})
+
+        out["produto"] = {
+            "total": total,
+            "with_img": with_img,
+            "without_img": total - with_img,
+            "sample_brands_with_img": brands_with_img,
+        }
+
+        # ProdutoEstoqueMongoBeanie (estoque - Beanie uses class name as collection)
+        for cname in coll_names:
+            if "produto" in cname.lower() and "estoque" in cname.lower():
+                try:
+                    c = db[cname]
+                    out["produtoestoque"] = {
+                        "collection": cname,
+                        "total": await c.count_documents({}),
+                        "with_img": await c.count_documents({"img": {"$exists": True, "$nin": [None, ""]}}),
+                    }
+                    break
+                except Exception as e:
+                    out["produtoestoque"] = {"collection": cname, "error": str(e)}
+        if "produtoestoque" not in out:
+            out["produtoestoque"] = {"note": "no produtoestoque collection found"}
+
+        if total == 0:
+            out["hint"] = "Produto collection is empty. Data may have been lost (volume removed?) or never synced. Check: docker volume ls | grep mongo"
+        elif with_img == 0:
+            out["hint"] = "Produto docs exist but none have img. Images were never saved or were cleared. You may need to re-paste/save images per product."
+        else:
+            out["hint"] = "Images exist. If UI shows none, check frontend API calls or filters."
+    except Exception as e:
+        out["error"] = str(e)
+        out["hint"] = "MongoDB unreachable. Is mongo container running? docker ps | grep mongo"
+    return out
+
+
 @router.get("/api/reloadfrompostgresdb/marcafornecedor/")
 async def reloadfrompostgresdb_marcafornecedor():
-    """Reload marcas from PostgreSQL into MongoDB. Returns marcas list or error detail."""
+    """Reload marcas from PostgreSQL into MongoDB. Uses load_marcas_from_db (simple, reliable)."""
+    steps = []
     try:
-        marcas_collection = engine.get_collection(Marcas)
-        marcas_collection.drop()
+        # Step 1: drop MongoDB collection
+        try:
+            marcas_collection = engine.get_collection(Marcas)
+            marcas_collection.drop()
+            steps.append("mongo_drop:ok")
+        except Exception as e1:
+            steps.append(f"mongo_drop:fail:{e1!s}")
+            raise
 
-        dados_marcas_fornecedores = LevantamentoPostgres.load_marcas_fornecedores_from_db()
-        if not dados_marcas_fornecedores:
-            logger.warning("reloadfrompostgresdb_marcafornecedor: no data from PostgreSQL")
+        # Step 2: load from PostgreSQL
+        try:
+            marcas_list = LevantamentoPostgres.load_marcas_from_db()
+            steps.append(f"postgres_load:ok:{len(marcas_list or [])} rows")
+        except Exception as e2:
+            steps.append(f"postgres_load:fail:{e2!s}")
+            raise
+
+        if not marcas_list:
             return []
 
-        marcas_fornecedores_list = []
-        marcas_list = []
-        fornecedor_list = []
+        # Step 3: save to MongoDB
+        try:
+            marcas_to_save = [Marcas(cod_marca=m["cod_marca"], nom_marca=m["nom_marca"], fornecedores=[]) for m in marcas_list]
+            await engine.save_all(marcas_to_save)
+            steps.append(f"mongo_save:ok:{len(marcas_to_save)}")
+        except Exception as e3:
+            steps.append(f"mongo_save:fail:{e3!s}")
+            raise
 
-        for i in range(len(dados_marcas_fornecedores)):
-            row = dados_marcas_fornecedores[i]
-            marca_fornecedor = MarcaFornecedor(
-                cod_marca=row[3], nom_marca=row[4] or "",
-                cod_fornecedor=row[0], raz_fornecedor=row[1] or "", fan_fornecedor=row[2] or ""
-            )
-            marcas_fornecedores_list.append(marca_fornecedor)
-
-            fornecedor = Fornecedor(cod_fornecedor=row[0], raz_fornecedor=row[1] or "", fan_fornecedor=row[2] or "")
-            next_nom_marca = dados_marcas_fornecedores[i + 1][4] if i < len(dados_marcas_fornecedores) - 1 else None
-
-            if row[4] == next_nom_marca:
-                fornecedor_list.append(fornecedor)
-            else:
-                fornecedor_list.append(fornecedor)
-                marca = Marcas(cod_marca=row[3], nom_marca=row[4] or "", fornecedores=fornecedor_list)
-                fornecedor_list = []
-                marcas_list.append(marca)
-
-        await engine.save_all(marcas_fornecedores_list)
-        await engine.save_all(marcas_list)
-        return jsonable_encoder(marcas_list)
+        return jsonable_encoder(marcas_to_save)
     except Exception as e:
         logger.exception("reloadfrompostgresdb_marcafornecedor failed: %s", e)
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=f"steps={steps} error={e!s}")
 
 
 # @router.get("/api/read/marcafornecedor/")
@@ -212,11 +316,35 @@ async def reloadfrompostgresdb_marcafornecedor():
 #     return jsonable_encoder(marcas_fornecedores_obj)
 
 
+@router.get("/api/read/marcas/debug")
+async def read_marcas_debug():
+    """Diagnostic: check MongoDB count, PostgreSQL fallback, and Postgres connectivity."""
+    mongo_count = 0
+    mongo_err = None
+    try:
+        marcas_obj = await engine.find(Marcas)
+        mongo_count = len(marcas_obj) if marcas_obj else 0
+    except Exception as e:
+        mongo_err = str(e)
+    pg_count = 0
+    pg_err = None
+    try:
+        marcas_list = LevantamentoPostgres.load_marcas_from_db()
+        pg_count = len(marcas_list) if marcas_list else 0
+    except Exception as e:
+        pg_err = str(e)
+    return {
+        "mongo_count": mongo_count,
+        "mongo_error": mongo_err,
+        "postgres_fallback_count": pg_count,
+        "postgres_error": pg_err,
+        "effective_source": "mongo" if mongo_count > 0 else ("postgres" if pg_count > 0 else "none"),
+    }
+
+
 @router.get("/api/read/marcas/")
 async def read_marcas():
     """Return marcas from MongoDB. If empty (e.g. fresh DB), fallback to PostgreSQL."""
-    print("[MARCAS] /api/read/marcas/ called", flush=True)
-    logger.warning("read_marcas: endpoint called")
     try:
         marcas_obj = await engine.find(Marcas)
     except Exception as e:
@@ -224,7 +352,6 @@ async def read_marcas():
         marcas_obj = []
     if marcas_obj:
         return jsonable_encoder(marcas_obj)
-    # Fallback: MongoDB empty (fresh container or never synced) — load from PostgreSQL
     logger.info("read_marcas: MongoDB empty, trying PostgreSQL fallback")
     try:
         marcas_list = LevantamentoPostgres.load_marcas_from_db()

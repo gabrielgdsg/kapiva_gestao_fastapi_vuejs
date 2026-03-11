@@ -85,7 +85,7 @@ class LevantamentoPostgres:
                 try:
                     cursor.execute(query)
                     rows = cursor.fetchall()
-                    result = [{"cod_marca": int(r[0]) if r[0] is not None else 0, "nom_marca": str(r[1] or "")} for r in rows]
+                    result = [{"cod_marca": int(r[0]) if r[0] is not None else 0, "nom_marca": str(r[1] or ""), "fornecedores": []} for r in rows]
                     if result:
                         logger.info("load_marcas_from_db: loaded %d marcas from PostgreSQL (query=%s)", len(result), name)
                         return result

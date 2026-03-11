@@ -3,7 +3,7 @@
     <h1>Caixa</h1>
     <b-form @submit.stop.prevent="onSubmit">
       <label for="datepicker-date">Data: </label>
-      <mydatepicker id="datepicker-date" datepicker_default="" @childToParent="receiveDataCaixa"/>
+      <mydatepicker id="datepicker-date" :datepicker_default="defaultDate" @childToParent="receiveDataCaixa"/>
       <br><br>
       <br><br>
       <b-button type="submit" variant="primary">Enviar</b-button>
@@ -25,21 +25,25 @@ export default {
     'mydatepicker': Mydatepicker
   },
   data () {
+    const today = new Date().toISOString().slice(0, 10)
     return {
-      data_caixa: ''
+      data_caixa: today,
+      defaultDate: today
     }
   },
   methods: {
     onSubmit () {
-      const path = `/api/financeiro/caixa/${this.data_caixa}`
+      const path = `/api/financeiro/caixas/${this.data_caixa}`
       axios.get(path)
         .then((res) => {
-          console.log("res")
-          console.log(res)
           this.$router.push({name: 'FinanceiroCaixa', params: {currentComponent: 'tabela', data_caixa: this.data_caixa, dados_caixa: res.data}})
         })
         .catch((error) => {
-          console.log(error)
+          console.error('Caixa load failed:', error)
+          this.$bvToast?.toast(error?.response?.data?.detail || error?.message || 'Erro ao carregar caixa', {
+            title: 'Erro',
+            variant: 'danger'
+          })
         })
     },
     receiveDataCaixa (value) {

@@ -45,6 +45,16 @@ class Settings(BaseSettings):
     BACKFILL_FROM_DATE: str = "2019-01-01"
     UPLOAD_DIR: str = "./uploads"
 
+    # Cartão / Conciliação — Stone
+    STONE_AFFILIATION_CODE: str = "232084871"
+    STONE_BEARER_TOKEN: str = ""
+    STONE_AUTH_RAW: str = ""
+    STONE_AUTH_ENCRYPTED: str = ""
+    # Cartão / Conciliação — Sicredi Máquinas (opcional)
+    SICREDI_API_URL: str = ""
+    SICREDI_API_TOKEN: str = ""
+    SICREDI_ESTABELECIMENTO_ID: str = ""
+
     class Config:
         env_file = [str(env_file_path)] + ([str(backend_env)] if backend_env.exists() else [])
         env_file_encoding = "utf-8"

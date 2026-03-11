@@ -1,10 +1,9 @@
 <template>
-  <b-container class="financeiro-caixa-table">
-    {{data_caixa}}
-
-    <b-row align-h="center">
-      <b-col cols="4">
-        <h4 class="text-center"> Caixa - Loja</h4>
+  <div class="financeiro-caixa-table" :class="{ 'caixa-compact': compact }">
+    <b-row align-h="center" :no-gutters="compact">
+      <b-col :cols="compact ? 12 : 4" :class="compact ? 'px-1' : ''">
+        <h6 v-if="!compact" class="text-center mb-1">Caixa - Loja</h6>
+        <h6 v-else class="text-center mb-0 mt-1" style="font-size:11px">Loja</h6>
         <b-table responsive striped hover :items="computed_items.loj" :fields="fields">
           <template v-slot:cell(icons)="data">
             <div class="text-center">
@@ -42,8 +41,9 @@
         </b-table>
       </b-col>
 
-      <b-col cols="4">
-        <h4 class="text-center"> Caixa - Sistema</h4>
+      <b-col :cols="compact ? 12 : 4" :class="compact ? 'px-1' : ''">
+        <h6 v-if="!compact" class="text-center mb-1">Caixa - Sistema</h6>
+        <h6 v-else class="text-center mb-0 mt-1" style="font-size:11px">Sistema</h6>
         <b-table responsive striped hover :items="computed_items.sist" :fields="fields">
             <template #cell(item)="data">
                     <editable-field :editable=false :numero=false v-model="data.item.item"></editable-field>
@@ -53,7 +53,7 @@
                 <editable-field :editable=false :numero=true v-model="data.item.valor"></editable-field>
             </template>
         </b-table>
-        <h4 class="text-center"> Caixa - Fechamento</h4>
+        <h6 :class="compact ? 'text-center mb-0 mt-1' : 'text-center mb-1'" :style="compact ? 'font-size:11px' : ''">Fechamento</h6>
         <b-table responsive striped hover :items="computed_items.res" :fields="fields">
             <template #cell(item)="data">
                 <strong>  <editable-field :editable=false :numero=false v-model="data.item.item"></editable-field> </strong>
@@ -74,7 +74,7 @@
 
 
     </b-row>
-  </b-container>
+  </div>
 </template>
 
 <script>
@@ -85,9 +85,11 @@ import EditableField from '../components/EditableField'
 
 export default {
   name: 'FinanceiroCaixaTable',
-  props: ['data_caixa', 'dados_caixa'],
+  props: ['data_caixa', 'dados_caixa', 'compact'],
   components: {'editable-field' : EditableField},
   data: function () {
+    const d = this.dados_caixa || {}
+    const lojOutras = d.loj_outras_entradas_list || []
     return {
       fields: [
         {
@@ -100,21 +102,21 @@ export default {
           key: 'icons', label: '', thStyle: {width: '5rem'}
         }],
       caixa: {
-            data_caixa: moment(this.data_caixa).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-            loj_sangria_list: this.dados_caixa.loj_sangria_list,
-            loj_outras_entradas_list: this.dados_caixa.loj_outras_entradas_list,
-            loj_cartao: this.dados_caixa.loj_cartao,
-            loj_suprimento: this.dados_caixa.loj_suprimento,
-            loj_troco: this.dados_caixa.loj_troco,
-            loj_total: this.dados_caixa.loj_total,
-            sist_troco: this.dados_caixa.sist_troco,
-            sist_pos: this.dados_caixa.sist_pos,
-            sist_dinheiro: this.dados_caixa.sist_dinheiro,
-            sist_total: this.dados_caixa.sist_total,
-            res_caixa: this.dados_caixa.res_caixa
+            data_caixa: moment(this.data_caixa || new Date()).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+            loj_sangria_list: d.loj_sangria_list || [],
+            loj_outras_entradas_list: lojOutras,
+            loj_cartao: d.loj_cartao || { item: 'Cartao', valor: 0 },
+            loj_suprimento: d.loj_suprimento || { item: 'Suprimento', valor: 0 },
+            loj_troco: d.loj_troco || { item: 'Troco', valor: 0 },
+            loj_total: d.loj_total || { item: 'TOTAL Loja', valor: 0 },
+            sist_troco: d.sist_troco || { item: 'Troco', valor: 0 },
+            sist_pos: d.sist_pos || { item: 'P.O.S.', valor: 0 },
+            sist_dinheiro: d.sist_dinheiro || { item: 'Dinheiro', valor: 0 },
+            sist_total: d.sist_total || { item: 'TOTAL Sistema', valor: 0 },
+            res_caixa: d.res_caixa || { item: 'RESULTADO', valor: 0 }
         },
-        n_outras_entradas:this.dados_caixa.loj_outras_entradas_list.length,
-        loj_items:[],
+        n_outras_entradas: lojOutras.length,
+        loj_items: [],
 
     }
   },
@@ -212,7 +214,8 @@ export default {
           const path = `/api/financeiro/caixacartao/${this.data_caixa}`
           axios.get(path, {params: {data_caixa: this.data_caixa}})
               .then((res) => {
-                  this.caixa.loj_cartao.valor = JSON.parse(res.data.loj_cartao)
+                  const v = res.data.loj_cartao
+                  this.caixa.loj_cartao.valor = typeof v === 'string' ? parseFloat(v) || 0 : (Number(v) || 0)
               })
               .catch((error) => {
                   // eslint-disable-next-line
@@ -285,14 +288,9 @@ export default {
 </script>
 
 <style scoped>
-  body {
-    padding: 1rem;
-  }
-
-  /*.righted-input {*/
-  /*  text-align: right*/
-  /*}*/
-  /*.lefted-input {*/
-  /*  text-align: left*/
-  /*}*/
+.financeiro-caixa-table { padding: 0.5rem; }
+.caixa-compact .b-table { font-size: 11px; }
+.caixa-compact .b-table td, .caixa-compact .b-table th { padding: 2px 4px; }
+.caixa-compact .btn { padding: 2px 6px; font-size: 11px; }
+.caixa-compact h6 { font-size: 11px !important; }
 </style>

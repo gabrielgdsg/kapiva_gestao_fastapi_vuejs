@@ -16,7 +16,7 @@
                     <router-link class="nav-link" to="/pedidos-chegando">Pedidos Chegando</router-link>
                     <router-link class="nav-link" to="/metas">Metas</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>
-                        <b-dropdown-item class="nav-link" :to="{name: 'FinanceiroCaixa', params: {currentComponent: 'selecionar'}}">
+                        <b-dropdown-item class="nav-link" to="/financeiro/caixa">
                             Caixa
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
@@ -96,8 +96,13 @@
                     })
                     .catch((error) => {
                         this.busy = false
-                        const msg = error.response?.data?.detail || error.message || 'Erro ao atualizar'
-                        this.$bvToast.toast(msg, { title: 'AtualizarDB falhou', variant: 'danger', noAutoHide: true })
+                        const d = error.response?.data?.detail
+                        const msg = (typeof d === 'string' ? d : (d ? JSON.stringify(d) : error.message)) || 'Erro ao atualizar'
+                        console.error('AtualizarDB failed:', error.response?.data || error)
+                        if (this.$bvToast) {
+                            this.$bvToast.toast(msg, { title: 'AtualizarDB falhou', variant: 'danger', noAutoHide: true })
+                        }
+                        alert('AtualizarDB falhou: ' + msg)
                     })
             },
             onHidden() {

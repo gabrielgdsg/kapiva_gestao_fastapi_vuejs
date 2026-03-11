@@ -16,9 +16,10 @@ export default {
   },
   props: ['datepicker_default'],
   data () {
+    const def = this.datepicker_default
+    const d = def ? new Date(def) : new Date()
     return {
-      // date_value: this.initial_date,
-      date_value: new Date(this.datepicker_default),
+      date_value: (d && !isNaN(d.getTime())) ? d : new Date(),
       // date_value: new Date('2020-03-18'),
       // date_value: '',
       // date_value: new Date(2019, 11, 15), // initial date_value

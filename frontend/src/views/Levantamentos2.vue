@@ -7,7 +7,7 @@
       <div>
         <h1 class="lev2-title">Levantamentos 2</h1>
         <div class="lev2-subtitle">
-          {{ visibleProducts.length }} produto(s) visíveis · {{ activeCols.length }} tamanho(s)
+          {{ visibleProducts.length }} produto(s) visíveis · {{ safeActiveCols.length }} tamanho(s)
         </div>
       </div>
       <div class="lev2-header-actions">
@@ -37,33 +37,8 @@
 
     <!-- Load bar: Marca, dates, Enviar -->
     <div class="lev2-load-bar">
-      <div class="lev2-load-field lev2-marca-wrap">
-        <label class="lev2-label">Marca</label>
-        <div class="lev2-marca-combo">
-          <b-form-input
-            v-model="marcaQuery"
-            size="sm"
-            class="lev2-input lev2-marca-input"
-            placeholder="Digite para buscar..."
-            autocomplete="off"
-            @focus="marcaDropdownOpen = true"
-            @input="marcaDropdownOpen = true"
-            @blur="marcaDropdownCloseSoon"
-          />
-          <div v-if="marcaDropdownOpen" class="lev2-marca-dropdown" @mousedown.prevent>
-            <div
-              v-for="m in filteredMarcasSlice"
-              :key="m.cod_marca"
-              class="lev2-marca-option"
-              :class="{ active: m.cod_marca === cod_marca }"
-              @mousedown="selectMarca(m)"
-            >
-              {{ m.nom_marca }} <span class="lev2-marca-cod">({{ m.cod_marca }})</span>
-            </div>
-            <div v-if="filteredMarcas.length === 0" class="lev2-marca-empty">Nenhuma marca encontrada</div>
-          </div>
-        </div>
-        <div v-if="cod_marca && selectedMarcaNom" class="lev2-marca-hint">Selecionada: {{ selectedMarcaNom }}</div>
+      <div class="lev2-load-field">
+        <Levantamentos2MarcaSelect :marcas="marcas" :value="cod_marca" @input="cod_marca = $event"/>
       </div>
       <div class="lev2-load-field">
         <label class="lev2-label">Data inicial</label>
@@ -74,9 +49,16 @@
         <b-form-input v-model="data_cadastro_fim" type="date" size="sm" class="lev2-input" />
       </div>
       <div class="lev2-load-field lev2-actions">
+        <b-form-checkbox v-model="useMongo" size="sm" class="lev2-mongo-toggle" title="Usar cache MongoDB (mais rápido para marcas grandes)">
+          MongoDB
+        </b-form-checkbox>
         <b-button size="sm" variant="primary" :disabled="loading || !cod_marca" @click="onSubmit">
           <b-spinner v-if="loading" small class="mr-1" />
           {{ loading ? 'Carregando...' : 'Carregar' }}
+        </b-button>
+        <b-button size="sm" variant="outline-secondary" :disabled="syncing || loading || !cod_marca" @click="forceSync" title="Sincronizar Postgres → MongoDB para carregamento mais rápido">
+          <b-spinner v-if="syncing" small class="mr-1" />
+          {{ syncing ? 'Sincronizando...' : 'Force Sync' }}
         </b-button>
         <b-button size="sm" variant="outline-secondary" :disabled="loading || !products.length" @click="carregarImagens" title="Recarregar imagens da base">
           Recarregar Imagens
@@ -106,7 +88,7 @@
           <input v-model="gradeSearch" type="text" placeholder="Buscar..." class="lev2-grade-search" />
         </div>
         <div v-if="autoDetected.length" class="lev2-auto-msg">
-          🔍 Auto: {{ autoDetected.map(id => groupById[id] && groupById[id].label).join(', ') }}
+          🔍 Auto: {{ (autoDetected || []).filter(Boolean).map(id => (groupById[id] && groupById[id].label) || id).join(', ') }}
         </div>
         <div class="lev2-cats">
           <div v-for="cat in categories" :key="cat.id" class="lev2-cat">
@@ -194,7 +176,7 @@
               <th v-if="showImgLink" class="lev2-th">Link Img</th>
               <th class="lev2-th lev2-th-plus">+</th>
               <th
-                v-for="(col, i) in activeCols"
+                v-for="(col, i) in safeColsIter"
                 :key="col.key"
                 class="lev2-th lev2-th-size"
                 :style="thSizeStyle(col, i)"
@@ -215,7 +197,7 @@
               <td v-if="showImg" class="lev2-td" />
               <td v-if="showImgLink" class="lev2-td" />
               <td class="lev2-td" />
-              <td v-for="col in activeCols" :key="'f-'+col.key" class="lev2-td lev2-td-size-filter">
+              <td v-for="col in safeColsIter" :key="'f-'+col.key" class="lev2-td lev2-td-size-filter">
                 <b-form-input v-model="sizeFilters[col.key]" size="sm" :placeholder="'E;S'" class="lev2-size-filter-inp" :title="'entrada;stock ex: 1;0 ou >1;&lt;1'" />
               </td>
               <td class="lev2-td" />
@@ -230,7 +212,7 @@
               <td v-if="showImgLink" class="lev2-td" />
               <td class="lev2-td" />
               <td
-                v-for="col in activeCols"
+                v-for="col in safeColsIter"
                 :key="'tot-'+col.key"
                 class="lev2-td lev2-td-center"
                 :class="{ 'lev2-td-has': colTotals.stock[col.key] > 0 || colTotals.stockE[col.key] > 0 }"
@@ -286,7 +268,7 @@
                   <button type="button" class="lev2-btn-plus" @click="toggleDetails(p)">{{ expandedRowId === p._virtualId ? '-' : '+' }}</button>
                 </td>
                 <td
-                  v-for="(col, i) in activeCols"
+                  v-for="(col, i) in safeColsIter"
                   :key="col.key"
                   class="lev2-td lev2-td-center lev2-td-size"
                   :class="sizeCellClass(p[col.key], p[col.key+'_E'])"
@@ -325,7 +307,7 @@
                           {{ movto.origem_nome }}
                         </span>
                       </template>
-                      <template v-for="col in activeCols" #[`cell(${col.key})`]="{ item: movto }">
+                      <template v-for="col in safeColsIter" #[`cell(${col.key})`]="{ item: movto }">
                         <span :key="col.key" :class="getMovimentoClass(movto[col.key])">{{ movto[col.key] != null && movto[col.key] !== 0 ? movto[col.key] : '' }}</span>
                       </template>
                       <template #cell(tot_movto)="{ item: movto }">
@@ -361,6 +343,7 @@
 <script>
 import axios from 'axios'
 import moment from 'moment'
+import Levantamentos2MarcaSelect from '../components/Levantamentos2MarcaSelect'
 
 const CATEGORIES = [
   { id: 'calcado', label: '👟 Calçado', color: '#3b82f6', bg: '#dbeafe', groups: [
@@ -417,6 +400,7 @@ function compareSizeKeys(a, b) {
 
 export default {
   name: 'Levantamentos2',
+  components: { Levantamentos2MarcaSelect },
   data() {
     const today = new Date()
     const y = today.getFullYear()
@@ -437,8 +421,6 @@ export default {
       data_cadastro_ini: '2019-07-01',
       data_cadastro_fim: `${y}-${m}-${d}`,
       marcas: [],
-      marcaQuery: '',
-      marcaDropdownOpen: false,
       showImg: true,
       showCost: false,
       showImgLink: false,
@@ -484,7 +466,9 @@ export default {
       expandedRowId: null,
       sizeFilters: {},
       imagesByKey: {},
-      imgLinkEditBuffer: {} // key: 'ref|cor' -> raw string while editing URL
+      imgLinkEditBuffer: {}, // key: 'ref|cor' -> raw string while editing URL
+      useMongo: false, // Use MongoDB cache for faster loads (sync first)
+      syncing: false
     }
   },
   watch: {
@@ -500,28 +484,19 @@ export default {
     },
     activeCols: {
       handler(cols) {
-        cols.forEach(col => {
-          if (this.sizeFilters[col.key] === undefined) this.$set(this.sizeFilters, col.key, '')
-        })
+        try {
+          (cols || []).filter(c => c && typeof c.key === 'string').forEach(col => {
+            if (this.sizeFilters[col.key] === undefined) this.$set(this.sizeFilters, col.key, '')
+          })
+        } catch (e) {
+          console.warn('Levantamentos2 activeCols watch:', e)
+        }
       },
       immediate: true
     }
   },
   computed: {
     groupById: () => GROUP_BY_ID,
-    filteredMarcas() {
-      const q = (this.marcaQuery || '').trim().toLowerCase()
-      if (!q) return this.marcas
-      return this.marcas.filter(m => (m.nom_marca || '').toLowerCase().includes(q) || String(m.cod_marca || '').toLowerCase().includes(q))
-    },
-    filteredMarcasSlice() {
-      return this.filteredMarcas.slice(0, 80)
-    },
-    selectedMarcaNom() {
-      if (!this.cod_marca || !this.marcas.length) return ''
-      const m = this.marcas.find(x => x.cod_marca === this.cod_marca)
-      return m ? m.nom_marca : ''
-    },
     mappedItemsComputed() {
       const mapped = []
       const obj = this.subgrouped_items_bycolor_obj
@@ -642,9 +617,6 @@ export default {
     hasColumnFilters() {
       return Object.values(this.debouncedFilters).some(v => (v || '').trim() !== '')
     },
-    marcaOptions() {
-      return this.marcas || []
-    },
     metaKeys() {
       return new Set([
         'nom_marca', 'dat_cadastro', 'dat_ultcompra', 'cod_referencia', 'des_cor', 'des_produto', 'img',
@@ -662,8 +634,9 @@ export default {
       const seen = new Set()
       const cols = []
       for (const g of ALL_GROUPS) {
-        if (!this.selectedGroupIds.includes(g.id)) continue
-        for (const s of g.sizes) {
+        if (!g || !this.selectedGroupIds.includes(g.id)) continue
+        for (const s of (g.sizes || [])) {
+          if (s == null) continue
           const key = String(s)
           if (!seen.has(key)) {
             seen.add(key)
@@ -674,6 +647,7 @@ export default {
       const predefined = this.allPredefinedSizes
       const meta = this.metaKeys
       for (const p of this.products) {
+        if (!p) continue
         for (const k of Object.keys(p)) {
           if (k.endsWith('_E') || meta.has(k)) continue
           if (typeof p[k] !== 'number' && typeof p[k + '_E'] !== 'number') continue
@@ -683,14 +657,14 @@ export default {
           cols.push({ key, catId: 'especiais', catColor: '#64748b', catBg: '#f1f5f9' })
         }
       }
-      cols.sort((a, b) => compareSizeKeys(a.key, b.key))
-      return cols
+      cols.sort((a, b) => (a && b && a.key && b.key) ? compareSizeKeys(a.key, b.key) : 0)
+      return cols.filter(c => c && c.key)
     },
     visibleCatIds() {
-      return [...new Set(this.visibleCols.map(c => c.catId))]
+      return [...new Set((this.visibleCols || []).filter(c => c && c.catId).map(c => c.catId))]
     },
     colSet() {
-      return new Set(this.visibleCols.map(c => c.key))
+      return new Set((this.visibleCols || []).filter(c => c && c.key).map(c => c.key))
     },
     hasSizeFilters() {
       return Object.keys(this.sizeFilters || {}).some(k => (this.sizeFilters[k] || '').trim() !== '')
@@ -724,18 +698,31 @@ export default {
       )
     },
     activeCols() {
-      return this.visibleCols.filter(col =>
-        this.visibleProducts.some(p => (Number(p[col.key]) || 0) > 0 || (Number(p[col.key + '_E']) || 0) > 0)
+      return (this.visibleCols || []).filter(col =>
+        col && col.key && this.visibleProducts.some(p => (Number(p[col.key]) || 0) > 0 || (Number(p[col.key + '_E']) || 0) > 0)
       )
     },
+    safeActiveCols() {
+      try {
+        return (this.activeCols || []).filter(c => c && c.key && typeof c.key === 'string')
+      } catch (_) {
+        return []
+      }
+    },
+    /** Guaranteed-safe array for v-for; never contains undefined or items without key */
+    safeColsIter() {
+      const arr = this.safeActiveCols || []
+      return Array.isArray(arr) ? arr.filter(c => c != null && c && typeof c.key === 'string') : []
+    },
     movimentosFields() {
-      const gradeKeys = (this.activeCols || []).map(c => c.key)
+      const gradeKeys = (this.safeColsIter || []).map(c => c.key).filter(k => k != null && k !== '')
+      const sizeFields = gradeKeys.map(k => ({ key: k, label: k, sortable: true })).filter(f => f && f.key)
       return [
         { key: 'data_movto', label: 'Data', sortable: true },
         { key: 'origem', label: 'Origem', sortable: true },
-        ...gradeKeys.map(k => ({ key: k, label: k, sortable: true })),
+        ...sizeFields,
         { key: 'tot_movto', label: 'Tot.', sortable: true }
-      ]
+      ].filter(f => f && f.key)
     },
     sortedProducts() {
       const list = [...this.visibleProducts]
@@ -801,14 +788,18 @@ export default {
     colTotals() {
       const stock = {}
       const stockE = {}
-      for (const col of this.activeCols) {
-        stock[col.key] = 0
-        stockE[col.key] = 0
+      for (const col of this.safeColsIter) {
+        if (col && col.key) {
+          stock[col.key] = 0
+          stockE[col.key] = 0
+        }
       }
       for (const p of this.visibleProducts) {
-        for (const col of this.activeCols) {
-          stock[col.key] += Math.max(0, Number(p[col.key]) || 0)
-          stockE[col.key] += Number(p[col.key + '_E']) || 0
+        for (const col of this.safeColsIter) {
+          if (col && col.key) {
+            stock[col.key] = (stock[col.key] || 0) + Math.max(0, Number(p[col.key]) || 0)
+            stockE[col.key] = (stockE[col.key] || 0) + Number(p[col.key + '_E']) || 0
+          }
         }
       }
       return { stock, stockE }
@@ -820,7 +811,7 @@ export default {
       return Object.values(this.colTotals.stockE).reduce((a, b) => a + b, 0)
     },
     detailColspan() {
-      return 4 + (this.showDataCad ? 1 : 0) + (this.showDataUltCompra ? 1 : 0) + (this.showImg ? 1 : 0) + (this.showImgLink ? 1 : 0) + 1 + this.activeCols.length + 1 + (this.showCost ? 1 : 0) + 1 + (this.showPerf ? 1 : 0)
+      return 4 + (this.showDataCad ? 1 : 0) + (this.showDataUltCompra ? 1 : 0) + (this.showImg ? 1 : 0) + (this.showImgLink ? 1 : 0) + 1 + this.safeActiveCols.length + 1 + (this.showCost ? 1 : 0) + 1 + (this.showPerf ? 1 : 0)
     }
   },
   mounted() {
@@ -829,13 +820,14 @@ export default {
   },
   methods: {
     selectedInCat(cat) {
-      return cat.groups.filter(g => this.selectedGroupIds.includes(g.id))
+      return (cat && cat.groups || []).filter(g => g && g.id && this.selectedGroupIds.includes(g.id))
     },
     filteredGroupsInCat(cat) {
-      if (!this.gradeSearch) return cat.groups
+      const groups = (cat && cat.groups) ? cat.groups.filter(g => g && g.id) : []
+      if (!this.gradeSearch) return groups
       const q = this.gradeSearch.toLowerCase()
-      return cat.groups.filter(g =>
-        g.label.toLowerCase().includes(q) || g.sizes.some(s => String(s).toLowerCase().includes(q))
+      return groups.filter(g =>
+        (g.label || '').toLowerCase().includes(q) || (g.sizes || []).some(s => String(s).toLowerCase().includes(q))
       )
     },
     toggleCatOpen(id) {
@@ -973,7 +965,7 @@ export default {
     },
     formatMovimentos(movtos) {
       if (!movtos || !Array.isArray(movtos)) return []
-      const gradeKeys = (this.activeCols || []).map(c => c.key)
+      const gradeKeys = (this.safeActiveCols || []).map(c => c.key)
       return movtos.map(movto => {
         const cod_origem = movto.cod_origem_movto != null ? movto.cod_origem_movto : movto.tipo_movto
         const origem_nome = (this.origemMapping && this.origemMapping[cod_origem]) || `Origem ${cod_origem}`
@@ -1003,14 +995,22 @@ export default {
       return this.sortDir === 1 ? '↑' : '↓'
     },
     productTotalStock(p) {
-      return Math.max(0, Number(p.totais) || 0)
+      let sum = 0
+      for (const col of this.safeColsIter) {
+        if (col && col.key) sum += Math.max(0, Number(p[col.key]) || 0)
+      }
+      return sum
     },
     productTotalEntries(p) {
-      return Number(p.totais_E) || 0
+      let sum = 0
+      for (const col of this.safeColsIter) {
+        if (col && col.key) sum += Number(p[col.key + '_E']) || 0
+      }
+      return sum
     },
     perfPct(p) {
-      const totalE = Number(p.totais_E) || 0
-      const stock = Math.max(0, Number(p.totais) || 0)
+      const totalE = this.productTotalEntries(p)
+      const stock = this.productTotalStock(p)
       if (!totalE) return 0
       const sold = Math.max(0, totalE - stock)
       return Math.round((sold / totalE) * 100)
@@ -1041,7 +1041,7 @@ export default {
       return 'lev2-cell-empty'
     },
     thSizeStyle(col, i) {
-      const prev = this.activeCols[i - 1]
+      const prev = this.safeActiveCols[i - 1]
       const catChange = prev && prev.catId !== col.catId
       return {
         background: col.catBg,
@@ -1057,7 +1057,7 @@ export default {
       }
     },
     tdSizeBorder(col, i) {
-      const prev = this.activeCols[i - 1]
+      const prev = this.safeActiveCols[i - 1]
       const catChange = prev && prev.catId !== col.catId
       return { borderLeft: catChange ? `2px solid ${col.catColor}33` : undefined }
     },
@@ -1205,20 +1205,15 @@ export default {
     },
     loadMarcas() {
       axios.get('/api/read/marcas/').then(res => {
-        this.marcas = res.data || []
-        if (this.cod_marca && this.marcas.length) {
-          const m = this.marcas.find(x => x.cod_marca === this.cod_marca)
-          if (m) this.marcaQuery = m.nom_marca
-        }
+        const raw = res.data || []
+        this.marcas = raw.map((m, i) => {
+          if (!m || typeof m !== 'object') return { cod_marca: i, nom_marca: '(inválido)' }
+          const cod = m.cod_marca ?? m.COD_MARCA ?? i
+          const nom = (m.nom_marca ?? m.NOM_MARCA ?? '').toString()
+          return { cod_marca: cod, nom_marca: nom || '(sem nome)' }
+        }).filter(m => m.cod_marca != null)
+        // cod_marca sync to child via :value prop
       }).catch(() => {})
-    },
-    selectMarca(m) {
-      this.cod_marca = m.cod_marca
-      this.marcaQuery = m.nom_marca || ''
-      this.marcaDropdownOpen = false
-    },
-    marcaDropdownCloseSoon() {
-      setTimeout(() => { this.marcaDropdownOpen = false }, 200)
     },
     objectify(row) {
       if (!Array.isArray(row)) return null
@@ -1277,7 +1272,8 @@ export default {
       this.loading = true
       this.loadTime = null
       const start = performance.now()
-      axios.get(`/api/levantamentos/${ini}/${fim}/${this.cod_marca}`)
+      const sourceParam = this.useMongo ? '?source=mongo' : ''
+      axios.get(`/api/levantamentos/${ini}/${fim}/${this.cod_marca}${sourceParam}`)
         .then(res => {
           this.loadTime = Math.round(performance.now() - start)
           this.imagesByKey = {}
@@ -1295,6 +1291,26 @@ export default {
           this.imagesByKey = {}
         })
         .finally(() => { this.loading = false })
+    },
+    async forceSync() {
+      if (!this.cod_marca) return
+      const ini = (this.data_cadastro_ini || '').replace(/\//g, '-')
+      const fim = (this.data_cadastro_fim || '').replace(/\//g, '-')
+      if (!ini || !fim) {
+        this.$bvToast && this.$bvToast.toast('Informe data inicial e final.', { variant: 'warning' })
+        return
+      }
+      this.syncing = true
+      try {
+        const res = await axios.post(`/api/levantamentos/sync?data_ini=${encodeURIComponent(ini)}&data_fim=${encodeURIComponent(fim)}&cod_marca=${encodeURIComponent(this.cod_marca)}`)
+        const msg = res.data?.rows_synced != null ? `${res.data.rows_synced} linhas sincronizadas` : 'Sincronizado'
+        this.$bvToast && this.$bvToast.toast(msg, { variant: 'success' })
+        this.useMongo = true
+      } catch (err) {
+        this.$bvToast && this.$bvToast.toast('Erro ao sincronizar: ' + (err.response?.data?.detail || err.message), { variant: 'danger' })
+      } finally {
+        this.syncing = false
+      }
     },
     carregarImagens() {
       if (!this.products.length) return
@@ -1347,7 +1363,8 @@ export default {
 .lev2-load-field { display: flex; flex-direction: column; gap: 4px; }
 .lev2-label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.4px; }
 .lev2-input { padding: 6px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; min-width: 140px; }
-.lev2-actions { flex-direction: row; align-items: center; }
+.lev2-actions { flex-direction: row; align-items: center; flex-wrap: wrap; gap: 8px; }
+.lev2-mongo-toggle { margin-right: 4px; white-space: nowrap; }
 .lev2-load-ms { font-size: 12px; color: #6b7280; margin-left: 8px; }
 .lev2-marca-wrap { position: relative; min-width: 200px; }
 .lev2-marca-combo { position: relative; }

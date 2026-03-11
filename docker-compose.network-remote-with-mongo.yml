@@ -36,6 +36,8 @@ services:
       ALLOWED_ORIGINS: "*"
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/app   # mount live code — restart container to pick up changes
     depends_on:
       mongo:
         condition: service_healthy

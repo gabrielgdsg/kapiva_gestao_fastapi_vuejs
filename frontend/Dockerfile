@@ -8,7 +8,7 @@ ENV NODE_OPTIONS=--openssl-legacy-provider
 COPY package.json package-lock.json ./
 RUN npm ci --silent
 
-# Copy source
+# Copy source (.cachebust file changes each deploy to invalidate cache)
 COPY . .
 
 # Fix css-declaration-sorter incompatibility with Vue CLI 4 / Webpack 4

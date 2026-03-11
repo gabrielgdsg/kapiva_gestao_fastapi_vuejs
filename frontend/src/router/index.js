@@ -48,7 +48,7 @@ const routes = [
     meta: { hideNavbar: true }
   },
   {
-    path: '/financeiro/caixa',
+    path: '/financeiro/caixa/:currentComponent?',
     name: 'FinanceiroCaixa',
     component: () => import('../views/FinanceiroCaixa.vue'),
     props: true
