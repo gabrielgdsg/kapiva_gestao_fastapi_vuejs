@@ -60,6 +60,12 @@ const routes = [
     props: true
   },
   {
+    path: '/clientes',
+    name: 'Clientes',
+    component: () => import('../views/Clientes.vue'),
+    props: true
+  },
+  {
     path: '/estoque',
     name: 'Estoque',
     component: () => import('../views/Estoque'),

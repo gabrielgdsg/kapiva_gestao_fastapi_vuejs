@@ -14,6 +14,7 @@
                     <router-link class="nav-link" to="/faturamento">Faturamento</router-link>
                     <router-link class="nav-link" to="/vendedor">Vendedores</router-link>
                     <router-link class="nav-link" to="/pedidos-chegando">Pedidos Chegando</router-link>
+                    <router-link class="nav-link" to="/clientes">Clientes</router-link>
                     <router-link class="nav-link" to="/metas">Metas</router-link>
                     <b-nav-item-dropdown text="Financeiro" right>
                         <b-dropdown-item class="nav-link" to="/financeiro/caixa">

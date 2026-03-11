@@ -31,6 +31,7 @@ from app.api.vendas.api_vendas import router as vendas_router
 from app.api.faturamento.api_faturamento import router as faturamento_router
 from app.api.vendedor.api_vendedor import router as vendedor_router
 from app.api.pedidos_chegando import router as pedidos_chegando_router
+from app.api.clientes.api_clientes import router as clientes_router
 from app.core.logging import setup_logging, get_logger
 from pathlib import Path
 
@@ -50,6 +51,7 @@ app.include_router(api_caixa.router)
 app.include_router(vendedor_router)
 app.include_router(faturamento_router)
 app.include_router(pedidos_chegando_router)
+app.include_router(clientes_router)
 app.include_router(vendas_router)
 
 # Initialize database connection pool (non-fatal so app can start when DB unreachable, e.g. in Docker)

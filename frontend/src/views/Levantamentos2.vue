@@ -49,7 +49,7 @@
         <b-form-input v-model="data_cadastro_fim" type="date" size="sm" class="lev2-input" />
       </div>
       <div class="lev2-load-field lev2-actions">
-        <b-form-checkbox v-model="useMongo" size="sm" class="lev2-mongo-toggle" title="Usar cache MongoDB (mais rápido para marcas grandes)">
+        <b-form-checkbox v-model="useMongo" size="sm" class="lev2-mongo-toggle" title="Usar cache MongoDB. Para marcas grandes, Postgres pode ser mais rápido no primeiro carregamento. Use Force Sync antes de carregar com MongoDB.">
           MongoDB
         </b-form-checkbox>
         <b-button size="sm" variant="primary" :disabled="loading || !cod_marca" @click="onSubmit">
@@ -478,7 +478,7 @@ export default {
         this.filterDebounceTimer = setTimeout(() => {
           this.debouncedFilters = { ...newVal }
           try { localStorage.setItem('lev2_col_filters', JSON.stringify(newVal)) } catch (e) { /* ignore */ }
-        }, 300)
+        }, 500)
       },
       deep: true
     },
